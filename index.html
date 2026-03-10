@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Cooper Routine</title>
+
+  <style>
+    @font-face {
+      font-family: 'CustomFont';
+      src: url('https://raw.githubusercontent.com/FotisVal/NFC_Home_Music/9086892e1cfb13d0e3f10e926b5b318df55aa4dd/fonts/GRAYSTROKE%20ITALIC.otf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    :root {
+      --bg: #333;
+      --panel: #222;
+      --panel-2: #3a3a3a;
+      --text: #fff;
+      --muted: #bbb;
+      --line: #777;
+      --accent: #ffd400;
+      --btn: #555;
+      --btn-hover: #666;
+      --success: #36c26b;
+      --danger: #d45b5b;
+      --info: #4d90fe;
+      --shadow: 0 10px 25px rgba(0,0,0,0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top, rgba(255, 212, 0, 0.08), transparent 20%),
+        var(--bg);
+      color: var(--text);
+      text-align: center;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    .header {
+      background-color: var(--panel);
+      padding: 12px 0;
+      position: relative;
+      width: 100%;
+      height: 108px;
+      box-shadow: var(--shadow);
+    }
+
+    .header h1 {
+      font-family: 'CustomFont', sans-serif;
+      color: var(--accent);
+      font-size: 2.5em;
+      margin: 0;
+      line-height: 1.2em;
+      letter-spacing: 0.5px;
+    }
+
+    .header h1 span {
+      display: block;
+    }
+
+    .header::after {
+      content: "";
+      display: block;
+      height: 3px;
+      width: 100%;
+      background-color: var(--line);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    .subtitle {
+      font-size: 0.95em;
+      margin: 20px 16px 8px;
+      color: var(--muted);
+    }
+
+    .app {
+      width: min(92%, 560px);
+      margin: 0 auto;
+      padding: 14px 0 120px;
+    }
+
+    .player-wrap {
+      margin-top: 18px;
+      margin-bottom: 18px;
+    }
+
+    .status-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 14px;
+      text-align: left;
+      box-shadow: var(--shadow);
+      margin: 14px 0 18px;
+      backdrop-filter: blur(6px);
+    }
+
+    .status-title {
+      font-size: 0.88em;
+      color: var(--muted);
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+    }
+
+    .status-message {
+      font-size: 1em;
+      line-height: 1.45;
+      color: var(--text);
+      min-height: 44px;
+    }
+
+    .status-meta {
+      margin-top: 8px;
+      font-size: 0.85em;
+      color: #d4d4d4;
+      line-height: 1.4;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .button {
+      background-color: var(--btn);
+      color: white;
+      border: none;
+      padding: 15px 18px;
+      font-size: 1.08em;
+      border-radius: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 58px;
+      width: 100%;
+      transition: transform 0.12s ease, background-color 0.18s ease, opacity 0.18s ease;
+      box-shadow: var(--shadow);
+      font-weight: 600;
+    }
+
+    .button:hover {
+      background-color: var(--btn-hover);
+      transform: translateY(-1px);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .button.primary {
+      background: linear-gradient(180deg, #5a5a5a, #4c4c4c);
+    }
+
+    .button.success {
+      background: linear-gradient(180deg, #3dbf70, #2fa45e);
+    }
+
+    .button.info {
+      background: linear-gradient(180deg, #5b98ff, #427fea);
+    }
+
+    .button.danger {
+      background: linear-gradient(180deg, #da6767, #bd5050);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .pill {
+      font-size: 0.8em;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      color: #e7e7e7;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .pill.ok { color: #c8ffd9; }
+    .pill.warn { color: #ffe9ad; }
+
+    .corner-image {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      width: 112px;
+      height: auto;
+      opacity: 0.92;
+      pointer-events: none;
+    }
+
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 2.15em;
+      }
+
+      .corner-image {
+        width: 92px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1><span>Mini Cooper</span><span>Routine</span></h1>
+  </div>
+
+  <div class="app">
+    <div class="subtitle">Tap once when you park, and once when you want to find your car.</div>
+
+    <div class="player-wrap">
+      <iframe
+        style="border-radius:12px"
+        src="https://open.spotify.com/embed/playlist/37i9dQZF1E39oixsPcANo4?utm_source=generator"
+        width="100%"
+        height="180"
+        frameborder="0"
+        allowfullscreen=""
+        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        loading="lazy">
+      </iframe>
+    </div>
+
+    <div class="status-card">
+      <div class="status-title">Parking status</div>
+      <div id="statusMessage" class="status-message">Connecting...</div>
+      <div id="statusMeta" class="status-meta"></div>
+    </div>
+
+    <div class="button-grid">
+      <button class="button primary" id="homeBtn" onclick="navigateToHome()">
+        📍 Take me Home
+      </button>
+
+      <button class="button success" id="saveBtn" onclick="saveParkingSpot()">
+        🚗 Save Parking Spot
+      </button>
+
+      <button class="button info" id="showBtn" onclick="showParkingSpot()">
+        🗺️ Show Parking Spot
+      </button>
+
+      <button class="button info" id="navigateBtn" onclick="navigateToCar()">
+        🧭 Find My Car
+      </button>
+
+      <button class="button danger" id="clearBtn" onclick="clearParkingSpot()">
+        🗑️ Clear Saved Spot
+      </button>
+    </div>
+
+    <div class="pill-row">
+      <div id="cloudPill" class="pill">Cloud: checking...</div>
+      <div id="localPill" class="pill">Local backup: checking...</div>
+    </div>
+  </div>
+
+  <img
+    src="https://raw.githubusercontent.com/FotisVal/NFC_Home_Music/main/pngegg.png"
+    class="corner-image"
+    alt="Mini Cooper"
+  />
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+    import {
+      getAuth,
+      signInAnonymously,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import {
+      initializeFirestore,
+      persistentLocalCache,
+      persistentSingleTabManager,
+      doc,
+      setDoc,
+      getDoc,
+      deleteDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyBJOuWflHjO3_b-VTerQrhrleIVBz50GGg",
+    authDomain: "mini-cooper-routine.firebaseapp.com",
+    projectId: "mini-cooper-routine",
+    storageBucket: "mini-cooper-routine.firebasestorage.app",
+    messagingSenderId: "734879685589",
+    appId: "1:734879685589:web:a9a7f1b776efce00e43b5c",
+    measurementId: "G-1LETT1WZQ6"
+  };
+
+    const homeTranslations = {
+      en: "home",
+      es: "casa",
+      fr: "domicile",
+      de: "heim",
+      it: "casa",
+      pt: "casa",
+      ru: "дом",
+      zh: "家",
+      ja: "家",
+      ko: "집",
+      el: "σπίτι"
+    };
+
+    const LOCAL_KEY = "miniCooperParkingBackupV2";
+
+    const app = initializeApp(firebaseConfig);
+
+    const db = initializeFirestore(app, {
+      localCache: persistentLocalCache({
+        tabManager: persistentSingleTabManager()
+      })
+    });
+
+    const auth = getAuth(app);
+
+    const statusMessageEl = document.getElementById("statusMessage");
+    const statusMetaEl = document.getElementById("statusMeta");
+    const cloudPillEl = document.getElementById("cloudPill");
+    const localPillEl = document.getElementById("localPill");
+
+    const saveBtn = document.getElementById("saveBtn");
+    const showBtn = document.getElementById("showBtn");
+    const navigateBtn = document.getElementById("navigateBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    let currentUser = null;
+    let lastKnownSpot = null;
+
+    function setBusy(isBusy) {
+      saveBtn.disabled = isBusy;
+      showBtn.disabled = isBusy;
+      navigateBtn.disabled = isBusy;
+      clearBtn.disabled = isBusy;
+    }
+
+    function setStatus(message, meta = "") {
+      statusMessageEl.textContent = message;
+      statusMetaEl.textContent = meta;
+    }
+
+    function setPill(el, text, type = "") {
+      el.textContent = text;
+      el.className = `pill ${type}`.trim();
+    }
+
+    function formatDate(ms) {
+      if (!ms) return "unknown time";
+      return new Date(ms).toLocaleString("el-GR");
+    }
+
+    function getParkingDocRef(uid) {
+      return doc(db, "users", uid, "parking", "current");
+    }
+
+    function saveLocalBackup(data) {
+      localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+      setPill(localPillEl, "Local backup: ready", "ok");
+    }
+
+    function readLocalBackup() {
+      try {
+        const raw = localStorage.getItem(LOCAL_KEY);
+        if (!raw) {
+          setPill(localPillEl, "Local backup: empty");
+          return null;
+        }
+        const parsed = JSON.parse(raw);
+        setPill(localPillEl, "Local backup: ready", "ok");
+        return parsed;
+      } catch (e) {
+        console.error("Local backup parse error:", e);
+        setPill(localPillEl, "Local backup: error", "warn");
+        return null;
+      }
+    }
+
+    function clearLocalBackup() {
+      localStorage.removeItem(LOCAL_KEY);
+      setPill(localPillEl, "Local backup: empty");
+    }
+
+    function updateStatusFromSpot(spot, sourceLabel = "cloud") {
+      if (!spot) {
+        setStatus("No parking spot saved yet.", "Tap “Save Parking Spot” when you park.");
+        return;
+      }
+
+      const meta = [
+        `Saved: ${formatDate(spot.savedAtMillis)}`,
+        `Accuracy: ${spot.accuracy ? Math.round(spot.accuracy) + "m" : "unknown"}`,
+        `Source: ${sourceLabel}`
+      ].join(" • ");
+
+      setStatus("Your parking spot is saved and ready.", meta);
+    }
+
+    function navigateToHome() {
+      const userLang =
+        Intl.DateTimeFormat().resolvedOptions().locale ||
+        navigator.language ||
+        navigator.userLanguage ||
+        "en";
+
+      const langCode = userLang.split("-")[0];
+      const homeLabel = homeTranslations[langCode] || "home";
+
+      const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(homeLabel)}&travelmode=driving&dir_action=navigate`;
+      window.open(mapsUrl, "_blank");
+    }
+
+    async function ensureAnonymousLogin() {
+      return new Promise((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            currentUser = user;
+            unsubscribe();
+            resolve(user);
+            return;
+          }
+
+          try {
+            const result = await signInAnonymously(auth);
+            currentUser = result.user;
+            unsubscribe();
+            resolve(result.user);
+          } catch (error) {
+            unsubscribe();
+            reject(error);
+          }
+        });
+      });
+    }
+
+    async function loadCloudSpot() {
+      if (!currentUser) return null;
+
+      try {
+        const snap = await getDoc(getParkingDocRef(currentUser.uid));
+        if (!snap.exists()) {
+          setPill(cloudPillEl, "Cloud: empty");
+          return null;
+        }
+
+        const data = snap.data();
+        const spot = {
+          lat: data.lat,
+          lng: data.lng,
+          accuracy: data.accuracy || null,
+          savedAtMillis: data.savedAtMillis || null
+        };
+
+        setPill(cloudPillEl, "Cloud: ready", "ok");
+        return spot;
+      } catch (error) {
+        console.error("Cloud load error:", error);
+        setPill(cloudPillEl, "Cloud: unavailable", "warn");
+        return null;
+      }
+    }
+
+    function getCurrentLocation() {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error("Geolocation is not supported on this device/browser."));
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => resolve(position),
+          (error) => reject(error),
+          {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+          }
+        );
+      });
+    }
+
+    async function saveParkingSpot() {
+      if (!currentUser) {
+        setStatus("Still connecting to your parking account.", "Please try again in a moment.");
+        return;
+      }
+
+      setBusy(true);
+      setStatus("Getting your current location...", "Please keep this page open for a moment.");
+
+      try {
+        const position = await getCurrentLocation();
+
+        const spot = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          savedAtMillis: Date.now()
+        };
+
+        saveLocalBackup(spot);
+        lastKnownSpot = spot;
+        updateStatusFromSpot(spot, "local backup");
+
+        try {
+          await setDoc(getParkingDocRef(currentUser.uid), {
+            ...spot,
+            savedAt: serverTimestamp()
+          });
+
+          setPill(cloudPillEl, "Cloud: synced", "ok");
+          updateStatusFromSpot(spot, "cloud + local backup");
+
+          if (navigator.vibrate) {
+            navigator.vibrate(80);
+          }
+        } catch (cloudError) {
+          console.error("Cloud save failed:", cloudError);
+          setPill(cloudPillEl, "Cloud: pending/failed", "warn");
+          setStatus(
+            "Saved locally, but cloud sync failed.",
+            `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${Math.round(spot.accuracy)}m`
+          );
+        }
+      } catch (error) {
+        console.error("Location error:", error);
+
+        if (error.code === 1) {
+          setStatus("Location permission was denied.", "Allow location access to save where you parked.");
+        } else if (error.code === 2) {
+          setStatus("Your location is unavailable right now.", "Try again where GPS signal is better.");
+        } else if (error.code === 3) {
+          setStatus("Location request timed out.", "Try again in a few seconds.");
+        } else {
+          setStatus("Could not get your current location.", error.message || "Unknown error.");
+        }
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function getBestAvailableSpot() {
+      if (lastKnownSpot) return { spot: lastKnownSpot, source: "memory" };
+
+      const localSpot = readLocalBackup();
+      if (localSpot) return { spot: localSpot, source: "local backup" };
+
+      return { spot: null, source: null };
+    }
+
+    async function showParkingSpot() {
+      setBusy(true);
+      setStatus("Checking your saved parking spot...");
+
+      try {
+        let cloudSpot = null;
+
+        if (currentUser) {
+          cloudSpot = await loadCloudSpot();
+        }
+
+        const chosen = cloudSpot
+          ? { spot: cloudSpot, source: "cloud" }
+          : getBestAvailableSpot();
+
+        if (!chosen.spot) {
+          setStatus("No parking spot saved yet.", "Tap “Save Parking Spot” when you park.");
+          return;
+        }
+
+        lastKnownSpot = chosen.spot;
+        updateStatusFromSpot(chosen.spot, chosen.source);
+
+        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${chosen.spot.lat},${chosen.spot.lng}`;
+        window.open(mapsUrl, "_blank");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function navigateToCar() {
+      setBusy(true);
+      setStatus("Preparing navigation to your car...");
+
+      try {
+        let cloudSpot = null;
+
+        if (currentUser) {
+          cloudSpot = await loadCloudSpot();
+        }
+
+        const chosen = cloudSpot
+          ? { spot: cloudSpot, source: "cloud" }
+          : getBestAvailableSpot();
+
+        if (!chosen.spot) {
+          setStatus("No parking spot saved yet.", "Save your parking first, then use Find My Car.");
+          return;
+        }
+
+        lastKnownSpot = chosen.spot;
+        updateStatusFromSpot(chosen.spot, chosen.source);
+
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${chosen.spot.lat},${chosen.spot.lng}&travelmode=walking`;
+        window.open(mapsUrl, "_blank");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function clearParkingSpot() {
+      setBusy(true);
+      setStatus("Clearing saved parking spot...");
+
+      try {
+        clearLocalBackup();
+        lastKnownSpot = null;
+
+        if (currentUser) {
+          try {
+            await deleteDoc(getParkingDocRef(currentUser.uid));
+            setPill(cloudPillEl, "Cloud: empty");
+          } catch (error) {
+            console.error("Cloud delete failed:", error);
+            setPill(cloudPillEl, "Cloud: delete failed", "warn");
+          }
+        }
+
+        setStatus("Parking spot cleared.", "You can save a new one anytime.");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    window.navigateToHome = navigateToHome;
+    window.saveParkingSpot = saveParkingSpot;
+    window.showParkingSpot = showParkingSpot;
+    window.navigateToCar = navigateToCar;
+    window.clearParkingSpot = clearParkingSpot;
+
+    async function init() {
+      setBusy(true);
+
+      const localSpot = readLocalBackup();
+      if (localSpot) {
+        lastKnownSpot = localSpot;
+        updateStatusFromSpot(localSpot, "local backup");
+      } else {
+        setStatus("Connecting...", "Preparing your parking profile.");
+      }
+
+      try {
+        await ensureAnonymousLogin();
+        setPill(cloudPillEl, "Cloud: connected", "ok");
+      } catch (error) {
+        console.error("Auth error:", error);
+        setPill(cloudPillEl, "Cloud: auth failed", "warn");
+        setStatus(
+          "App opened, but cloud connection failed.",
+          "Local backup will still work on this device."
+        );
+        setBusy(false);
+        return;
+      }
+
+      try {
+        const cloudSpot = await loadCloudSpot();
+
+        if (cloudSpot) {
+          lastKnownSpot = cloudSpot;
+          saveLocalBackup(cloudSpot);
+          updateStatusFromSpot(cloudSpot, "cloud");
+        } else if (localSpot) {
+          updateStatusFromSpot(localSpot, "local backup");
+        } else {
+          setStatus("No parking spot saved yet.", "Tap “Save Parking Spot” when you park.");
+        }
+      } catch (error) {
+        console.error("Init load error:", error);
+      }
+
+      setBusy(false);
+    }
+
+    init();
+  </script>
+</body>
+</html>
