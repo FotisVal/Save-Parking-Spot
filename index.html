@@ -7,6 +7,8 @@
 
   <!-- Favicon -->
   <link rel="icon" type="image/jpg" href="favicon.jpg" />
+  <link rel="apple-touch-icon" href="favicon.jpg" />
+  <meta name="theme-color" content="#171717" />
 
   <style>
     :root {
@@ -246,7 +248,7 @@
       </div>
 
       <div class="footer-note">
-        Use NFC with <strong>?mode=save</strong> to save automatically without overwriting the spot during normal viewing.
+        Use NFC with <strong>?mode=save</strong> to save once without overwriting the saved spot during normal viewing.
       </div>
     </div>
   </div>
@@ -327,6 +329,11 @@
 
     function getParkingDocRef(uid) {
       return doc(db, "users", uid, "parking", "current");
+    }
+
+    function clearSaveModeFromUrl() {
+      const cleanUrl = window.location.pathname + window.location.hash;
+      window.history.replaceState({}, document.title, cleanUrl);
     }
 
     function setHeroState(type, title, text, meta = "") {
@@ -464,7 +471,7 @@
     async function saveParkingLocation() {
       if (!currentUser) {
         setHeroState("error", "Cloud not ready", "Please refresh and try again.");
-        return;
+        return false;
       }
 
       setHeroState(
@@ -501,6 +508,8 @@
           if (navigator.vibrate) {
             navigator.vibrate(80);
           }
+
+          return true;
         } catch (cloudError) {
           console.error(cloudError);
           setPill(cloudPillEl, "Cloud: pending/failed", "warn");
@@ -511,6 +520,8 @@
             "The spot was stored on this device, but cloud sync failed.",
             `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${Math.round(spot.accuracy)}m`
           );
+
+          return true;
         }
       } catch (error) {
         console.error(error);
@@ -540,6 +551,8 @@
             error.message || "Unknown error."
           );
         }
+
+        return false;
       } finally {
         setBusy(false);
       }
@@ -697,7 +710,12 @@
       setBusy(false);
 
       if (currentMode === "save") {
-        await saveParkingLocation();
+        const savedSuccessfully = await saveParkingLocation();
+
+        if (savedSuccessfully) {
+          clearSaveModeFromUrl();
+          setPill(modePillEl, "Mode: view only");
+        }
       }
     }
 
