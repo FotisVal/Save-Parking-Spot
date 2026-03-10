@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="el">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Parking Save</title>
+  <title>Quick Saving Parking Spot</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png" />
 
   <style>
     :root {
@@ -67,13 +70,6 @@
       color: var(--accent);
       letter-spacing: 0.3px;
       font-weight: 800;
-    }
-
-    .subtitle {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 0.96rem;
-      line-height: 1.45;
     }
 
     .content {
@@ -218,10 +214,7 @@
 <body>
   <div class="app">
     <div class="top">
-      <h1 class="title">Quick Parking Save</h1>
-      <p class="subtitle">
-        Με το που ανοίγει η σελίδα, προσπαθεί να αποθηκεύσει αυτόματα την τοποθεσία σου.
-      </p>
+      <h1 class="title">Quick Saving Parking Spot</h1>
     </div>
 
     <div class="content">
@@ -235,7 +228,7 @@
       <div class="pill-row">
         <div id="cloudPill" class="pill">Cloud: checking...</div>
         <div id="localPill" class="pill">Local backup: checking...</div>
-        <div id="autoPill" class="pill">Auto-save: waiting...</div>
+        <div id="modePill" class="pill">Mode: checking...</div>
       </div>
 
       <div class="buttons">
@@ -253,7 +246,7 @@
       </div>
 
       <div class="footer-note">
-        Αν ο browser ζητήσει άδεια τοποθεσίας, πάτα Allow για να γίνει το αυτόματο save.
+        Use NFC with <strong>?mode=save</strong> to save automatically without overwriting the spot during normal viewing.
       </div>
     </div>
   </div>
@@ -276,9 +269,7 @@
       serverTimestamp
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-    // Βάλε εδώ το ίδιο config που έχεις ήδη
-    // For Firebase JS SDK v7.20.0 and later, measurementId is optional const 
-const firebaseConfig = {
+    const firebaseConfig = {
     apiKey: "AIzaSyBJOuWflHjO3_b-VTerQrhrleIVBz50GGg",
     authDomain: "mini-cooper-routine.firebaseapp.com",
     projectId: "mini-cooper-routine",
@@ -287,8 +278,8 @@ const firebaseConfig = {
     appId: "1:734879685589:web:a9a7f1b776efce00e43b5c",
     measurementId: "G-1LETT1WZQ6"
   };
-    
-    const LOCAL_KEY = "quickParkingSaveLocalBackupV1";
+
+    const LOCAL_KEY = "quickParkingSaveLocalBackupV2";
 
     const app = initializeApp(firebaseConfig);
     const db = initializeFirestore(app, {
@@ -306,7 +297,7 @@ const firebaseConfig = {
 
     const cloudPillEl = document.getElementById("cloudPill");
     const localPillEl = document.getElementById("localPill");
-    const autoPillEl = document.getElementById("autoPill");
+    const modePillEl = document.getElementById("modePill");
 
     const showBtn = document.getElementById("showBtn");
     const navigateBtn = document.getElementById("navigateBtn");
@@ -314,7 +305,9 @@ const firebaseConfig = {
 
     let currentUser = null;
     let lastKnownSpot = null;
-    let autoSaveAttempted = false;
+
+    const params = new URLSearchParams(window.location.search);
+    const currentMode = params.get("mode") === "save" ? "save" : "view";
 
     function setBusy(isBusy) {
       showBtn.disabled = isBusy;
@@ -329,7 +322,7 @@ const firebaseConfig = {
 
     function formatDate(ms) {
       if (!ms) return "unknown time";
-      return new Date(ms).toLocaleString("el-GR");
+      return new Date(ms).toLocaleString("en-GB");
     }
 
     function getParkingDocRef(uid) {
@@ -379,7 +372,7 @@ const firebaseConfig = {
         setHeroState(
           "waiting",
           "No saved location",
-          "Open the page and allow location access to store your position."
+          "No parking spot is currently stored."
         );
         return;
       }
@@ -392,8 +385,8 @@ const firebaseConfig = {
 
       setHeroState(
         "saved",
-        "Location saved successfully",
-        "Your position is available and ready to open in Google Maps.",
+        "Parking spot saved successfully",
+        "Your saved spot is ready to open in Google Maps.",
         meta
       );
     }
@@ -468,20 +461,15 @@ const firebaseConfig = {
       });
     }
 
-    async function autoSaveLocation() {
-      if (autoSaveAttempted) return;
-      autoSaveAttempted = true;
-
+    async function saveParkingLocation() {
       if (!currentUser) {
         setHeroState("error", "Cloud not ready", "Please refresh and try again.");
-        setPill(autoPillEl, "Auto-save: failed", "warn");
         return;
       }
 
-      setPill(autoPillEl, "Auto-save: running", "ok");
       setHeroState(
         "waiting",
-        "Trying to save your location",
+        "Saving parking spot",
         "Please allow location access if your browser asks for permission."
       );
 
@@ -508,7 +496,6 @@ const firebaseConfig = {
           });
 
           setPill(cloudPillEl, "Cloud: synced", "ok");
-          setPill(autoPillEl, "Auto-save: completed", "ok");
           updateHeroFromSpot(spot, "cloud + local backup");
 
           if (navigator.vibrate) {
@@ -517,18 +504,16 @@ const firebaseConfig = {
         } catch (cloudError) {
           console.error(cloudError);
           setPill(cloudPillEl, "Cloud: pending/failed", "warn");
-          setPill(autoPillEl, "Auto-save: local only", "warn");
 
           setHeroState(
             "saved",
             "Saved locally",
-            "Your location was stored on this device, but cloud sync failed.",
+            "The spot was stored on this device, but cloud sync failed.",
             `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${Math.round(spot.accuracy)}m`
           );
         }
       } catch (error) {
         console.error(error);
-        setPill(autoPillEl, "Auto-save: not completed", "warn");
 
         if (error.code === 1) {
           setHeroState(
@@ -546,7 +531,7 @@ const firebaseConfig = {
           setHeroState(
             "error",
             "Location request timed out",
-            "Open the page again and try one more time."
+            "Please try again."
           );
         } else {
           setHeroState(
@@ -571,7 +556,7 @@ const firebaseConfig = {
 
     async function showSavedLocation() {
       setBusy(true);
-      setHeroState("waiting", "Checking saved location", "Opening your saved point on Google Maps...");
+      setHeroState("waiting", "Checking saved location", "Opening your saved point in Google Maps...");
 
       try {
         let cloudSpot = null;
@@ -586,7 +571,7 @@ const firebaseConfig = {
           setHeroState(
             "error",
             "No saved location found",
-            "Nothing is stored yet. Open the page and allow location access."
+            "No parking spot is currently stored."
           );
           return;
         }
@@ -618,7 +603,7 @@ const firebaseConfig = {
           setHeroState(
             "error",
             "No saved location found",
-            "Nothing is stored yet. Open the page and allow location access."
+            "No parking spot is currently stored."
           );
           return;
         }
@@ -654,7 +639,7 @@ const firebaseConfig = {
         setHeroState(
           "waiting",
           "Saved data cleared",
-          "The stored point was removed. Open the page again to save a new one."
+          "The stored parking spot was removed."
         );
       } finally {
         setBusy(false);
@@ -667,6 +652,12 @@ const firebaseConfig = {
 
     async function init() {
       setBusy(true);
+
+      if (currentMode === "save") {
+        setPill(modePillEl, "Mode: NFC save", "ok");
+      } else {
+        setPill(modePillEl, "Mode: view only");
+      }
 
       const localSpot = readLocalBackup();
       if (localSpot) {
@@ -704,7 +695,10 @@ const firebaseConfig = {
       }
 
       setBusy(false);
-      await autoSaveLocation();
+
+      if (currentMode === "save") {
+        await saveParkingLocation();
+      }
     }
 
     init();
