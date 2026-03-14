@@ -341,14 +341,14 @@
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
-    apiKey: "AIzaSyBJOuWflHjO3_b-VTerQrhrleIVBz50GGg",
-    authDomain: "mini-cooper-routine.firebaseapp.com",
-    projectId: "mini-cooper-routine",
-    storageBucket: "mini-cooper-routine.firebasestorage.app",
-    messagingSenderId: "734879685589",
-    appId: "1:734879685589:web:a9a7f1b776efce00e43b5c",
-    measurementId: "G-1LETT1WZQ6"
-  };
+    apiKey: "AIzaSyBJOuWflHjO3_b-VTerQrhrleIVBz50GGg",
+    authDomain: "mini-cooper-routine.firebaseapp.com",
+    projectId: "mini-cooper-routine",
+    storageBucket: "mini-cooper-routine.firebasestorage.app",
+    messagingSenderId: "734879685589",
+    appId: "1:734879685589:web:a9a7f1b776efce00e43b5c",
+    measurementId: "G-1LETT1WZQ6"
+  };
 
     const LOCAL_KEY = "quickParkingSaveLocalBackupV4";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
@@ -725,4 +725,97 @@
 
         if (currentUser) {
           try {
-            await deleteDoc(getParkingDocR
+            await deleteDoc(getParkingDocRef(currentUser.uid));
+            setPill(cloudPillEl, "Cloud: empty");
+          } catch (error) {
+            console.error(error);
+            setPill(cloudPillEl, "Cloud: delete failed", "warn");
+          }
+        }
+
+        setHeroState(
+          "waiting",
+          "Saved data cleared",
+          "The stored parking spot was removed."
+        );
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    window.showSavedLocation = showSavedLocation;
+    window.navigateToSavedLocation = navigateToSavedLocation;
+    window.clearSavedLocation = clearSavedLocation;
+
+    async function init() {
+      setBusy(true);
+
+      if (currentMode === "save") {
+        setPill(modePillEl, "Mode: NFC save", "ok");
+      } else {
+        setPill(modePillEl, "Mode: view only");
+      }
+
+      const localSpot = readLocalBackup();
+      if (localSpot) {
+        lastKnownSpot = localSpot;
+        updateHeroFromSpot(localSpot, "local backup");
+      } else {
+        setHeroState("waiting", "Starting...", "Preparing secure storage.");
+      }
+
+      try {
+        await ensureAnonymousLogin();
+        setPill(cloudPillEl, "Cloud: connected", "ok");
+      } catch (error) {
+        console.error(error);
+        setPill(cloudPillEl, "Cloud: auth failed", "warn");
+        setHeroState(
+          "error",
+          "Cloud connection failed",
+          "Local backup may still work on this device."
+        );
+        setBusy(false);
+        return;
+      }
+
+      try {
+        const cloudSpot = await loadCloudSpot();
+
+        if (cloudSpot) {
+          lastKnownSpot = cloudSpot;
+          saveLocalBackup(cloudSpot);
+          updateHeroFromSpot(cloudSpot, "cloud");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      setBusy(false);
+
+      if (currentMode === "save") {
+        if (sessionStorage.getItem(SESSION_SAVE_KEY)) {
+          clearSaveModeFromUrl();
+          setPill(modePillEl, "Mode: view only");
+          setHeroState(
+            "saved",
+            "Parking already saved",
+            "This tab already stored a parking location."
+          );
+          return;
+        }
+
+        const savedSuccessfully = await saveParkingLocation();
+
+        if (savedSuccessfully) {
+          sessionStorage.setItem(SESSION_SAVE_KEY, "true");
+          clearSaveModeFromUrl();
+          setPill(modePillEl, "Mode: view only");
+        }
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
