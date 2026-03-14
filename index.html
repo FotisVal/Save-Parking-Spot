@@ -5,24 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quick Saving Parking Spot</title>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/jpg" href="favicon.jpg" />
-  <link rel="apple-touch-icon" href="favicon.jpg" />
-  <meta name="theme-color" content="#171717" />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="favicon.png" />
+  <meta name="theme-color" content="#0f1014" />
 
   <style>
     :root {
-      --bg: #171717;
-      --panel: #232323;
-      --panel-soft: #2e2e2e;
+      --bg-1: #0b0d12;
+      --bg-2: #151922;
+      --panel: rgba(24, 28, 38, 0.78);
+      --panel-strong: rgba(31, 36, 49, 0.92);
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(255, 255, 255, 0.14);
       --text: #ffffff;
-      --muted: #b8b8b8;
-      --accent: #ffd400;
-      --success: #35c46a;
-      --info: #4d90fe;
-      --danger: #d85d5d;
-      --border: rgba(255,255,255,0.08);
-      --shadow: 0 14px 34px rgba(0,0,0,0.28);
+      --muted: #aeb6c7;
+      --accent: #ffd84d;
+      --accent-2: #ffb800;
+      --success: #35d07f;
+      --success-soft: rgba(53, 208, 127, 0.16);
+      --info: #5ea0ff;
+      --danger: #ff6b6b;
+      --danger-soft: rgba(255, 107, 107, 0.15);
+      --warning: #ffcc66;
+      --warning-soft: rgba(255, 204, 102, 0.14);
+      --shadow-xl: 0 18px 45px rgba(0, 0, 0, 0.38);
+      --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.28);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 16px;
     }
 
     * {
@@ -34,105 +44,146 @@
       margin: 0;
       padding: 0;
       min-height: 100%;
-      font-family: Arial, sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(255,212,0,0.10), transparent 22%),
-        linear-gradient(180deg, #1a1a1a 0%, #171717 100%);
+      font-family: Inter, Arial, sans-serif;
       color: var(--text);
+      background:
+        radial-gradient(circle at top center, rgba(255, 216, 77, 0.18), transparent 20%),
+        radial-gradient(circle at bottom left, rgba(94, 160, 255, 0.10), transparent 24%),
+        linear-gradient(180deg, var(--bg-2) 0%, var(--bg-1) 100%);
     }
 
     body {
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       padding: 18px;
     }
 
     .app {
       width: 100%;
-      max-width: 460px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.025));
-      border: 1px solid var(--border);
-      border-radius: 24px;
+      max-width: 470px;
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+      border: 1px solid var(--line);
       overflow: hidden;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow-xl);
+      backdrop-filter: blur(14px);
+      position: relative;
+    }
+
+    .app::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.06), transparent 24%),
+        linear-gradient(315deg, rgba(255,216,77,0.04), transparent 22%);
+      pointer-events: none;
     }
 
     .top {
-      padding: 26px 20px 18px;
+      position: relative;
+      padding: 26px 22px 18px;
       text-align: center;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--line);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
     }
 
     .title {
       margin: 0;
-      font-size: 1.8rem;
-      color: var(--accent);
+      font-size: 1.75rem;
+      font-weight: 900;
       letter-spacing: 0.3px;
-      font-weight: 800;
+      color: var(--accent);
+      text-shadow: 0 0 16px rgba(255, 216, 77, 0.18);
     }
 
     .content {
+      position: relative;
       padding: 18px;
     }
 
     .hero {
-      background: linear-gradient(180deg, #2a2a2a, #232323);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 20px 16px;
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(34, 39, 53, 0.92), rgba(21, 25, 34, 0.96));
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px 18px;
       text-align: center;
-      box-shadow: var(--shadow);
+      box-shadow: var(--shadow-md);
       margin-bottom: 14px;
     }
 
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.05), transparent 26%);
+      pointer-events: none;
+    }
+
     .hero-icon {
-      width: 84px;
-      height: 84px;
-      margin: 0 auto 12px;
+      width: 88px;
+      height: 88px;
+      margin: 0 auto 14px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 2rem;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.08);
-      transition: all 0.25s ease;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--line-strong);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+      transition: all 0.28s ease;
     }
 
     .hero.saved .hero-icon {
-      background: rgba(53,196,106,0.16);
-      border-color: rgba(53,196,106,0.35);
+      background: var(--success-soft);
+      border-color: rgba(53, 208, 127, 0.35);
+      box-shadow:
+        0 0 0 8px rgba(53, 208, 127, 0.06),
+        inset 0 1px 0 rgba(255,255,255,0.08);
       transform: scale(1.03);
     }
 
     .hero.waiting .hero-icon {
-      background: rgba(255,212,0,0.12);
-      border-color: rgba(255,212,0,0.28);
+      background: rgba(255, 216, 77, 0.10);
+      border-color: rgba(255, 216, 77, 0.24);
+      box-shadow:
+        0 0 0 8px rgba(255, 216, 77, 0.04),
+        inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .hero.error .hero-icon {
-      background: rgba(216,93,93,0.14);
-      border-color: rgba(216,93,93,0.3);
+      background: var(--danger-soft);
+      border-color: rgba(255, 107, 107, 0.28);
+      box-shadow:
+        0 0 0 8px rgba(255, 107, 107, 0.04),
+        inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .hero-title {
-      font-size: 1.18rem;
-      font-weight: 800;
-      margin-bottom: 6px;
+      font-size: 1.2rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
     }
 
     .hero-text {
-      color: #e8e8e8;
-      line-height: 1.45;
-      min-height: 46px;
+      color: #edf1f7;
+      line-height: 1.5;
+      min-height: 48px;
+      font-size: 0.98rem;
     }
 
     .hero-meta {
-      margin-top: 10px;
-      color: #cfcfcf;
+      margin-top: 12px;
+      color: var(--muted);
       font-size: 0.86rem;
       line-height: 1.45;
       word-break: break-word;
@@ -146,16 +197,25 @@
     }
 
     .pill {
+      padding: 8px 12px;
       border-radius: 999px;
-      padding: 7px 11px;
       font-size: 0.8rem;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid var(--border);
-      color: #ececec;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--line);
+      color: #eff3fa;
+      backdrop-filter: blur(6px);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
-    .pill.ok { color: #cbffd9; }
-    .pill.warn { color: #ffe8a8; }
+    .pill.ok {
+      color: #d3ffe4;
+      border-color: rgba(53, 208, 127, 0.18);
+    }
+
+    .pill.warn {
+      color: #ffe9b3;
+      border-color: rgba(255, 204, 102, 0.18);
+    }
 
     .buttons {
       display: grid;
@@ -163,17 +223,29 @@
     }
 
     button {
+      appearance: none;
       border: none;
-      border-radius: 16px;
-      min-height: 58px;
       width: 100%;
+      min-height: 60px;
+      border-radius: 18px;
       cursor: pointer;
+      padding: 15px 16px;
       font-size: 1rem;
-      font-weight: 800;
-      color: #fff;
-      padding: 14px 16px;
-      transition: transform 0.12s ease, opacity 0.18s ease, filter 0.18s ease;
-      box-shadow: var(--shadow);
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      color: white;
+      transition: transform 0.12s ease, opacity 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    button::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), transparent 34%);
+      pointer-events: none;
     }
 
     button:hover {
@@ -186,22 +258,22 @@
     }
 
     button:disabled {
-      opacity: 0.62;
+      opacity: 0.58;
       cursor: not-allowed;
       transform: none;
       filter: none;
     }
 
     .show-btn {
-      background: linear-gradient(180deg, #629dff, #447fea);
+      background: linear-gradient(180deg, #6ba8ff, #447fea);
     }
 
     .nav-btn {
-      background: linear-gradient(180deg, #5c92ff, #3f76e8);
+      background: linear-gradient(180deg, #4ba2ff, #2a7be8);
     }
 
     .clear-btn {
-      background: linear-gradient(180deg, #dd6b6b, #c14f4f);
+      background: linear-gradient(180deg, #ff7a7a, #e15555);
     }
 
     .footer-note {
@@ -210,6 +282,22 @@
       font-size: 0.83rem;
       text-align: center;
       line-height: 1.45;
+    }
+
+    @media (max-width: 430px) {
+      .title {
+        font-size: 1.55rem;
+      }
+
+      .hero {
+        padding: 20px 15px;
+      }
+
+      .hero-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 1.85rem;
+      }
     }
   </style>
 </head>
@@ -248,7 +336,7 @@
       </div>
 
       <div class="footer-note">
-        Use NFC with <strong>?mode=save</strong> to save once without overwriting the saved spot during normal viewing.
+        Use NFC with <strong>?mode=save</strong> to save once without overwriting the stored spot during normal viewing.
       </div>
     </div>
   </div>
@@ -272,16 +360,16 @@
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
-    apiKey: "AIzaSyBJOuWflHjO3_b-VTerQrhrleIVBz50GGg",
-    authDomain: "mini-cooper-routine.firebaseapp.com",
-    projectId: "mini-cooper-routine",
-    storageBucket: "mini-cooper-routine.firebasestorage.app",
-    messagingSenderId: "734879685589",
-    appId: "1:734879685589:web:a9a7f1b776efce00e43b5c",
-    measurementId: "G-1LETT1WZQ6"
-  };
+      apiKey: "PUT_YOUR_API_KEY_HERE",
+      authDomain: "PUT_YOUR_AUTH_DOMAIN_HERE",
+      projectId: "PUT_YOUR_PROJECT_ID_HERE",
+      storageBucket: "PUT_YOUR_STORAGE_BUCKET_HERE",
+      messagingSenderId: "PUT_YOUR_MESSAGING_SENDER_ID_HERE",
+      appId: "PUT_YOUR_APP_ID_HERE"
+    };
 
-    const LOCAL_KEY = "quickParkingSaveLocalBackupV2";
+    const LOCAL_KEY = "quickParkingSaveLocalBackupV3";
+    const MAX_ACCEPTABLE_ACCURACY_METERS = 15;
 
     const app = initializeApp(firebaseConfig);
     const db = initializeFirestore(app, {
@@ -484,11 +572,25 @@
 
       try {
         const position = await getCurrentLocation();
+        const measuredAccuracy = position.coords.accuracy;
+
+        if (typeof measuredAccuracy !== "number" || measuredAccuracy > MAX_ACCEPTABLE_ACCURACY_METERS) {
+          setPill(localPillEl, `GPS too weak: ${Math.round(measuredAccuracy || 0)}m`, "warn");
+
+          setHeroState(
+            "error",
+            "Accuracy too low to save",
+            `Current GPS accuracy is ${Math.round(measuredAccuracy || 0)}m. A value of ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better is required.`,
+            "Move to a clearer area and scan the NFC again."
+          );
+
+          return false;
+        }
 
         const spot = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-          accuracy: position.coords.accuracy,
+          accuracy: measuredAccuracy,
           savedAtMillis: Date.now()
         };
 
