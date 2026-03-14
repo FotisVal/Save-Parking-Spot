@@ -14,25 +14,16 @@
       --bg-1: #0b0d12;
       --bg-2: #151922;
       --panel: rgba(24, 28, 38, 0.78);
-      --panel-strong: rgba(31, 36, 49, 0.92);
       --line: rgba(255, 255, 255, 0.08);
       --line-strong: rgba(255, 255, 255, 0.14);
       --text: #ffffff;
       --muted: #aeb6c7;
       --accent: #ffd84d;
-      --accent-2: #ffb800;
       --success: #35d07f;
       --success-soft: rgba(53, 208, 127, 0.16);
-      --info: #5ea0ff;
-      --danger: #ff6b6b;
       --danger-soft: rgba(255, 107, 107, 0.15);
-      --warning: #ffcc66;
-      --warning-soft: rgba(255, 204, 102, 0.14);
       --shadow-xl: 0 18px 45px rgba(0, 0, 0, 0.38);
       --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.28);
-      --radius-xl: 28px;
-      --radius-lg: 20px;
-      --radius-md: 16px;
     }
 
     * {
@@ -62,9 +53,8 @@
     .app {
       width: 100%;
       max-width: 470px;
-      border-radius: var(--radius-xl);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
+      border-radius: 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
       border: 1px solid var(--line);
       overflow: hidden;
       box-shadow: var(--shadow-xl);
@@ -87,8 +77,7 @@
       padding: 26px 22px 18px;
       text-align: center;
       border-bottom: 1px solid var(--line);
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
     }
 
     .title {
@@ -108,8 +97,7 @@
     .hero {
       position: relative;
       overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(34, 39, 53, 0.92), rgba(21, 25, 34, 0.96));
+      background: linear-gradient(180deg, rgba(34, 39, 53, 0.92), rgba(21, 25, 34, 0.96));
       border: 1px solid var(--line);
       border-radius: 24px;
       padding: 22px 18px;
@@ -122,8 +110,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.05), transparent 26%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.05), transparent 26%);
       pointer-events: none;
     }
 
@@ -145,26 +132,20 @@
     .hero.saved .hero-icon {
       background: var(--success-soft);
       border-color: rgba(53, 208, 127, 0.35);
-      box-shadow:
-        0 0 0 8px rgba(53, 208, 127, 0.06),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+      box-shadow: 0 0 0 8px rgba(53, 208, 127, 0.06), inset 0 1px 0 rgba(255,255,255,0.08);
       transform: scale(1.03);
     }
 
     .hero.waiting .hero-icon {
       background: rgba(255, 216, 77, 0.10);
       border-color: rgba(255, 216, 77, 0.24);
-      box-shadow:
-        0 0 0 8px rgba(255, 216, 77, 0.04),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+      box-shadow: 0 0 0 8px rgba(255, 216, 77, 0.04), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .hero.error .hero-icon {
       background: var(--danger-soft);
       border-color: rgba(255, 107, 107, 0.28);
-      box-shadow:
-        0 0 0 8px rgba(255, 107, 107, 0.04),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+      box-shadow: 0 0 0 8px rgba(255, 107, 107, 0.04), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
     .hero-title {
@@ -234,7 +215,7 @@
       font-weight: 900;
       letter-spacing: 0.2px;
       color: white;
-      transition: transform 0.12s ease, opacity 0.18s ease, filter 0.18s ease, box-shadow 0.18s ease;
+      transition: transform 0.12s ease, opacity 0.18s ease, filter 0.18s ease;
       box-shadow: var(--shadow-md);
       position: relative;
       overflow: hidden;
@@ -369,9 +350,9 @@
     measurementId: "G-1LETT1WZQ6"
   };
 
-
-    const LOCAL_KEY = "quickParkingSaveLocalBackupV3";
-    const MAX_ACCEPTABLE_ACCURACY_METERS = 50;
+    const LOCAL_KEY = "quickParkingSaveLocalBackupV4";
+    const SESSION_SAVE_KEY = "parkingSavedThisSession";
+    const MAX_ACCEPTABLE_ACCURACY_METERS = 15;
 
     const app = initializeApp(firebaseConfig);
     const db = initializeFirestore(app, {
@@ -578,14 +559,12 @@
 
         if (typeof measuredAccuracy !== "number" || measuredAccuracy > MAX_ACCEPTABLE_ACCURACY_METERS) {
           setPill(localPillEl, `GPS too weak: ${Math.round(measuredAccuracy || 0)}m`, "warn");
-
           setHeroState(
             "error",
             "Accuracy too low to save",
             `Current GPS accuracy is ${Math.round(measuredAccuracy || 0)}m. A value of ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better is required.`,
             "Move to a clearer area and scan the NFC again."
           );
-
           return false;
         }
 
@@ -741,89 +720,9 @@
 
       try {
         clearLocalBackup();
+        sessionStorage.removeItem(SESSION_SAVE_KEY);
         lastKnownSpot = null;
 
         if (currentUser) {
           try {
-            await deleteDoc(getParkingDocRef(currentUser.uid));
-            setPill(cloudPillEl, "Cloud: empty");
-          } catch (error) {
-            console.error(error);
-            setPill(cloudPillEl, "Cloud: delete failed", "warn");
-          }
-        }
-
-        setHeroState(
-          "waiting",
-          "Saved data cleared",
-          "The stored parking spot was removed."
-        );
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    window.showSavedLocation = showSavedLocation;
-    window.navigateToSavedLocation = navigateToSavedLocation;
-    window.clearSavedLocation = clearSavedLocation;
-
-    async function init() {
-      setBusy(true);
-
-      if (currentMode === "save") {
-        setPill(modePillEl, "Mode: NFC save", "ok");
-      } else {
-        setPill(modePillEl, "Mode: view only");
-      }
-
-      const localSpot = readLocalBackup();
-      if (localSpot) {
-        lastKnownSpot = localSpot;
-        updateHeroFromSpot(localSpot, "local backup");
-      } else {
-        setHeroState("waiting", "Starting...", "Preparing secure storage.");
-      }
-
-      try {
-        await ensureAnonymousLogin();
-        setPill(cloudPillEl, "Cloud: connected", "ok");
-      } catch (error) {
-        console.error(error);
-        setPill(cloudPillEl, "Cloud: auth failed", "warn");
-        setHeroState(
-          "error",
-          "Cloud connection failed",
-          "Local backup may still work on this device."
-        );
-        setBusy(false);
-        return;
-      }
-
-      try {
-        const cloudSpot = await loadCloudSpot();
-
-        if (cloudSpot) {
-          lastKnownSpot = cloudSpot;
-          saveLocalBackup(cloudSpot);
-          updateHeroFromSpot(cloudSpot, "cloud");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-
-      setBusy(false);
-
-      if (currentMode === "save") {
-        const savedSuccessfully = await saveParkingLocation();
-
-        if (savedSuccessfully) {
-          clearSaveModeFromUrl();
-          setPill(modePillEl, "Mode: view only");
-        }
-      }
-    }
-
-    init();
-  </script>
-</body>
-</html>
+            await deleteDoc(getParkingDocR
