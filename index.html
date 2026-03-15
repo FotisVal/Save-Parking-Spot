@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Quick Saving Parking Spot</title>
+  <title>Save Parking Spot</title>
 
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="favicon.png" />
@@ -22,6 +22,7 @@
       --success: #35d07f;
       --success-soft: rgba(53, 208, 127, 0.16);
       --danger-soft: rgba(255, 107, 107, 0.15);
+      --warning-soft: rgba(255, 204, 102, 0.14);
       --shadow-xl: 0 18px 45px rgba(0, 0, 0, 0.38);
       --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.28);
     }
@@ -285,7 +286,7 @@
 <body>
   <div class="app">
     <div class="top">
-      <h1 class="title">Quick Saving Parking Spot</h1>
+      <h1 class="title">Save Parking Spot</h1>
     </div>
 
     <div class="content">
@@ -308,7 +309,7 @@
         </button>
 
         <button class="nav-btn" id="navigateBtn" onclick="navigateToSavedLocation()">
-          🧭 Navigate There
+          🧭 Navigate to Spot
         </button>
 
         <button class="clear-btn" id="clearBtn" onclick="clearSavedLocation()">
@@ -341,18 +342,20 @@
     } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
     const firebaseConfig = {
-    apiKey: "AIzaSyBJOuWflHjO3_b-VTerQrhrleIVBz50GGg",
-    authDomain: "mini-cooper-routine.firebaseapp.com",
-    projectId: "mini-cooper-routine",
-    storageBucket: "mini-cooper-routine.firebasestorage.app",
-    messagingSenderId: "734879685589",
-    appId: "1:734879685589:web:a9a7f1b776efce00e43b5c",
-    measurementId: "G-1LETT1WZQ6"
-  };
+      apiKey: "AIzaSyBJOuWflHjO3_b-VTerQrhrleIVBz50GGg",
+      authDomain: "mini-cooper-routine.firebaseapp.com",
+      projectId: "mini-cooper-routine",
+      storageBucket: "mini-cooper-routine.firebasestorage.app",
+      messagingSenderId: "734879685589",
+      appId: "1:734879685589:web:a9a7f1b776efce00e43b5c",
+      measurementId: "G-1LETT1WZQ6"
+    };
 
-    const LOCAL_KEY = "quickParkingSaveLocalBackupV4";
+    const LOCAL_KEY = "saveParkingSpotLocalBackupV1";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
-    const MAX_ACCEPTABLE_ACCURACY_METERS = 50;
+    const MAX_ACCEPTABLE_ACCURACY_METERS = 25;
+    const MAX_LOCATION_ATTEMPTS = 5;
+    const RETRY_DELAY_MS = 1500;
 
     const app = initializeApp(firebaseConfig);
     const db = initializeFirestore(app, {
@@ -520,7 +523,11 @@
       }
     }
 
-    function getCurrentLocation() {
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function getCurrentLocationOnce() {
       return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
           reject(new Error("Geolocation is not supported on this device/browser."));
@@ -539,22 +546,55 @@
       });
     }
 
+    async function getBestAccurateLocation() {
+      let bestPosition = null;
+
+      for (let attempt = 1; attempt <= MAX_LOCATION_ATTEMPTS; attempt++) {
+        setHeroState(
+          "waiting",
+          "Checking GPS accuracy",
+          `Attempt ${attempt} of ${MAX_LOCATION_ATTEMPTS}. Waiting for a location accurate enough to save.`
+        );
+
+        try {
+          const position = await getCurrentLocationOnce();
+          const accuracy = position.coords.accuracy;
+
+          if (!bestPosition || accuracy < bestPosition.coords.accuracy) {
+            bestPosition = position;
+          }
+
+          if (typeof accuracy === "number" && accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS) {
+            return position;
+          }
+        } catch (error) {
+          if (attempt === MAX_LOCATION_ATTEMPTS && !bestPosition) {
+            throw error;
+          }
+        }
+
+        if (attempt < MAX_LOCATION_ATTEMPTS) {
+          await wait(RETRY_DELAY_MS);
+        }
+      }
+
+      if (bestPosition) {
+        return bestPosition;
+      }
+
+      throw new Error("Could not get a usable location.");
+    }
+
     async function saveParkingLocation() {
       if (!currentUser) {
         setHeroState("error", "Cloud not ready", "Please refresh and try again.");
         return false;
       }
 
-      setHeroState(
-        "waiting",
-        "Saving parking spot",
-        "Please allow location access if your browser asks for permission."
-      );
-
       setBusy(true);
 
       try {
-        const position = await getCurrentLocation();
+        const position = await getBestAccurateLocation();
         const measuredAccuracy = position.coords.accuracy;
 
         if (typeof measuredAccuracy !== "number" || measuredAccuracy > MAX_ACCEPTABLE_ACCURACY_METERS) {
@@ -562,7 +602,7 @@
           setHeroState(
             "error",
             "Accuracy too low to save",
-            `Current GPS accuracy is ${Math.round(measuredAccuracy || 0)}m. A value of ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better is required.`,
+            `Best GPS accuracy found was ${Math.round(measuredAccuracy || 0)}m. A value of ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better is required.`,
             "Move to a clearer area and scan the NFC again."
           );
           return false;
@@ -683,139 +723,4 @@
     }
 
     async function navigateToSavedLocation() {
-      setBusy(true);
-      setHeroState("waiting", "Preparing navigation", "Google Maps will open with walking directions.");
-
-      try {
-        let cloudSpot = null;
-
-        if (currentUser) {
-          cloudSpot = await loadCloudSpot();
-        }
-
-        const chosen = cloudSpot ? { spot: cloudSpot, source: "cloud" } : getBestAvailableSpot();
-
-        if (!chosen.spot) {
-          setHeroState(
-            "error",
-            "No saved location found",
-            "No parking spot is currently stored."
-          );
-          return;
-        }
-
-        lastKnownSpot = chosen.spot;
-        updateHeroFromSpot(chosen.spot, chosen.source);
-
-        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${chosen.spot.lat},${chosen.spot.lng}&travelmode=walking`;
-        window.open(mapsUrl, "_blank");
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    async function clearSavedLocation() {
-      setBusy(true);
-      setHeroState("waiting", "Clearing saved data", "Removing local backup and cloud data...");
-
-      try {
-        clearLocalBackup();
-        sessionStorage.removeItem(SESSION_SAVE_KEY);
-        lastKnownSpot = null;
-
-        if (currentUser) {
-          try {
-            await deleteDoc(getParkingDocRef(currentUser.uid));
-            setPill(cloudPillEl, "Cloud: empty");
-          } catch (error) {
-            console.error(error);
-            setPill(cloudPillEl, "Cloud: delete failed", "warn");
-          }
-        }
-
-        setHeroState(
-          "waiting",
-          "Saved data cleared",
-          "The stored parking spot was removed."
-        );
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    window.showSavedLocation = showSavedLocation;
-    window.navigateToSavedLocation = navigateToSavedLocation;
-    window.clearSavedLocation = clearSavedLocation;
-
-    async function init() {
-      setBusy(true);
-
-      if (currentMode === "save") {
-        setPill(modePillEl, "Mode: NFC save", "ok");
-      } else {
-        setPill(modePillEl, "Mode: view only");
-      }
-
-      const localSpot = readLocalBackup();
-      if (localSpot) {
-        lastKnownSpot = localSpot;
-        updateHeroFromSpot(localSpot, "local backup");
-      } else {
-        setHeroState("waiting", "Starting...", "Preparing secure storage.");
-      }
-
-      try {
-        await ensureAnonymousLogin();
-        setPill(cloudPillEl, "Cloud: connected", "ok");
-      } catch (error) {
-        console.error(error);
-        setPill(cloudPillEl, "Cloud: auth failed", "warn");
-        setHeroState(
-          "error",
-          "Cloud connection failed",
-          "Local backup may still work on this device."
-        );
-        setBusy(false);
-        return;
-      }
-
-      try {
-        const cloudSpot = await loadCloudSpot();
-
-        if (cloudSpot) {
-          lastKnownSpot = cloudSpot;
-          saveLocalBackup(cloudSpot);
-          updateHeroFromSpot(cloudSpot, "cloud");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-
-      setBusy(false);
-
-      if (currentMode === "save") {
-        if (sessionStorage.getItem(SESSION_SAVE_KEY)) {
-          clearSaveModeFromUrl();
-          setPill(modePillEl, "Mode: view only");
-          setHeroState(
-            "saved",
-            "Parking already saved",
-            "This tab already stored a parking location."
-          );
-          return;
-        }
-
-        const savedSuccessfully = await saveParkingLocation();
-
-        if (savedSuccessfully) {
-          sessionStorage.setItem(SESSION_SAVE_KEY, "true");
-          clearSaveModeFromUrl();
-          setPill(modePillEl, "Mode: view only");
-        }
-      }
-    }
-
-    init();
-  </script>
-</body>
-</html>
+      setBusy(tr
