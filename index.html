@@ -723,4 +723,139 @@
     }
 
     async function navigateToSavedLocation() {
-      setBusy(tr
+      setBusy(true);
+      setHeroState("waiting", "Preparing navigation", "Google Maps will open with walking directions.");
+
+      try {
+        let cloudSpot = null;
+
+        if (currentUser) {
+          cloudSpot = await loadCloudSpot();
+        }
+
+        const chosen = cloudSpot ? { spot: cloudSpot, source: "cloud" } : getBestAvailableSpot();
+
+        if (!chosen.spot) {
+          setHeroState(
+            "error",
+            "No saved location found",
+            "No parking spot is currently stored."
+          );
+          return;
+        }
+
+        lastKnownSpot = chosen.spot;
+        updateHeroFromSpot(chosen.spot, chosen.source);
+
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${chosen.spot.lat},${chosen.spot.lng}&travelmode=walking&dir_action=navigate`;
+        window.open(mapsUrl, "_blank");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function clearSavedLocation() {
+      setBusy(true);
+      setHeroState("waiting", "Clearing saved data", "Removing local backup and cloud data...");
+
+      try {
+        clearLocalBackup();
+        sessionStorage.removeItem(SESSION_SAVE_KEY);
+        lastKnownSpot = null;
+
+        if (currentUser) {
+          try {
+            await deleteDoc(getParkingDocRef(currentUser.uid));
+            setPill(cloudPillEl, "Cloud: empty");
+          } catch (error) {
+            console.error(error);
+            setPill(cloudPillEl, "Cloud: delete failed", "warn");
+          }
+        }
+
+        setHeroState(
+          "waiting",
+          "Saved data cleared",
+          "The stored parking spot was removed."
+        );
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    window.showSavedLocation = showSavedLocation;
+    window.navigateToSavedLocation = navigateToSavedLocation;
+    window.clearSavedLocation = clearSavedLocation;
+
+    async function init() {
+      setBusy(true);
+
+      if (currentMode === "save") {
+        setPill(modePillEl, "Mode: NFC save", "ok");
+      } else {
+        setPill(modePillEl, "Mode: view only");
+      }
+
+      const localSpot = readLocalBackup();
+      if (localSpot) {
+        lastKnownSpot = localSpot;
+        updateHeroFromSpot(localSpot, "local backup");
+      } else {
+        setHeroState("waiting", "Starting...", "Preparing secure storage.");
+      }
+
+      try {
+        await ensureAnonymousLogin();
+        setPill(cloudPillEl, "Cloud: connected", "ok");
+      } catch (error) {
+        console.error(error);
+        setPill(cloudPillEl, "Cloud: auth failed", "warn");
+        setHeroState(
+          "error",
+          "Cloud connection failed",
+          "Local backup may still work on this device."
+        );
+        setBusy(false);
+        return;
+      }
+
+      try {
+        const cloudSpot = await loadCloudSpot();
+
+        if (cloudSpot) {
+          lastKnownSpot = cloudSpot;
+          saveLocalBackup(cloudSpot);
+          updateHeroFromSpot(cloudSpot, "cloud");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+
+      setBusy(false);
+
+      if (currentMode === "save") {
+        if (sessionStorage.getItem(SESSION_SAVE_KEY)) {
+          clearSaveModeFromUrl();
+          setPill(modePillEl, "Mode: view only");
+          setHeroState(
+            "saved",
+            "Parking already saved",
+            "This tab already stored a parking location."
+          );
+          return;
+        }
+
+        const savedSuccessfully = await saveParkingLocation();
+
+        if (savedSuccessfully) {
+          sessionStorage.setItem(SESSION_SAVE_KEY, "true");
+          clearSaveModeFromUrl();
+          setPill(modePillEl, "Mode: view only");
+        }
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
