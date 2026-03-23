@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Save Parking Spot</title>
 
   <link rel="icon" type="image/png" href="favicon.png" />
@@ -13,7 +13,6 @@
     :root {
       --bg-1: #0b0d12;
       --bg-2: #151922;
-      --panel: rgba(24, 28, 38, 0.78);
       --line: rgba(255, 255, 255, 0.08);
       --line-strong: rgba(255, 255, 255, 0.14);
       --text: #ffffff;
@@ -22,7 +21,7 @@
       --success: #35d07f;
       --success-soft: rgba(53, 208, 127, 0.16);
       --danger-soft: rgba(255, 107, 107, 0.15);
-      --warning-soft: rgba(255, 204, 102, 0.14);
+      --search-soft: rgba(77, 144, 254, 0.16);
       --shadow-xl: 0 18px 45px rgba(0, 0, 0, 0.38);
       --shadow-md: 0 10px 24px rgba(0, 0, 0, 0.28);
     }
@@ -35,7 +34,9 @@
     html, body {
       margin: 0;
       padding: 0;
-      min-height: 100%;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
       font-family: Inter, Arial, sans-serif;
       color: var(--text);
       background:
@@ -48,12 +49,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 18px;
+      padding: 12px;
     }
 
     .app {
       width: 100%;
-      max-width: 470px;
+      max-width: 430px;
+      height: min(96vh, 780px);
       border-radius: 28px;
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
       border: 1px solid var(--line);
@@ -61,6 +63,8 @@
       box-shadow: var(--shadow-xl);
       backdrop-filter: blur(14px);
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .app::before {
@@ -75,15 +79,16 @@
 
     .top {
       position: relative;
-      padding: 26px 22px 18px;
+      padding: 20px 18px 14px;
       text-align: center;
       border-bottom: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+      flex: 0 0 auto;
     }
 
     .title {
       margin: 0;
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       font-weight: 900;
       letter-spacing: 0.3px;
       color: var(--accent);
@@ -92,7 +97,12 @@
 
     .content {
       position: relative;
-      padding: 18px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1 1 auto;
+      min-height: 0;
     }
 
     .hero {
@@ -101,10 +111,10 @@
       background: linear-gradient(180deg, rgba(34, 39, 53, 0.92), rgba(21, 25, 34, 0.96));
       border: 1px solid var(--line);
       border-radius: 24px;
-      padding: 22px 18px;
+      padding: 18px 16px;
       text-align: center;
       box-shadow: var(--shadow-md);
-      margin-bottom: 14px;
+      flex: 0 0 auto;
     }
 
     .hero::before {
@@ -115,10 +125,18 @@
       pointer-events: none;
     }
 
-    .hero-icon {
+    .hero-icon-wrap {
+      position: relative;
       width: 88px;
       height: 88px;
-      margin: 0 auto 14px;
+      margin: 0 auto 12px;
+    }
+
+    .hero-icon {
+      position: relative;
+      z-index: 2;
+      width: 88px;
+      height: 88px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -143,14 +161,56 @@
       box-shadow: 0 0 0 8px rgba(255, 216, 77, 0.04), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
+    .hero.searching .hero-icon {
+      background: var(--search-soft);
+      border-color: rgba(77, 144, 254, 0.35);
+      box-shadow: 0 0 0 8px rgba(77, 144, 254, 0.05), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
     .hero.error .hero-icon {
       background: var(--danger-soft);
       border-color: rgba(255, 107, 107, 0.28);
       box-shadow: 0 0 0 8px rgba(255, 107, 107, 0.04), inset 0 1px 0 rgba(255,255,255,0.08);
     }
 
+    .radar-ring,
+    .radar-ring-2 {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(77, 144, 254, 0.35);
+      opacity: 0;
+      transform: scale(0.7);
+      pointer-events: none;
+      display: none;
+    }
+
+    .hero.searching .radar-ring,
+    .hero.searching .radar-ring-2 {
+      display: block;
+    }
+
+    .hero.searching .radar-ring {
+      animation: radarPulse 1.8s infinite;
+    }
+
+    .hero.searching .radar-ring-2 {
+      animation: radarPulse 1.8s infinite 0.9s;
+    }
+
+    @keyframes radarPulse {
+      0% {
+        transform: scale(0.72);
+        opacity: 0.8;
+      }
+      100% {
+        transform: scale(1.45);
+        opacity: 0;
+      }
+    }
+
     .hero-title {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       font-weight: 900;
       margin-bottom: 8px;
       letter-spacing: 0.2px;
@@ -158,30 +218,31 @@
 
     .hero-text {
       color: #edf1f7;
-      line-height: 1.5;
-      min-height: 48px;
-      font-size: 0.98rem;
+      line-height: 1.45;
+      min-height: 22px;
+      font-size: 0.96rem;
     }
 
     .hero-meta {
-      margin-top: 12px;
+      margin-top: 10px;
       color: var(--muted);
-      font-size: 0.86rem;
-      line-height: 1.45;
+      font-size: 0.82rem;
+      line-height: 1.4;
       word-break: break-word;
+      min-height: 18px;
     }
 
     .pill-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 14px 0 16px;
+      flex: 0 0 auto;
     }
 
     .pill {
       padding: 8px 12px;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       background: rgba(255,255,255,0.06);
       border: 1px solid var(--line);
       color: #eff3fa;
@@ -201,18 +262,20 @@
 
     .buttons {
       display: grid;
-      gap: 12px;
+      gap: 10px;
+      margin-top: auto;
+      flex: 0 0 auto;
     }
 
     button {
       appearance: none;
       border: none;
       width: 100%;
-      min-height: 60px;
+      min-height: 56px;
       border-radius: 18px;
       cursor: pointer;
-      padding: 15px 16px;
-      font-size: 1rem;
+      padding: 14px 16px;
+      font-size: 0.98rem;
       font-weight: 900;
       letter-spacing: 0.2px;
       color: white;
@@ -258,27 +321,35 @@
       background: linear-gradient(180deg, #ff7a7a, #e15555);
     }
 
-    .footer-note {
-      margin-top: 14px;
-      color: var(--muted);
-      font-size: 0.83rem;
-      text-align: center;
-      line-height: 1.45;
-    }
+    @media (max-height: 720px) {
+      .app {
+        height: 96vh;
+      }
 
-    @media (max-width: 430px) {
+      .top {
+        padding: 16px 16px 12px;
+      }
+
       .title {
-        font-size: 1.55rem;
+        font-size: 1.35rem;
       }
 
       .hero {
-        padding: 20px 15px;
+        padding: 14px 12px;
+      }
+
+      .hero-icon-wrap,
+      .hero-icon {
+        width: 76px;
+        height: 76px;
       }
 
       .hero-icon {
-        width: 80px;
-        height: 80px;
-        font-size: 1.85rem;
+        font-size: 1.75rem;
+      }
+
+      button {
+        min-height: 52px;
       }
     }
   </style>
@@ -291,9 +362,13 @@
 
     <div class="content">
       <div id="hero" class="hero waiting">
-        <div id="heroIcon" class="hero-icon">📍</div>
+        <div class="hero-icon-wrap">
+          <div class="radar-ring"></div>
+          <div class="radar-ring-2"></div>
+          <div id="heroIcon" class="hero-icon">📍</div>
+        </div>
         <div id="heroTitle" class="hero-title">Starting...</div>
-        <div id="heroText" class="hero-text">Preparing location access and secure storage.</div>
+        <div id="heroText" class="hero-text">Preparing secure storage.</div>
         <div id="heroMeta" class="hero-meta"></div>
       </div>
 
@@ -315,10 +390,6 @@
         <button class="clear-btn" id="clearBtn" onclick="clearSavedLocation()">
           🗑️ Clear Saved Data
         </button>
-      </div>
-
-      <div class="footer-note">
-        Use NFC with <strong>?mode=save</strong> to save once without overwriting the stored spot during normal viewing.
       </div>
     </div>
   </div>
@@ -351,10 +422,10 @@
       measurementId: "G-1LETT1WZQ6"
     };
 
-    const LOCAL_KEY = "saveParkingSpotLocalBackupV1";
+    const LOCAL_KEY = "saveParkingSpotLocalBackupV2";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
     const MAX_ACCEPTABLE_ACCURACY_METERS = 25;
-    const MAX_LOCATION_ATTEMPTS = 5;
+    const MAX_LOCATION_ATTEMPTS = 10;
     const RETRY_DELAY_MS = 1500;
 
     const app = initializeApp(firebaseConfig);
@@ -397,7 +468,7 @@
     }
 
     function formatDate(ms) {
-      if (!ms) return "unknown time";
+      if (!ms) return "";
       return new Date(ms).toLocaleString("en-GB");
     }
 
@@ -410,7 +481,7 @@
       window.history.replaceState({}, document.title, cleanUrl);
     }
 
-    function setHeroState(type, title, text, meta = "") {
+    function setHeroState(type, title, text = "", meta = "") {
       heroEl.className = `hero ${type}`;
       heroTitleEl.textContent = title;
       heroTextEl.textContent = text;
@@ -418,6 +489,7 @@
 
       if (type === "saved") heroIconEl.textContent = "✅";
       else if (type === "error") heroIconEl.textContent = "⚠️";
+      else if (type === "searching") heroIconEl.textContent = "📍";
       else heroIconEl.textContent = "📍";
     }
 
@@ -448,27 +520,17 @@
       setPill(localPillEl, "Local backup: empty");
     }
 
-    function updateHeroFromSpot(spot, source = "cloud") {
+    function updateHeroFromSpot(spot) {
       if (!spot) {
-        setHeroState(
-          "waiting",
-          "No saved location",
-          "No parking spot is currently stored."
-        );
+        setHeroState("waiting", "No saved location", "");
         return;
       }
-
-      const meta = [
-        `Saved: ${formatDate(spot.savedAtMillis)}`,
-        `Accuracy: ${spot.accuracy ? Math.round(spot.accuracy) + "m" : "unknown"}`,
-        `Source: ${source}`
-      ].join(" • ");
 
       setHeroState(
         "saved",
         "Parking spot saved successfully",
-        "Your saved spot is ready to open in Google Maps.",
-        meta
+        "",
+        `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${spot.accuracy ? Math.round(spot.accuracy) + "m" : "unknown"}`
       );
     }
 
@@ -551,9 +613,12 @@
 
       for (let attempt = 1; attempt <= MAX_LOCATION_ATTEMPTS; attempt++) {
         setHeroState(
-          "waiting",
-          "Checking GPS accuracy",
-          `Attempt ${attempt} of ${MAX_LOCATION_ATTEMPTS}. Waiting for a location accurate enough to save.`
+          "searching",
+          "Searching for your location",
+          `GPS scan ${attempt}/${MAX_LOCATION_ATTEMPTS}`,
+          bestPosition
+            ? `Best accuracy so far: ${Math.round(bestPosition.coords.accuracy)}m`
+            : "Waiting for first accurate GPS fix..."
         );
 
         try {
@@ -587,7 +652,7 @@
 
     async function saveParkingLocation() {
       if (!currentUser) {
-        setHeroState("error", "Cloud not ready", "Please refresh and try again.");
+        setHeroState("error", "Cloud not ready", "", "Please refresh and try again.");
         return false;
       }
 
@@ -602,8 +667,8 @@
           setHeroState(
             "error",
             "Accuracy too low to save",
-            `Best GPS accuracy found was ${Math.round(measuredAccuracy || 0)}m. A value of ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better is required.`,
-            "Move to a clearer area and scan the NFC again."
+            "",
+            `Best accuracy found: ${Math.round(measuredAccuracy || 0)}m • Required: ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better`
           );
           return false;
         }
@@ -617,7 +682,7 @@
 
         saveLocalBackup(spot);
         lastKnownSpot = spot;
-        updateHeroFromSpot(spot, "local backup");
+        updateHeroFromSpot(spot);
 
         try {
           await setDoc(getParkingDocRef(currentUser.uid), {
@@ -626,7 +691,7 @@
           });
 
           setPill(cloudPillEl, "Cloud: synced", "ok");
-          updateHeroFromSpot(spot, "cloud + local backup");
+          updateHeroFromSpot(spot);
 
           if (navigator.vibrate) {
             navigator.vibrate(80);
@@ -640,7 +705,7 @@
           setHeroState(
             "saved",
             "Saved locally",
-            "The spot was stored on this device, but cloud sync failed.",
+            "",
             `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${Math.round(spot.accuracy)}m`
           );
 
@@ -650,29 +715,13 @@
         console.error(error);
 
         if (error.code === 1) {
-          setHeroState(
-            "error",
-            "Location permission denied",
-            "The browser did not get permission, so nothing was saved."
-          );
+          setHeroState("error", "Location permission denied", "");
         } else if (error.code === 2) {
-          setHeroState(
-            "error",
-            "Location unavailable",
-            "Try again in a place with better GPS signal."
-          );
+          setHeroState("error", "Location unavailable", "");
         } else if (error.code === 3) {
-          setHeroState(
-            "error",
-            "Location request timed out",
-            "Please try again."
-          );
+          setHeroState("error", "Location request timed out", "");
         } else {
-          setHeroState(
-            "error",
-            "Could not get location",
-            error.message || "Unknown error."
-          );
+          setHeroState("error", "Could not get location", "");
         }
 
         return false;
@@ -682,17 +731,17 @@
     }
 
     function getBestAvailableSpot() {
-      if (lastKnownSpot) return { spot: lastKnownSpot, source: "memory" };
+      if (lastKnownSpot) return { spot: lastKnownSpot };
 
       const localSpot = readLocalBackup();
-      if (localSpot) return { spot: localSpot, source: "local backup" };
+      if (localSpot) return { spot: localSpot };
 
-      return { spot: null, source: null };
+      return { spot: null };
     }
 
     async function showSavedLocation() {
       setBusy(true);
-      setHeroState("waiting", "Checking saved location", "Opening your saved point in Google Maps...");
+      setHeroState("waiting", "Opening saved spot", "");
 
       try {
         let cloudSpot = null;
@@ -701,19 +750,15 @@
           cloudSpot = await loadCloudSpot();
         }
 
-        const chosen = cloudSpot ? { spot: cloudSpot, source: "cloud" } : getBestAvailableSpot();
+        const chosen = cloudSpot ? { spot: cloudSpot } : getBestAvailableSpot();
 
         if (!chosen.spot) {
-          setHeroState(
-            "error",
-            "No saved location found",
-            "No parking spot is currently stored."
-          );
+          setHeroState("error", "No saved location found", "");
           return;
         }
 
         lastKnownSpot = chosen.spot;
-        updateHeroFromSpot(chosen.spot, chosen.source);
+        updateHeroFromSpot(chosen.spot);
 
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${chosen.spot.lat},${chosen.spot.lng}`;
         window.open(mapsUrl, "_blank");
@@ -724,7 +769,7 @@
 
     async function navigateToSavedLocation() {
       setBusy(true);
-      setHeroState("waiting", "Preparing navigation", "Google Maps will open with walking directions.");
+      setHeroState("waiting", "Preparing navigation", "");
 
       try {
         let cloudSpot = null;
@@ -733,19 +778,15 @@
           cloudSpot = await loadCloudSpot();
         }
 
-        const chosen = cloudSpot ? { spot: cloudSpot, source: "cloud" } : getBestAvailableSpot();
+        const chosen = cloudSpot ? { spot: cloudSpot } : getBestAvailableSpot();
 
         if (!chosen.spot) {
-          setHeroState(
-            "error",
-            "No saved location found",
-            "No parking spot is currently stored."
-          );
+          setHeroState("error", "No saved location found", "");
           return;
         }
 
         lastKnownSpot = chosen.spot;
-        updateHeroFromSpot(chosen.spot, chosen.source);
+        updateHeroFromSpot(chosen.spot);
 
         const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${chosen.spot.lat},${chosen.spot.lng}&travelmode=walking&dir_action=navigate`;
         window.open(mapsUrl, "_blank");
@@ -756,7 +797,7 @@
 
     async function clearSavedLocation() {
       setBusy(true);
-      setHeroState("waiting", "Clearing saved data", "Removing local backup and cloud data...");
+      setHeroState("waiting", "Clearing saved data", "");
 
       try {
         clearLocalBackup();
@@ -773,11 +814,7 @@
           }
         }
 
-        setHeroState(
-          "waiting",
-          "Saved data cleared",
-          "The stored parking spot was removed."
-        );
+        setHeroState("waiting", "Saved data cleared", "");
       } finally {
         setBusy(false);
       }
@@ -799,9 +836,9 @@
       const localSpot = readLocalBackup();
       if (localSpot) {
         lastKnownSpot = localSpot;
-        updateHeroFromSpot(localSpot, "local backup");
+        updateHeroFromSpot(localSpot);
       } else {
-        setHeroState("waiting", "Starting...", "Preparing secure storage.");
+        setHeroState("waiting", "Starting...", "");
       }
 
       try {
@@ -810,11 +847,7 @@
       } catch (error) {
         console.error(error);
         setPill(cloudPillEl, "Cloud: auth failed", "warn");
-        setHeroState(
-          "error",
-          "Cloud connection failed",
-          "Local backup may still work on this device."
-        );
+        setHeroState("error", "Cloud connection failed", "");
         setBusy(false);
         return;
       }
@@ -825,7 +858,7 @@
         if (cloudSpot) {
           lastKnownSpot = cloudSpot;
           saveLocalBackup(cloudSpot);
-          updateHeroFromSpot(cloudSpot, "cloud");
+          updateHeroFromSpot(cloudSpot);
         }
       } catch (error) {
         console.error(error);
@@ -837,11 +870,7 @@
         if (sessionStorage.getItem(SESSION_SAVE_KEY)) {
           clearSaveModeFromUrl();
           setPill(modePillEl, "Mode: view only");
-          setHeroState(
-            "saved",
-            "Parking already saved",
-            "This tab already stored a parking location."
-          );
+          setHeroState("saved", "Parking already saved", "");
           return;
         }
 
