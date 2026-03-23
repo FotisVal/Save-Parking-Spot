@@ -2,12 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
   <title>Save Parking Spot</title>
 
   <link rel="icon" type="image/png" href="favicon.png" />
-  <link rel="apple-touch-icon" href="favicon.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0f1014" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
   <style>
     :root {
@@ -49,14 +55,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 12px;
+      padding: 18px;
     }
 
     .app {
       width: 100%;
-      max-width: 430px;
-      height: min(96vh, 780px);
-      border-radius: 28px;
+      max-width: 440px;
+      height: min(92vh, 760px);
+      border-radius: 30px;
       background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.025));
       border: 1px solid var(--line);
       overflow: hidden;
@@ -79,7 +85,7 @@
 
     .top {
       position: relative;
-      padding: 20px 18px 14px;
+      padding: 26px 22px 18px;
       text-align: center;
       border-bottom: 1px solid var(--line);
       background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
@@ -88,7 +94,7 @@
 
     .title {
       margin: 0;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       font-weight: 900;
       letter-spacing: 0.3px;
       color: var(--accent);
@@ -97,10 +103,10 @@
 
     .content {
       position: relative;
-      padding: 14px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       flex: 1 1 auto;
       min-height: 0;
     }
@@ -110,8 +116,8 @@
       overflow: hidden;
       background: linear-gradient(180deg, rgba(34, 39, 53, 0.92), rgba(21, 25, 34, 0.96));
       border: 1px solid var(--line);
-      border-radius: 24px;
-      padding: 18px 16px;
+      border-radius: 26px;
+      padding: 22px 18px;
       text-align: center;
       box-shadow: var(--shadow-md);
       flex: 0 0 auto;
@@ -127,16 +133,16 @@
 
     .hero-icon-wrap {
       position: relative;
-      width: 88px;
-      height: 88px;
-      margin: 0 auto 12px;
+      width: 92px;
+      height: 92px;
+      margin: 0 auto 14px;
     }
 
     .hero-icon {
       position: relative;
       z-index: 2;
-      width: 88px;
-      height: 88px;
+      width: 92px;
+      height: 92px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -199,37 +205,57 @@
     }
 
     @keyframes radarPulse {
-      0% {
-        transform: scale(0.72);
-        opacity: 0.8;
-      }
-      100% {
-        transform: scale(1.45);
-        opacity: 0;
-      }
+      0% { transform: scale(0.72); opacity: 0.8; }
+      100% { transform: scale(1.45); opacity: 0; }
     }
 
     .hero-title {
-      font-size: 1.15rem;
+      font-size: 1.14rem;
       font-weight: 900;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       letter-spacing: 0.2px;
     }
 
     .hero-text {
       color: #edf1f7;
-      line-height: 1.45;
-      min-height: 22px;
+      line-height: 1.42;
+      min-height: 20px;
       font-size: 0.96rem;
     }
 
     .hero-meta {
       margin-top: 10px;
       color: var(--muted);
-      font-size: 0.82rem;
+      font-size: 0.83rem;
       line-height: 1.4;
       word-break: break-word;
       min-height: 18px;
+    }
+
+    .action-row {
+      display: none;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .action-row.show {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .mini-btn {
+      min-height: 46px;
+      border-radius: 14px;
+      border: none;
+      font-weight: 800;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(180deg, #6ba8ff, #447fea);
+      box-shadow: var(--shadow-md);
+    }
+
+    .mini-btn.cancel {
+      background: linear-gradient(180deg, #6c6f78, #4f5259);
     }
 
     .pill-row {
@@ -262,7 +288,7 @@
 
     .buttons {
       display: grid;
-      gap: 10px;
+      gap: 12px;
       margin-top: auto;
       flex: 0 0 auto;
     }
@@ -271,10 +297,10 @@
       appearance: none;
       border: none;
       width: 100%;
-      min-height: 56px;
+      min-height: 58px;
       border-radius: 18px;
       cursor: pointer;
-      padding: 14px 16px;
+      padding: 15px 16px;
       font-size: 0.98rem;
       font-weight: 900;
       letter-spacing: 0.2px;
@@ -321,35 +347,41 @@
       background: linear-gradient(180deg, #ff7a7a, #e15555);
     }
 
-    @media (max-height: 720px) {
+    @media (max-height: 760px) {
       .app {
-        height: 96vh;
+        height: 94vh;
       }
 
       .top {
-        padding: 16px 16px 12px;
+        padding: 20px 18px 14px;
       }
 
       .title {
-        font-size: 1.35rem;
+        font-size: 1.42rem;
+      }
+
+      .content {
+        padding: 14px;
+        gap: 12px;
       }
 
       .hero {
-        padding: 14px 12px;
+        padding: 18px 14px;
       }
 
-      .hero-icon-wrap,
-      .hero-icon {
-        width: 76px;
-        height: 76px;
+      .hero-icon-wrap {
+        width: 82px;
+        height: 82px;
       }
 
       .hero-icon {
-        font-size: 1.75rem;
+        width: 82px;
+        height: 82px;
+        font-size: 1.8rem;
       }
 
       button {
-        min-height: 52px;
+        min-height: 54px;
       }
     }
   </style>
@@ -367,9 +399,15 @@
           <div class="radar-ring-2"></div>
           <div id="heroIcon" class="hero-icon">📍</div>
         </div>
+
         <div id="heroTitle" class="hero-title">Starting...</div>
         <div id="heroText" class="hero-text">Preparing secure storage.</div>
         <div id="heroMeta" class="hero-meta"></div>
+
+        <div id="saveAnywayRow" class="action-row">
+          <button class="mini-btn cancel" onclick="cancelSaveAnyway()">Cancel</button>
+          <button class="mini-btn" onclick="saveBestFoundAnyway()">Save Anyway</button>
+        </div>
       </div>
 
       <div class="pill-row">
@@ -422,7 +460,7 @@
       measurementId: "G-1LETT1WZQ6"
     };
 
-    const LOCAL_KEY = "saveParkingSpotLocalBackupV2";
+    const LOCAL_KEY = "saveParkingSpotLocalBackupV3";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
     const MAX_ACCEPTABLE_ACCURACY_METERS = 25;
     const MAX_LOCATION_ATTEMPTS = 10;
@@ -449,9 +487,11 @@
     const showBtn = document.getElementById("showBtn");
     const navigateBtn = document.getElementById("navigateBtn");
     const clearBtn = document.getElementById("clearBtn");
+    const saveAnywayRow = document.getElementById("saveAnywayRow");
 
     let currentUser = null;
     let lastKnownSpot = null;
+    let bestFailedSpot = null;
 
     const params = new URLSearchParams(window.location.search);
     const currentMode = params.get("mode") === "save" ? "save" : "view";
@@ -460,6 +500,14 @@
       showBtn.disabled = isBusy;
       navigateBtn.disabled = isBusy;
       clearBtn.disabled = isBusy;
+    }
+
+    function vibratePattern(type) {
+      if (!navigator.vibrate) return;
+
+      if (type === "search-start") navigator.vibrate([35]);
+      if (type === "success") navigator.vibrate([70, 40, 90]);
+      if (type === "error") navigator.vibrate([120, 60, 120]);
     }
 
     function setPill(el, text, type = "") {
@@ -479,6 +527,15 @@
     function clearSaveModeFromUrl() {
       const cleanUrl = window.location.pathname + window.location.hash;
       window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    function hideSaveAnyway() {
+      saveAnywayRow.classList.remove("show");
+      bestFailedSpot = null;
+    }
+
+    function showSaveAnyway() {
+      saveAnywayRow.classList.add("show");
     }
 
     function setHeroState(type, title, text = "", meta = "") {
@@ -526,6 +583,7 @@
         return;
       }
 
+      hideSaveAnyway();
       setHeroState(
         "saved",
         "Parking spot saved successfully",
@@ -610,6 +668,7 @@
 
     async function getBestAccurateLocation() {
       let bestPosition = null;
+      vibratePattern("search-start");
 
       for (let attempt = 1; attempt <= MAX_LOCATION_ATTEMPTS; attempt++) {
         setHeroState(
@@ -630,7 +689,7 @@
           }
 
           if (typeof accuracy === "number" && accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS) {
-            return position;
+            return { position, accepted: true, bestPosition: position };
           }
         } catch (error) {
           if (attempt === MAX_LOCATION_ATTEMPTS && !bestPosition) {
@@ -644,34 +703,55 @@
       }
 
       if (bestPosition) {
-        return bestPosition;
+        return { position: bestPosition, accepted: false, bestPosition };
       }
 
       throw new Error("Could not get a usable location.");
     }
 
+    async function persistSpot(spot, cloudFailureTitle = "Saved locally") {
+      saveLocalBackup(spot);
+      lastKnownSpot = spot;
+      updateHeroFromSpot(spot);
+
+      try {
+        await setDoc(getParkingDocRef(currentUser.uid), {
+          ...spot,
+          savedAt: serverTimestamp()
+        });
+
+        setPill(cloudPillEl, "Cloud: synced", "ok");
+        updateHeroFromSpot(spot);
+        vibratePattern("success");
+        return true;
+      } catch (cloudError) {
+        console.error(cloudError);
+        setPill(cloudPillEl, "Cloud: pending/failed", "warn");
+        setHeroState(
+          "saved",
+          cloudFailureTitle,
+          "",
+          `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${Math.round(spot.accuracy)}m`
+        );
+        vibratePattern("error");
+        return true;
+      }
+    }
+
     async function saveParkingLocation() {
       if (!currentUser) {
         setHeroState("error", "Cloud not ready", "", "Please refresh and try again.");
+        vibratePattern("error");
         return false;
       }
 
+      hideSaveAnyway();
       setBusy(true);
 
       try {
-        const position = await getBestAccurateLocation();
+        const result = await getBestAccurateLocation();
+        const position = result.position;
         const measuredAccuracy = position.coords.accuracy;
-
-        if (typeof measuredAccuracy !== "number" || measuredAccuracy > MAX_ACCEPTABLE_ACCURACY_METERS) {
-          setPill(localPillEl, `GPS too weak: ${Math.round(measuredAccuracy || 0)}m`, "warn");
-          setHeroState(
-            "error",
-            "Accuracy too low to save",
-            "",
-            `Best accuracy found: ${Math.round(measuredAccuracy || 0)}m • Required: ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better`
-          );
-          return false;
-        }
 
         const spot = {
           lat: position.coords.latitude,
@@ -680,37 +760,21 @@
           savedAtMillis: Date.now()
         };
 
-        saveLocalBackup(spot);
-        lastKnownSpot = spot;
-        updateHeroFromSpot(spot);
-
-        try {
-          await setDoc(getParkingDocRef(currentUser.uid), {
-            ...spot,
-            savedAt: serverTimestamp()
-          });
-
-          setPill(cloudPillEl, "Cloud: synced", "ok");
-          updateHeroFromSpot(spot);
-
-          if (navigator.vibrate) {
-            navigator.vibrate(80);
-          }
-
-          return true;
-        } catch (cloudError) {
-          console.error(cloudError);
-          setPill(cloudPillEl, "Cloud: pending/failed", "warn");
-
+        if (!result.accepted) {
+          bestFailedSpot = spot;
+          setPill(localPillEl, `Best found: ${Math.round(measuredAccuracy || 0)}m`, "warn");
           setHeroState(
-            "saved",
-            "Saved locally",
-            "",
-            `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${Math.round(spot.accuracy)}m`
+            "error",
+            "Accuracy not good enough",
+            `Best GPS result: ${Math.round(measuredAccuracy || 0)}m`,
+            `Required: ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better`
           );
-
-          return true;
+          showSaveAnyway();
+          vibratePattern("error");
+          return false;
         }
+
+        return await persistSpot(spot);
       } catch (error) {
         console.error(error);
 
@@ -724,6 +788,7 @@
           setHeroState("error", "Could not get location", "");
         }
 
+        vibratePattern("error");
         return false;
       } finally {
         setBusy(false);
@@ -740,6 +805,7 @@
     }
 
     async function showSavedLocation() {
+      hideSaveAnyway();
       setBusy(true);
       setHeroState("waiting", "Opening saved spot", "");
 
@@ -768,6 +834,7 @@
     }
 
     async function navigateToSavedLocation() {
+      hideSaveAnyway();
       setBusy(true);
       setHeroState("waiting", "Preparing navigation", "");
 
@@ -796,6 +863,7 @@
     }
 
     async function clearSavedLocation() {
+      hideSaveAnyway();
       setBusy(true);
       setHeroState("waiting", "Clearing saved data", "");
 
@@ -820,9 +888,34 @@
       }
     }
 
+    async function saveBestFoundAnyway() {
+      if (!bestFailedSpot || !currentUser) return;
+
+      hideSaveAnyway();
+      setBusy(true);
+
+      try {
+        await persistSpot(bestFailedSpot, "Saved locally");
+        sessionStorage.setItem(SESSION_SAVE_KEY, "true");
+        clearSaveModeFromUrl();
+        setPill(modePillEl, "Mode: view only");
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function cancelSaveAnyway() {
+      hideSaveAnyway();
+      setHeroState("waiting", "Save cancelled", "");
+      clearSaveModeFromUrl();
+      setPill(modePillEl, "Mode: view only");
+    }
+
     window.showSavedLocation = showSavedLocation;
     window.navigateToSavedLocation = navigateToSavedLocation;
     window.clearSavedLocation = clearSavedLocation;
+    window.saveBestFoundAnyway = saveBestFoundAnyway;
+    window.cancelSaveAnyway = cancelSaveAnyway;
 
     async function init() {
       setBusy(true);
@@ -882,6 +975,16 @@
           setPill(modePillEl, "Mode: view only");
         }
       }
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        try {
+          await navigator.serviceWorker.register("./sw.js");
+        } catch (error) {
+          console.error("Service worker registration failed:", error);
+        }
+      });
     }
 
     init();
