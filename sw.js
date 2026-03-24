@@ -1,4 +1,4 @@
-const CACHE_NAME = "save-parking-spot-v1";
+const CACHE_NAME = "save-parking-spot-v2";
 
 const ASSETS = [
   "./",
@@ -6,7 +6,7 @@ const ASSETS = [
   "./manifest.json",
   "./favicon.png",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.jpg"
 ];
 
 self.addEventListener("install", (event) => {
@@ -36,10 +36,7 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      return (
-        cached ||
-        fetch(event.request).catch(() => caches.match("./index.html"))
-      );
+      return cached || fetch(event.request).catch(() => caches.match("./index.html"));
     })
   );
 });
