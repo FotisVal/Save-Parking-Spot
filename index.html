@@ -20,16 +20,12 @@
       --bg-1: #07090d;
       --bg-2: #10141d;
       --bg-3: #171c27;
-      --panel: rgba(20, 24, 34, 0.82);
-      --panel-strong: rgba(25, 31, 44, 0.96);
       --line: rgba(255, 255, 255, 0.08);
       --line-strong: rgba(255, 255, 255, 0.15);
       --text: #ffffff;
       --muted: #aeb6c7;
       --accent: #ffd84d;
-      --success: #35d07f;
       --success-soft: rgba(53, 208, 127, 0.16);
-      --danger: #ff6d6d;
       --danger-soft: rgba(255, 109, 109, 0.15);
       --search-soft: rgba(77, 144, 254, 0.18);
       --shadow-xl: 0 24px 60px rgba(0, 0, 0, 0.42);
@@ -376,7 +372,6 @@
       background: linear-gradient(180deg, #ff7d7d, #e25656);
     }
 
-    /* Site/browser only: slightly more breathing room, still no scrolling */
     @media (display-mode: browser) {
       body {
         padding: 12px;
@@ -387,19 +382,8 @@
         height: calc(100svh - 24px);
         max-height: calc(100svh - 24px);
       }
-
-      .top {
-        padding-top: 20px;
-        padding-bottom: 14px;
-      }
-
-      .content {
-        padding: 14px;
-        gap: 12px;
-      }
     }
 
-    /* Installed app */
     @media (display-mode: standalone) {
       body {
         padding: 8px;
@@ -537,7 +521,7 @@
       measurementId: "G-1LETT1WZQ6"
     };
 
-    const LOCAL_KEY = "saveParkingSpotLocalBackupV4";
+    const LOCAL_KEY = "saveParkingSpotLocalBackupV5";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
     const MAX_ACCEPTABLE_ACCURACY_METERS = 5;
     const MAX_LOCATION_ATTEMPTS = 10;
