@@ -521,11 +521,13 @@
       measurementId: "G-1LETT1WZQ6"
     };
 
-    const LOCAL_KEY = "saveParkingSpotLocalBackupV5";
+    const LOCAL_KEY = "saveParkingSpotLocalBackupV6";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
     const MAX_ACCEPTABLE_ACCURACY_METERS = 5;
-    const MAX_LOCATION_ATTEMPTS = 10;
-    const RETRY_DELAY_MS = 1500;
+
+    const LIVE_SEARCH_TIMEOUT_MS = 22000;
+    const LIVE_MIN_UPDATE_INTERVAL_MS = 1200;
+    const CACHED_FALLBACK_MAX_AGE_MS = 10 * 60 * 1000;
 
     const app = initializeApp(firebaseConfig);
     const db = initializeFirestore(app, {
@@ -702,11 +704,7 @@
       }
     }
 
-    function wait(ms) {
-      return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    function getCurrentLocationOnce() {
+    function getCurrentLocationOnce(options = {}) {
       return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
           reject(new Error("Geolocation is not supported on this device/browser."));
@@ -719,53 +717,153 @@
           {
             enableHighAccuracy: true,
             timeout: 15000,
-            maximumAge: 0
+            maximumAge: 0,
+            ...options
           }
         );
       });
     }
 
-    async function getBestAccurateLocation() {
-      let bestPosition = null;
+    async function getCachedFallbackLocation() {
+      try {
+        const position = await getCurrentLocationOnce({
+          enableHighAccuracy: false,
+          timeout: 4000,
+          maximumAge: CACHED_FALLBACK_MAX_AGE_MS
+        });
+        return position;
+      } catch (error) {
+        return null;
+      }
+    }
+
+    async function getHybridBestLocation() {
       vibratePattern("search-start");
 
-      for (let attempt = 1; attempt <= MAX_LOCATION_ATTEMPTS; attempt++) {
-        setHeroState(
-          "searching",
-          "Searching for your location",
-          `GPS scan ${attempt}/${MAX_LOCATION_ATTEMPTS}`,
-          bestPosition
-            ? `Best accuracy so far: ${Math.round(bestPosition.coords.accuracy)}m`
-            : "Waiting for first accurate GPS fix..."
-        );
+      return new Promise((resolve, reject) => {
+        let bestPosition = null;
+        let watchId = null;
+        let finished = false;
+        let lastUiUpdateAt = 0;
 
-        try {
-          const position = await getCurrentLocationOnce();
+        function finishSuccess(payload) {
+          if (finished) return;
+          finished = true;
+          if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+          clearTimeout(timeoutId);
+          resolve(payload);
+        }
+
+        function finishFailure(error) {
+          if (finished) return;
+          finished = true;
+          if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+          clearTimeout(timeoutId);
+          reject(error);
+        }
+
+        function maybeUpdateBest(position) {
           const accuracy = position.coords.accuracy;
-
           if (!bestPosition || accuracy < bestPosition.coords.accuracy) {
             bestPosition = position;
           }
-
-          if (typeof accuracy === "number" && accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS) {
-            return { position, accepted: true, bestPosition: position };
-          }
-        } catch (error) {
-          if (attempt === MAX_LOCATION_ATTEMPTS && !bestPosition) {
-            throw error;
-          }
         }
 
-        if (attempt < MAX_LOCATION_ATTEMPTS) {
-          await wait(RETRY_DELAY_MS);
+        function updateSearchingUi(stageLabel = "Live GPS search") {
+          const now = Date.now();
+          if (now - lastUiUpdateAt < LIVE_MIN_UPDATE_INTERVAL_MS) return;
+          lastUiUpdateAt = now;
+
+          setHeroState(
+            "searching",
+            "Searching for your location",
+            stageLabel,
+            bestPosition
+              ? `Best accuracy so far: ${Math.round(bestPosition.coords.accuracy)}m`
+              : "Waiting for first GPS fix..."
+          );
         }
-      }
 
-      if (bestPosition) {
-        return { position: bestPosition, accepted: false, bestPosition };
-      }
+        const timeoutId = setTimeout(async () => {
+          if (finished) return;
 
-      throw new Error("Could not get a usable location.");
+          if (bestPosition && typeof bestPosition.coords.accuracy === "number") {
+            const cachedPosition = await getCachedFallbackLocation();
+            if (cachedPosition) {
+              maybeUpdateBest(cachedPosition);
+            }
+
+            finishSuccess({
+              position: bestPosition,
+              accepted: bestPosition.coords.accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS,
+              source: "live-or-cached-best"
+            });
+            return;
+          }
+
+          const cachedOnly = await getCachedFallbackLocation();
+          if (cachedOnly) {
+            finishSuccess({
+              position: cachedOnly,
+              accepted: cachedOnly.coords.accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS,
+              source: "cached-fallback"
+            });
+            return;
+          }
+
+          finishFailure(new Error("Could not get a usable location."));
+        }, LIVE_SEARCH_TIMEOUT_MS);
+
+        if (!navigator.geolocation) {
+          finishFailure(new Error("Geolocation is not supported on this device/browser."));
+          return;
+        }
+
+        updateSearchingUi("Starting live GPS search...");
+
+        watchId = navigator.geolocation.watchPosition(
+          (position) => {
+            maybeUpdateBest(position);
+            updateSearchingUi("Live GPS search in progress...");
+
+            const accuracy = position.coords.accuracy;
+            if (typeof accuracy === "number" && accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS) {
+              finishSuccess({
+                position,
+                accepted: true,
+                source: "live-watch"
+              });
+            }
+          },
+          async () => {
+            const cachedOnly = await getCachedFallbackLocation();
+            if (cachedOnly) {
+              finishSuccess({
+                position: cachedOnly,
+                accepted: cachedOnly.coords.accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS,
+                source: "cached-fallback"
+              });
+              return;
+            }
+
+            if (bestPosition) {
+              finishSuccess({
+                position: bestPosition,
+                accepted: bestPosition.coords.accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS,
+                source: "best-live"
+              });
+              return;
+            }
+
+            finishFailure(new Error("Could not get a usable location."));
+          },
+          {
+            enableHighAccuracy: true,
+            maximumAge: 0,
+            timeout: 10000
+          }
+        );
+      });
     }
 
     async function persistSpot(spot, cloudFailureTitle = "Saved locally") {
@@ -808,7 +906,7 @@
       setBusy(true);
 
       try {
-        const result = await getBestAccurateLocation();
+        const result = await getHybridBestLocation();
         const position = result.position;
         const measuredAccuracy = position.coords.accuracy;
 
@@ -825,8 +923,10 @@
           setHeroState(
             "error",
             "Accuracy not good enough",
-            `Best GPS result: ${Math.round(measuredAccuracy || 0)}m`,
-            `Required: ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better`
+            `Best result: ${Math.round(measuredAccuracy || 0)}m`,
+            result.source === "cached-fallback"
+              ? `Using cached location fallback • Required: ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better`
+              : `Required: ${MAX_ACCEPTABLE_ACCURACY_METERS}m or better`
           );
           showSaveAnyway();
           vibratePattern("error");
