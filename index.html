@@ -14,6 +14,7 @@
   <meta name="theme-color" content="#0a0d12" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Parking Spot" />
 
   <style>
     :root {
@@ -466,8 +467,8 @@
         <div id="heroMeta" class="hero-meta"></div>
 
         <div id="saveAnywayRow" class="action-row">
-          <button class="mini-btn cancel" onclick="cancelSaveAnyway()">Cancel</button>
-          <button class="mini-btn" onclick="saveBestFoundAnyway()">Save Anyway</button>
+          <button class="mini-btn cancel" id="cancelSaveBtn">Cancel</button>
+          <button class="mini-btn" id="saveAnywayBtn">Save Anyway</button>
         </div>
       </div>
 
@@ -478,15 +479,15 @@
       </div>
 
       <div class="buttons">
-        <button class="show-btn" id="showBtn" onclick="showSavedLocation()">
+        <button class="show-btn" id="showBtn">
           🗺️ Show on Maps
         </button>
 
-        <button class="nav-btn" id="navigateBtn" onclick="navigateToSavedLocation()">
+        <button class="nav-btn" id="navigateBtn">
           🧭 Navigate to Spot
         </button>
 
-        <button class="clear-btn" id="clearBtn" onclick="clearSavedLocation()">
+        <button class="clear-btn" id="clearBtn">
           🗑️ Clear Saved Data
         </button>
       </div>
@@ -530,11 +531,19 @@
     const CACHED_FALLBACK_MAX_AGE_MS = 10 * 60 * 1000;
 
     const app = initializeApp(firebaseConfig);
-    const db = initializeFirestore(app, {
-      localCache: persistentLocalCache({
-        tabManager: persistentSingleTabManager()
-      })
-    });
+
+    let db;
+    try {
+      db = initializeFirestore(app, {
+        localCache: persistentLocalCache({
+          tabManager: persistentSingleTabManager()
+        })
+      });
+    } catch (error) {
+      console.warn("Persistent Firestore cache is unavailable. Falling back to memory.", error);
+      db = initializeFirestore(app);
+    }
+
     const auth = getAuth(app);
 
     const heroEl = document.getElementById("hero");
@@ -551,6 +560,8 @@
     const navigateBtn = document.getElementById("navigateBtn");
     const clearBtn = document.getElementById("clearBtn");
     const saveAnywayRow = document.getElementById("saveAnywayRow");
+    const cancelSaveBtn = document.getElementById("cancelSaveBtn");
+    const saveAnywayBtn = document.getElementById("saveAnywayBtn");
 
     let currentUser = null;
     let lastKnownSpot = null;
@@ -559,10 +570,35 @@
     const params = new URLSearchParams(window.location.search);
     const currentMode = params.get("mode") === "save" ? "save" : "view";
 
+    function isIOSDevice() {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    }
+
+    function openMapUrl(url) {
+      window.location.href = url;
+    }
+
+    function buildShowMapUrl(lat, lng) {
+      if (isIOSDevice()) {
+        return `https://maps.apple.com/?ll=${lat},${lng}&q=Saved%20Parking%20Spot`;
+      }
+      return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+    }
+
+    function buildNavigateMapUrl(lat, lng) {
+      if (isIOSDevice()) {
+        return `https://maps.apple.com/?daddr=${lat},${lng}&dirflg=w`;
+      }
+      return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking&dir_action=navigate`;
+    }
+
     function setBusy(isBusy) {
       showBtn.disabled = isBusy;
       navigateBtn.disabled = isBusy;
       clearBtn.disabled = isBusy;
+      cancelSaveBtn.disabled = isBusy;
+      saveAnywayBtn.disabled = isBusy;
     }
 
     function vibratePattern(type) {
@@ -612,8 +648,13 @@
     }
 
     function saveLocalBackup(data) {
-      localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
-      setPill(localPillEl, "Local backup: ready", "ok");
+      try {
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
+        setPill(localPillEl, "Local backup: ready", "ok");
+      } catch (error) {
+        console.error(error);
+        setPill(localPillEl, "Local backup: unavailable", "warn");
+      }
     }
 
     function readLocalBackup() {
@@ -634,7 +675,11 @@
     }
 
     function clearLocalBackup() {
-      localStorage.removeItem(LOCAL_KEY);
+      try {
+        localStorage.removeItem(LOCAL_KEY);
+      } catch (error) {
+        console.error(error);
+      }
       setPill(localPillEl, "Local backup: empty");
     }
 
@@ -985,8 +1030,8 @@
         lastKnownSpot = chosen.spot;
         updateHeroFromSpot(chosen.spot);
 
-        const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${chosen.spot.lat},${chosen.spot.lng}`;
-        window.open(mapsUrl, "_blank");
+        const mapsUrl = buildShowMapUrl(chosen.spot.lat, chosen.spot.lng);
+        openMapUrl(mapsUrl);
       } finally {
         setBusy(false);
       }
@@ -1014,8 +1059,8 @@
         lastKnownSpot = chosen.spot;
         updateHeroFromSpot(chosen.spot);
 
-        const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${chosen.spot.lat},${chosen.spot.lng}&travelmode=walking&dir_action=navigate`;
-        window.open(mapsUrl, "_blank");
+        const mapsUrl = buildNavigateMapUrl(chosen.spot.lat, chosen.spot.lng);
+        openMapUrl(mapsUrl);
       } finally {
         setBusy(false);
       }
@@ -1070,11 +1115,11 @@
       setPill(modePillEl, "Mode: view only");
     }
 
-    window.showSavedLocation = showSavedLocation;
-    window.navigateToSavedLocation = navigateToSavedLocation;
-    window.clearSavedLocation = clearSavedLocation;
-    window.saveBestFoundAnyway = saveBestFoundAnyway;
-    window.cancelSaveAnyway = cancelSaveAnyway;
+    showBtn.addEventListener("click", showSavedLocation);
+    navigateBtn.addEventListener("click", navigateToSavedLocation);
+    clearBtn.addEventListener("click", clearSavedLocation);
+    cancelSaveBtn.addEventListener("click", cancelSaveAnyway);
+    saveAnywayBtn.addEventListener("click", saveBestFoundAnyway);
 
     async function init() {
       setBusy(true);
