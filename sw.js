@@ -1,4 +1,4 @@
-const CACHE_NAME = "save-parking-spot-v3";
+const CACHE_NAME = "save-parking-spot-v4";
 
 const APP_SHELL = [
   "./",
@@ -6,13 +6,17 @@ const APP_SHELL = [
   "./manifest.json",
   "./favicon.png",
   "./icon-192.png",
-  "./icon-512.jpg"
+  "./icon-512.jpg",
+  "./phivimakes-logo-256.webp",
+  "./phivimakes-logo-192.png",
+  "./phivimakes-logo-512.png"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
   );
+
   self.skipWaiting();
 });
 
@@ -24,10 +28,13 @@ self.addEventListener("activate", (event) => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
+
+          return null;
         })
       )
     )
   );
+
   self.clients.claim();
 });
 
@@ -37,30 +44,34 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Only handle same-origin requests
+  // Only handle same-origin requests.
   if (url.origin !== self.location.origin) {
     return;
   }
 
-  // For page navigations: network first, fallback to cache
+  // For page navigations: network first, fallback to cached index.html.
+  // This helps the app update quickly after GitHub/Cloudflare deploys.
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
         .then((response) => {
           const responseClone = response.clone();
+
           caches.open(CACHE_NAME).then((cache) => {
             cache.put("./index.html", responseClone);
           });
+
           return response;
         })
         .catch(async () => {
           return (await caches.match("./index.html")) || Response.error();
         })
     );
+
     return;
   }
 
-  // For static assets: cache first, then network
+  // For static assets: cache first, then network.
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -73,6 +84,7 @@ self.addEventListener("fetch", (event) => {
         }
 
         const responseClone = networkResponse.clone();
+
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(request, responseClone);
         });
