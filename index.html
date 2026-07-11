@@ -115,10 +115,16 @@
       position: relative;
       padding: 12px;
       display: grid;
-      grid-template-rows: auto auto 1fr;
+      grid-template-rows: auto auto auto 1fr;
       gap: 10px;
       min-height: 0;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+    }
+
+    .content::-webkit-scrollbar {
+      display: none;
     }
 
     .hero {
@@ -172,19 +178,29 @@
       object-fit: contain;
       display: block;
       filter: drop-shadow(0 0 18px rgba(34, 211, 238, 0.75));
-      animation: logoPulse 2.4s ease-in-out infinite;
+      animation: logoPulse 2.15s ease-in-out infinite;
+    }
+
+    .hero.searching .brand-logo {
+      animation: logoPulse 0.9s ease-in-out infinite, logoSpinHint 2.8s linear infinite;
+      filter: drop-shadow(0 0 28px rgba(34, 211, 238, 0.98));
     }
 
     @keyframes logoPulse {
       0%, 100% {
         transform: scale(1);
-        filter: drop-shadow(0 0 12px rgba(34, 211, 238, 0.55));
+        filter: drop-shadow(0 0 14px rgba(34, 211, 238, 0.66));
       }
 
       50% {
-        transform: scale(1.06);
-        filter: drop-shadow(0 0 26px rgba(56, 189, 248, 0.95));
+        transform: scale(1.12);
+        filter: drop-shadow(0 0 34px rgba(56, 189, 248, 1));
       }
+    }
+
+    @keyframes logoSpinHint {
+      0% { rotate: 0deg; }
+      100% { rotate: 360deg; }
     }
 
     .hero.saved .hero-icon {
@@ -206,11 +222,31 @@
     }
 
     .hero.searching .hero-icon {
-      background: var(--search-soft);
-      border-color: rgba(77, 144, 254, 0.35);
+      background: rgba(77, 144, 254, 0.28);
+      border-color: rgba(34, 211, 238, 0.68);
       box-shadow:
-        0 0 0 8px rgba(77, 144, 254, 0.05),
-        inset 0 1px 0 rgba(255,255,255,0.08);
+        0 0 0 10px rgba(34, 211, 238, 0.10),
+        0 0 34px rgba(34, 211, 238, 0.45),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+      animation: searchGlow 0.95s ease-in-out infinite;
+    }
+
+    @keyframes searchGlow {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow:
+          0 0 0 8px rgba(34, 211, 238, 0.09),
+          0 0 24px rgba(34, 211, 238, 0.38),
+          inset 0 1px 0 rgba(255,255,255,0.12);
+      }
+
+      50% {
+        transform: scale(1.08);
+        box-shadow:
+          0 0 0 16px rgba(34, 211, 238, 0.15),
+          0 0 46px rgba(34, 211, 238, 0.72),
+          inset 0 1px 0 rgba(255,255,255,0.16);
+      }
     }
 
     .hero.error .hero-icon {
@@ -226,7 +262,7 @@
       position: absolute;
       inset: 0;
       border-radius: 50%;
-      border: 2px solid rgba(77, 144, 254, 0.35);
+      border: 3px solid rgba(34, 211, 238, 0.78);
       opacity: 0;
       transform: scale(0.7);
       pointer-events: none;
@@ -239,16 +275,16 @@
     }
 
     .hero.searching .radar-ring {
-      animation: radarPulse 1.8s infinite;
+      animation: radarPulse 1.15s infinite;
     }
 
     .hero.searching .radar-ring-2 {
-      animation: radarPulse 1.8s infinite 0.9s;
+      animation: radarPulse 1.15s infinite 0.52s;
     }
 
     @keyframes radarPulse {
-      0% { transform: scale(0.72); opacity: 0.82; }
-      100% { transform: scale(1.5); opacity: 0; }
+      0% { transform: scale(0.68); opacity: 0.95; }
+      100% { transform: scale(1.72); opacity: 0; }
     }
 
     .hero-title {
@@ -335,9 +371,9 @@
 
     .buttons {
       display: grid;
-      grid-template-rows: repeat(3, auto);
+      grid-template-columns: 1fr 1fr;
       gap: 10px;
-      align-content: end;
+      align-content: start;
       min-height: 0;
     }
 
@@ -348,8 +384,8 @@
       min-height: 54px;
       border-radius: var(--radius-md);
       cursor: pointer;
-      padding: 14px 16px;
-      font-size: 0.95rem;
+      padding: 13px 14px;
+      font-size: 0.92rem;
       font-weight: 900;
       letter-spacing: 0.2px;
       color: white;
@@ -363,7 +399,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, rgba(255,255,255,0.14), transparent 34%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.16), transparent 38%);
       pointer-events: none;
     }
 
@@ -383,6 +419,17 @@
       filter: none;
     }
 
+    .show-btn,
+    .nav-btn,
+    .save-named-btn,
+    .clear-btn {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: center;
+      text-align: left;
+    }
+
     .show-btn {
       background: linear-gradient(180deg, #6fb0ff, #447fea);
     }
@@ -391,8 +438,209 @@
       background: linear-gradient(180deg, #4ea6ff, #297ae7);
     }
 
+    .save-named-btn {
+      background: linear-gradient(180deg, #35d0a2, #178f75);
+      grid-column: 1 / -1;
+    }
+
     .clear-btn {
       background: linear-gradient(180deg, #ff7d7d, #e25656);
+      grid-column: 1 / -1;
+    }
+
+    .btn-icon {
+      font-size: 1.14rem;
+      line-height: 1;
+    }
+
+    .btn-copy {
+      display: grid;
+      gap: 2px;
+    }
+
+    .btn-title {
+      font-size: 0.93rem;
+      line-height: 1.05;
+    }
+
+    .btn-subtitle {
+      color: rgba(255,255,255,0.72);
+      font-size: 0.68rem;
+      line-height: 1.1;
+      font-weight: 750;
+    }
+
+    .spot-panels {
+      display: grid;
+      gap: 10px;
+      min-height: 0;
+      padding-bottom: 2px;
+    }
+
+    .spot-panel {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.045);
+      border-radius: var(--radius-lg);
+      padding: 12px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .panel-title {
+      font-size: 0.9rem;
+      font-weight: 950;
+      letter-spacing: 0.2px;
+    }
+
+    .panel-note {
+      color: var(--muted);
+      font-size: 0.68rem;
+      white-space: nowrap;
+    }
+
+    .spot-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .spot-item {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(0,0,0,0.16);
+    }
+
+    .spot-row-main {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .spot-name {
+      font-size: 0.82rem;
+      font-weight: 900;
+      line-height: 1.2;
+      word-break: break-word;
+    }
+
+    .spot-meta-small {
+      color: var(--muted);
+      font-size: 0.68rem;
+      line-height: 1.25;
+      margin-top: 3px;
+    }
+
+    .spot-badge {
+      color: #d3ffe4;
+      font-size: 0.66rem;
+      font-weight: 850;
+      padding: 5px 7px;
+      border-radius: 999px;
+      background: rgba(53, 208, 127, 0.11);
+      border: 1px solid rgba(53, 208, 127, 0.18);
+      white-space: nowrap;
+    }
+
+    .spot-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 7px;
+    }
+
+    .tiny-btn {
+      min-height: 34px;
+      padding: 8px 9px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(180deg, #3d4656, #2b323f);
+      box-shadow: none;
+    }
+
+    .tiny-btn.save-small {
+      background: linear-gradient(180deg, #35d0a2, #178f75);
+    }
+
+    .tiny-btn.delete-small {
+      background: linear-gradient(180deg, #ff7d7d, #d94d4d);
+    }
+
+    .empty-note {
+      color: var(--muted);
+      font-size: 0.76rem;
+      line-height: 1.35;
+      padding: 3px 0;
+    }
+
+    .confirm-banner {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      width: min(calc(100% - 24px), 430px);
+      transform: translate(-50%, calc(100% + 28px));
+      opacity: 0;
+      pointer-events: none;
+      z-index: 30;
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 24px;
+      background: rgba(15, 18, 25, 0.96);
+      box-shadow: 0 18px 50px rgba(0,0,0,0.50);
+      backdrop-filter: blur(16px);
+      padding: 14px;
+      transition: transform 0.22s ease, opacity 0.22s ease;
+    }
+
+    .confirm-banner.show {
+      transform: translate(-50%, 0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .confirm-title {
+      font-size: 0.95rem;
+      font-weight: 950;
+      margin-bottom: 4px;
+    }
+
+    .confirm-text {
+      color: var(--muted);
+      font-size: 0.78rem;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+
+    .confirm-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .confirm-btn {
+      min-height: 42px;
+      border-radius: 14px;
+      font-size: 0.82rem;
+      text-align: center;
+      box-shadow: none;
+      background: linear-gradient(180deg, #6f737c, #4f545d);
+    }
+
+    .confirm-btn.yes {
+      background: linear-gradient(180deg, #ff7d7d, #e25656);
+    }
+
+    .confirm-banner.safe .confirm-btn.yes {
+      background: linear-gradient(180deg, #35d0a2, #178f75);
     }
 
     @media (display-mode: browser) {
@@ -467,6 +715,15 @@
       .mini-btn {
         min-height: 40px;
       }
+
+      .spot-actions {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .tiny-btn {
+        min-height: 32px;
+        font-size: 0.68rem;
+      }
     }
   </style>
 </head>
@@ -510,17 +767,64 @@
 
       <div class="buttons">
         <button class="show-btn" id="showBtn">
-          🗺️ Show on Maps
+          <span class="btn-icon">🗺️</span>
+          <span class="btn-copy">
+            <span class="btn-title">Show</span>
+            <span class="btn-subtitle">Open map</span>
+          </span>
         </button>
 
         <button class="nav-btn" id="navigateBtn">
-          🧭 Navigate to Spot
+          <span class="btn-icon">🧭</span>
+          <span class="btn-copy">
+            <span class="btn-title">Navigate</span>
+            <span class="btn-subtitle">Walking route</span>
+          </span>
+        </button>
+
+        <button class="save-named-btn" id="saveNamedBtn">
+          <span class="btn-icon">⭐</span>
+          <span class="btn-copy">
+            <span class="btn-title">Save current spot with name</span>
+            <span class="btn-subtitle">Keep up to 10 important locations</span>
+          </span>
         </button>
 
         <button class="clear-btn" id="clearBtn">
-          🗑️ Clear Saved Data
+          <span class="btn-icon">🗑️</span>
+          <span class="btn-copy">
+            <span class="btn-title">Clear current spot</span>
+            <span class="btn-subtitle">Requires confirmation</span>
+          </span>
         </button>
       </div>
+
+      <div class="spot-panels">
+        <section class="spot-panel">
+          <div class="panel-head">
+            <div class="panel-title">Saved places</div>
+            <div id="savedCount" class="panel-note">0 / 10</div>
+          </div>
+          <div id="savedList" class="spot-list"></div>
+        </section>
+
+        <section class="spot-panel">
+          <div class="panel-head">
+            <div class="panel-title">Recent spots</div>
+            <div class="panel-note">Last 10</div>
+          </div>
+          <div id="recentList" class="spot-list"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div id="confirmBanner" class="confirm-banner" aria-hidden="true">
+    <div id="confirmTitle" class="confirm-title">Are you sure?</div>
+    <div id="confirmText" class="confirm-text"></div>
+    <div class="confirm-actions">
+      <button id="confirmNoBtn" class="confirm-btn" type="button">Cancel</button>
+      <button id="confirmYesBtn" class="confirm-btn yes" type="button">Yes</button>
     </div>
   </div>
 
@@ -554,6 +858,10 @@
 
     const LOCAL_KEY = "saveParkingSpotLocalBackupV6";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
+    const HISTORY_KEY = "saveParkingSpotRecentHistoryV1";
+    const NAMED_LOCATIONS_KEY = "saveParkingSpotNamedLocationsV1";
+    const MAX_RECENT_SPOTS = 10;
+    const MAX_NAMED_LOCATIONS = 10;
 
     const TARGET_ACCURACY_METERS = 30;
     const FAST_ACCEPTABLE_ACCURACY_METERS = 60;
@@ -591,10 +899,20 @@
 
     const showBtn = document.getElementById("showBtn");
     const navigateBtn = document.getElementById("navigateBtn");
+    const saveNamedBtn = document.getElementById("saveNamedBtn");
     const clearBtn = document.getElementById("clearBtn");
+    const recentListEl = document.getElementById("recentList");
+    const savedListEl = document.getElementById("savedList");
+    const savedCountEl = document.getElementById("savedCount");
     const saveAnywayRow = document.getElementById("saveAnywayRow");
     const cancelSaveBtn = document.getElementById("cancelSaveBtn");
     const saveAnywayBtn = document.getElementById("saveAnywayBtn");
+
+    const confirmBannerEl = document.getElementById("confirmBanner");
+    const confirmTitleEl = document.getElementById("confirmTitle");
+    const confirmTextEl = document.getElementById("confirmText");
+    const confirmNoBtn = document.getElementById("confirmNoBtn");
+    const confirmYesBtn = document.getElementById("confirmYesBtn");
 
     let currentUser = null;
     let lastKnownSpot = null;
@@ -638,6 +956,7 @@
     function setBusy(isBusy) {
       showBtn.disabled = isBusy;
       navigateBtn.disabled = isBusy;
+      saveNamedBtn.disabled = isBusy;
       clearBtn.disabled = isBusy;
       cancelSaveBtn.disabled = isBusy;
       saveAnywayBtn.disabled = isBusy;
@@ -659,6 +978,327 @@
       if (!ms) return "";
       return new Date(ms).toLocaleString("en-GB");
     }
+
+    function formatAccuracy(accuracy) {
+      return accuracy ? `${Math.round(accuracy)}m` : "unknown";
+    }
+
+    function makeSpotId(spot) {
+      const time = spot.savedAtMillis || Date.now();
+      const lat = typeof spot.lat === "number" ? spot.lat.toFixed(6) : "lat";
+      const lng = typeof spot.lng === "number" ? spot.lng.toFixed(6) : "lng";
+      return `${time}-${lat}-${lng}`;
+    }
+
+    function normalizeSpot(spot) {
+      return {
+        id: spot.id || makeSpotId(spot),
+        name: spot.name || "",
+        lat: spot.lat,
+        lng: spot.lng,
+        accuracy: spot.accuracy || null,
+        source: spot.source || "gps",
+        savedAtMillis: spot.savedAtMillis || Date.now(),
+        namedAtMillis: spot.namedAtMillis || null
+      };
+    }
+
+    function readStoredArray(key) {
+      try {
+        const raw = localStorage.getItem(key);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (error) {
+        console.error(error);
+        return [];
+      }
+    }
+
+    function writeStoredArray(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    function readRecentSpots() {
+      return readStoredArray(HISTORY_KEY).map(normalizeSpot).slice(0, MAX_RECENT_SPOTS);
+    }
+
+    function writeRecentSpots(spots) {
+      writeStoredArray(HISTORY_KEY, spots.map(normalizeSpot).slice(0, MAX_RECENT_SPOTS));
+    }
+
+    function readNamedLocations() {
+      return readStoredArray(NAMED_LOCATIONS_KEY).map(normalizeSpot).slice(0, MAX_NAMED_LOCATIONS);
+    }
+
+    function writeNamedLocations(spots) {
+      writeStoredArray(NAMED_LOCATIONS_KEY, spots.map(normalizeSpot).slice(0, MAX_NAMED_LOCATIONS));
+    }
+
+    function addRecentSpot(spot) {
+      const normalized = normalizeSpot(spot);
+      const recent = readRecentSpots()
+        .filter((item) => item.id !== normalized.id)
+        .filter((item) => !(Math.abs((item.savedAtMillis || 0) - normalized.savedAtMillis) < 1000));
+
+      const next = [normalized, ...recent].slice(0, MAX_RECENT_SPOTS);
+      writeRecentSpots(next);
+      renderSpotLists();
+      return next;
+    }
+
+    function showConfirmBanner({
+      title = "Are you sure?",
+      text = "",
+      confirmLabel = "Yes",
+      cancelLabel = "Cancel",
+      safe = false
+    } = {}) {
+      return new Promise((resolve) => {
+        confirmTitleEl.textContent = title;
+        confirmTextEl.textContent = text;
+        confirmYesBtn.textContent = confirmLabel;
+        confirmNoBtn.textContent = cancelLabel;
+        confirmBannerEl.classList.toggle("safe", safe);
+        confirmBannerEl.classList.add("show");
+        confirmBannerEl.setAttribute("aria-hidden", "false");
+
+        const cleanup = (result) => {
+          confirmBannerEl.classList.remove("show");
+          confirmBannerEl.setAttribute("aria-hidden", "true");
+          confirmYesBtn.removeEventListener("click", onYes);
+          confirmNoBtn.removeEventListener("click", onNo);
+          resolve(result);
+        };
+
+        const onYes = () => cleanup(true);
+        const onNo = () => cleanup(false);
+
+        confirmYesBtn.addEventListener("click", onYes, { once: true });
+        confirmNoBtn.addEventListener("click", onNo, { once: true });
+      });
+    }
+
+    function createSpotItem(spot, options = {}) {
+      const item = document.createElement("div");
+      item.className = "spot-item";
+
+      const main = document.createElement("div");
+      main.className = "spot-row-main";
+
+      const info = document.createElement("div");
+      const name = document.createElement("div");
+      name.className = "spot-name";
+      name.textContent = options.name || spot.name || `Spot • ${formatDate(spot.savedAtMillis)}`;
+
+      const meta = document.createElement("div");
+      meta.className = "spot-meta-small";
+      meta.textContent = `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${formatAccuracy(spot.accuracy)}`;
+
+      info.appendChild(name);
+      info.appendChild(meta);
+
+      const badge = document.createElement("div");
+      badge.className = "spot-badge";
+      badge.textContent = options.badge || "GPS";
+
+      main.appendChild(info);
+      main.appendChild(badge);
+
+      const actions = document.createElement("div");
+      actions.className = "spot-actions";
+
+      const show = document.createElement("button");
+      show.className = "tiny-btn";
+      show.type = "button";
+      show.textContent = "Show";
+      show.dataset.action = "show";
+      show.dataset.list = options.list;
+      show.dataset.index = String(options.index);
+
+      const nav = document.createElement("button");
+      nav.className = "tiny-btn";
+      nav.type = "button";
+      nav.textContent = "Navigate";
+      nav.dataset.action = "navigate";
+      nav.dataset.list = options.list;
+      nav.dataset.index = String(options.index);
+
+      actions.appendChild(show);
+      actions.appendChild(nav);
+
+      if (options.list === "recent") {
+        const save = document.createElement("button");
+        save.className = "tiny-btn save-small";
+        save.type = "button";
+        save.textContent = "Save name";
+        save.dataset.action = "save-name";
+        save.dataset.list = options.list;
+        save.dataset.index = String(options.index);
+        actions.appendChild(save);
+      } else {
+        const del = document.createElement("button");
+        del.className = "tiny-btn delete-small";
+        del.type = "button";
+        del.textContent = "Delete";
+        del.dataset.action = "delete";
+        del.dataset.list = options.list;
+        del.dataset.index = String(options.index);
+        actions.appendChild(del);
+      }
+
+      item.appendChild(main);
+      item.appendChild(actions);
+      return item;
+    }
+
+    function renderSpotLists() {
+      const recent = readRecentSpots();
+      const named = readNamedLocations();
+
+      savedCountEl.textContent = `${named.length} / ${MAX_NAMED_LOCATIONS}`;
+      savedListEl.textContent = "";
+      recentListEl.textContent = "";
+
+      if (!named.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-note";
+        empty.textContent = "No named locations yet. Save a good spot with a name when you want to keep it.";
+        savedListEl.appendChild(empty);
+      } else {
+        named.forEach((spot, index) => {
+          savedListEl.appendChild(createSpotItem(spot, {
+            list: "named",
+            index,
+            name: spot.name || `Saved place ${index + 1}`,
+            badge: "Saved"
+          }));
+        });
+      }
+
+      if (!recent.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-note";
+        empty.textContent = "Recent parking saves will appear here automatically.";
+        recentListEl.appendChild(empty);
+      } else {
+        recent.forEach((spot, index) => {
+          recentListEl.appendChild(createSpotItem(spot, {
+            list: "recent",
+            index,
+            badge: "Recent"
+          }));
+        });
+      }
+    }
+
+    function getSpotFromList(listName, index) {
+      const list = listName === "named" ? readNamedLocations() : readRecentSpots();
+      return list[Number(index)] || null;
+    }
+
+    function openSpotOnMap(spot, navigation = false) {
+      if (!spot) return;
+      const url = navigation
+        ? buildNavigateMapUrl(spot.lat, spot.lng)
+        : buildShowMapUrl(spot.lat, spot.lng);
+      openMapUrl(url);
+    }
+
+    async function saveSpotWithName(spot) {
+      if (!spot) {
+        setHeroState("error", "No location to save", "Save a parking spot first.");
+        return false;
+      }
+
+      const defaultName = `Parking ${new Date(spot.savedAtMillis || Date.now()).toLocaleDateString("en-GB")}`;
+      const rawName = window.prompt("Name this location:", spot.name || defaultName);
+      if (rawName === null) return false;
+
+      const name = rawName.trim();
+      if (!name) {
+        setHeroState("error", "Name is empty", "Please give the saved location a name.");
+        return false;
+      }
+
+      let named = readNamedLocations();
+      const normalized = normalizeSpot({
+        ...spot,
+        id: spot.id || makeSpotId(spot),
+        name,
+        namedAtMillis: Date.now()
+      });
+
+      named = named.filter((item) => item.id !== normalized.id && item.name.toLowerCase() !== name.toLowerCase());
+
+      if (named.length >= MAX_NAMED_LOCATIONS) {
+        const replaceOldest = await showConfirmBanner({
+          title: "Saved places are full",
+          text: "You already have 10 named locations. Replace the oldest one with this new saved place?",
+          confirmLabel: "Replace oldest",
+          cancelLabel: "Cancel",
+          safe: true
+        });
+
+        if (!replaceOldest) return false;
+        named = named.slice(0, MAX_NAMED_LOCATIONS - 1);
+      }
+
+      const next = [normalized, ...named].slice(0, MAX_NAMED_LOCATIONS);
+      writeNamedLocations(next);
+      renderSpotLists();
+
+      setHeroState(
+        "saved",
+        "Location saved with name",
+        name,
+        `Accuracy: ${formatAccuracy(normalized.accuracy)}`
+      );
+
+      return true;
+    }
+
+    async function handleSpotListClick(event) {
+      const button = event.target.closest("button[data-action]");
+      if (!button) return;
+
+      const spot = getSpotFromList(button.dataset.list, button.dataset.index);
+      if (!spot) return;
+
+      if (button.dataset.action === "show") {
+        openSpotOnMap(spot, false);
+        return;
+      }
+
+      if (button.dataset.action === "navigate") {
+        openSpotOnMap(spot, true);
+        return;
+      }
+
+      if (button.dataset.action === "save-name") {
+        await saveSpotWithName(spot);
+        return;
+      }
+
+      if (button.dataset.action === "delete") {
+        const ok = await showConfirmBanner({
+          title: "Delete saved place?",
+          text: `This will remove "${spot.name || "this saved place"}" from your named locations.`,
+          confirmLabel: "Delete",
+          cancelLabel: "Keep it"
+        });
+
+        if (!ok) return;
+        const named = readNamedLocations().filter((_, index) => index !== Number(button.dataset.index));
+        writeNamedLocations(named);
+        renderSpotLists();
+      }
+    }
+
 
     function getParkingDocRef(uid) {
       return doc(db, "users", uid, "parking", "current");
@@ -786,10 +1426,28 @@
         }
 
         const data = snap.data();
+
+        if (Array.isArray(data.recentSpots)) {
+          writeRecentSpots(data.recentSpots);
+        }
+
+        if (Array.isArray(data.namedLocations)) {
+          writeNamedLocations(data.namedLocations);
+        }
+
+        renderSpotLists();
+
+        if (typeof data.lat !== "number" || typeof data.lng !== "number") {
+          setPill(cloudPillEl, "Cloud: ready", "ok");
+          return null;
+        }
+
         const spot = {
+          id: data.id || null,
           lat: data.lat,
           lng: data.lng,
           accuracy: data.accuracy || null,
+          source: data.source || "cloud",
           savedAtMillis: data.savedAtMillis || null
         };
 
@@ -995,9 +1653,11 @@
 
     async function persistSpot(spot, cloudFailureTitle = "Saved locally") {
       // First save locally, immediately.
-      saveLocalBackup(spot);
-      lastKnownSpot = spot;
-      updateHeroFromSpot(spot);
+      const normalizedSpot = normalizeSpot(spot);
+      saveLocalBackup(normalizedSpot);
+      const recentSpots = addRecentSpot(normalizedSpot);
+      lastKnownSpot = normalizedSpot;
+      updateHeroFromSpot(normalizedSpot);
       vibratePattern("success");
 
       // Cloud sync runs in the background.
@@ -1016,7 +1676,9 @@
           }
 
           await setDoc(getParkingDocRef(user.uid), {
-            ...spot,
+            ...normalizedSpot,
+            recentSpots,
+            namedLocations: readNamedLocations(),
             savedAt: serverTimestamp()
           });
 
@@ -1029,7 +1691,7 @@
             "saved",
             cloudFailureTitle,
             "",
-            `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${Math.round(spot.accuracy || 0)}m`
+            `Saved: ${formatDate(normalizedSpot.savedAtMillis)} • Accuracy: ${Math.round(normalizedSpot.accuracy || 0)}m`
           );
         }
       })();
@@ -1066,6 +1728,7 @@
           source: result.source || "gps",
           savedAtMillis: Date.now()
         };
+        spot.id = makeSpotId(spot);
 
         if (!result.accepted) {
           bestFailedSpot = spot;
@@ -1173,8 +1836,18 @@
 
     async function clearSavedLocation() {
       hideSaveAnyway();
+
+      const confirmed = await showConfirmBanner({
+        title: "Clear current parking spot?",
+        text: "This will remove only the current saved parking spot. Your recent history and named saved places will stay available.",
+        confirmLabel: "Yes, clear it",
+        cancelLabel: "Cancel"
+      });
+
+      if (!confirmed) return;
+
       setBusy(true);
-      setHeroState("waiting", "Clearing saved data", "");
+      setHeroState("waiting", "Clearing current spot", "");
 
       try {
         clearLocalBackup();
@@ -1191,7 +1864,7 @@
           }
         }
 
-        setHeroState("waiting", "Saved data cleared", "");
+        setHeroState("waiting", "Current spot cleared", "Recent and named locations are still saved.");
       } finally {
         setBusy(false);
       }
@@ -1220,13 +1893,22 @@
       setPill(modePillEl, "Mode: view only");
     }
 
+    async function saveCurrentSpotWithName() {
+      const chosen = lastKnownSpot || readLocalBackup();
+      await saveSpotWithName(chosen);
+    }
+
     showBtn.addEventListener("click", showSavedLocation);
     navigateBtn.addEventListener("click", navigateToSavedLocation);
+    saveNamedBtn.addEventListener("click", saveCurrentSpotWithName);
     clearBtn.addEventListener("click", clearSavedLocation);
     cancelSaveBtn.addEventListener("click", cancelSaveAnyway);
     saveAnywayBtn.addEventListener("click", saveBestFoundAnyway);
+    recentListEl.addEventListener("click", handleSpotListClick);
+    savedListEl.addEventListener("click", handleSpotListClick);
 
     async function init() {
+      renderSpotLists();
       setBusy(true);
 
       if (currentMode === "save") {

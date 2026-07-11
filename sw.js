@@ -1,4 +1,4 @@
-const CACHE_NAME = "save-parking-spot-v4";
+const CACHE_NAME = "save-parking-spot-v6";
 
 const APP_SHELL = [
   "./",
@@ -6,7 +6,7 @@ const APP_SHELL = [
   "./manifest.json",
   "./favicon.png",
   "./icon-192.png",
-  "./icon-512.jpg",
+  "./icon-512.png",
   "./phivimakes-logo-256.webp",
   "./phivimakes-logo-192.png",
   "./phivimakes-logo-512.png"
