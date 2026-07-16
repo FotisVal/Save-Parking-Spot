@@ -1,13 +1,13 @@
 {
-  "name": "Save Parking Spot",
-  "short_name": "Parking",
-  "description": "Quickly save and open your saved parking spot.",
-  "start_url": "./",
+  "name": "ParkNous",
+  "short_name": "ParkNous",
+  "description": "Save your parking location, keep favorite spots, and navigate back easily.",
+  "start_url": "./?mode=view",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#07090d",
+  "background_color": "#0a0d12",
   "theme_color": "#0a0d12",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "./phivimakes-logo-192.png",

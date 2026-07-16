@@ -1,4 +1,4 @@
-const CACHE_NAME = "save-parking-spot-v6";
+const CACHE_NAME = "parknous-v8";
 
 const APP_SHELL = [
   "./",

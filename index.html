@@ -6,18 +6,28 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
   />
-  <title>Save Parking Spot</title>
+  <title>ParkNous</title>
 
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="manifest" href="manifest.json" />
   <link rel="preload" as="image" href="./phivimakes-logo-256.webp" />
+  <link rel="preload" as="image" href="./favicon.png" />
+  <link rel="preload" as="image" href="./parknous_onlytext.svg" />
   <meta name="theme-color" content="#0a0d12" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Parking Spot" />
+  <meta name="apple-mobile-web-app-title" content="ParkNous" />
 
   <style>
+    @font-face {
+      font-family: "Mous";
+      src: url("./fonts/mous.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
     :root {
       --bg-1: #07090d;
       --bg-2: #10141d;
@@ -102,13 +112,43 @@
 
     .title {
       margin: 0;
-      font-size: clamp(1.28rem, 4.7vw, 1.58rem);
-      font-weight: 900;
-      letter-spacing: 0.28px;
+      font-family: "Mous", Inter, Arial, sans-serif;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: clamp(1.32rem, 5vw, 1.72rem);
+      font-weight: 950;
+      letter-spacing: 0.34px;
       color: var(--accent);
       text-shadow:
         0 0 18px rgba(255, 216, 77, 0.14),
         0 0 36px rgba(255, 216, 77, 0.05);
+    }
+
+    .title-logo {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+      border-radius: 10px;
+      object-fit: contain;
+      display: block;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.10),
+        0 8px 18px rgba(0,0,0,0.22),
+        0 0 18px rgba(255, 216, 77, 0.12);
+    }
+
+    .title-wordmark {
+      height: clamp(24px, 6vw, 32px);
+      width: auto;
+      max-width: 205px;
+      flex: 0 1 auto;
+      object-fit: contain;
+      display: block;
+      filter:
+        drop-shadow(0 0 12px rgba(255, 216, 77, 0.16))
+        drop-shadow(0 0 24px rgba(255, 216, 77, 0.06));
     }
 
     .content {
@@ -481,36 +521,104 @@
       border: 1px solid var(--line);
       background: rgba(255,255,255,0.045);
       border-radius: var(--radius-lg);
-      padding: 12px;
+      padding: 10px;
       box-shadow: var(--shadow-md);
+      overflow: hidden;
     }
 
     .panel-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
       gap: 10px;
       margin-bottom: 8px;
     }
 
     .panel-title {
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       font-weight: 950;
       letter-spacing: 0.2px;
+      line-height: 1.1;
     }
 
     .panel-note {
       color: var(--muted);
-      font-size: 0.68rem;
+      font-size: 0.66rem;
       white-space: nowrap;
+      line-height: 1.2;
     }
 
-    .spot-list {
-      display: grid;
+    .panel-head-right {
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
 
+    .panel-toggle {
+      width: 34px;
+      min-height: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: none;
+      display: grid;
+      place-items: center;
+    }
+
+    .panel-toggle::before,
+    .panel-toggle::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.82);
+      top: 16px;
+      transition: transform 0.18s ease;
+    }
+
+    .panel-toggle::before {
+      transform: translateX(-3px) rotate(45deg);
+    }
+
+    .panel-toggle::after {
+      transform: translateX(3px) rotate(-45deg);
+    }
+
+    .spot-panel.open .panel-toggle::before {
+      transform: translateX(-3px) rotate(-45deg);
+    }
+
+    .spot-panel.open .panel-toggle::after {
+      transform: translateX(3px) rotate(45deg);
+    }
+
+    .carousel-shell {
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    .spot-list {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-padding: 0;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .spot-list::-webkit-scrollbar {
+      display: none;
+    }
+
     .spot-item {
+      flex: 0 0 100%;
+      min-width: 100%;
+      scroll-snap-align: start;
       display: grid;
       gap: 8px;
       padding: 10px;
@@ -581,6 +689,79 @@
       font-size: 0.76rem;
       line-height: 1.35;
       padding: 3px 0;
+    }
+
+    .spot-dropdown {
+      display: grid;
+      gap: 7px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      max-height: 210px;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .spot-dropdown::-webkit-scrollbar {
+      display: none;
+    }
+
+    .spot-dropdown[hidden] {
+      display: none;
+    }
+
+    .dropdown-spot-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 7px;
+      align-items: center;
+      padding: 8px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(0,0,0,0.13);
+    }
+
+    .dropdown-main {
+      min-width: 0;
+      text-align: left;
+    }
+
+    .dropdown-name {
+      font-size: 0.78rem;
+      font-weight: 900;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dropdown-meta {
+      color: var(--muted);
+      font-size: 0.62rem;
+      line-height: 1.15;
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dropdown-icon-btn {
+      width: 32px;
+      min-height: 32px;
+      height: 32px;
+      padding: 0;
+      border-radius: 11px;
+      background: linear-gradient(180deg, #3d4656, #2b323f);
+      box-shadow: none;
+      font-size: 0.78rem;
+    }
+
+    .dropdown-icon-btn.good {
+      background: linear-gradient(180deg, #35d0a2, #178f75);
+    }
+
+    .dropdown-icon-btn.bad {
+      background: linear-gradient(180deg, #ff7d7d, #d94d4d);
     }
 
     .confirm-banner {
@@ -678,7 +859,18 @@
       }
 
       .title {
-        font-size: 1.28rem;
+        font-size: 1.34rem;
+      }
+
+      .title-logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+      }
+
+      .title-wordmark {
+        height: 28px;
+        max-width: 176px;
       }
 
       .content {
@@ -730,7 +922,7 @@
 <body>
   <div class="app">
     <div class="top">
-      <h1 class="title">Save Parking Spot</h1>
+      <h1 class="title"><img src="./favicon.png" class="title-logo" alt="ParkNous logo"><img src="./parknous_onlytext.svg" class="title-wordmark" alt="ParkNous"></h1>
     </div>
 
     <div class="content">
@@ -800,20 +992,38 @@
       </div>
 
       <div class="spot-panels">
-        <section class="spot-panel">
+        <section id="savedPanel" class="spot-panel compact-panel">
           <div class="panel-head">
-            <div class="panel-title">Saved places</div>
-            <div id="savedCount" class="panel-note">0 / 10</div>
+            <div>
+              <div class="panel-title">Saved places</div>
+              <div class="panel-note">Swipe left/right</div>
+            </div>
+            <div class="panel-head-right">
+              <div id="savedCount" class="panel-note">0 / 10</div>
+              <button id="savedToggleBtn" class="panel-toggle" type="button" aria-label="Show saved places list"></button>
+            </div>
           </div>
-          <div id="savedList" class="spot-list"></div>
+          <div class="carousel-shell">
+            <div id="savedList" class="spot-list"></div>
+          </div>
+          <div id="savedDropdown" class="spot-dropdown" hidden></div>
         </section>
 
-        <section class="spot-panel">
+        <section id="recentPanel" class="spot-panel compact-panel">
           <div class="panel-head">
-            <div class="panel-title">Recent spots</div>
-            <div class="panel-note">Last 10</div>
+            <div>
+              <div class="panel-title">Recent spots</div>
+              <div class="panel-note">Newest first • swipe left/right</div>
+            </div>
+            <div class="panel-head-right">
+              <div class="panel-note">Last 10</div>
+              <button id="recentToggleBtn" class="panel-toggle" type="button" aria-label="Show recent spots list"></button>
+            </div>
           </div>
-          <div id="recentList" class="spot-list"></div>
+          <div class="carousel-shell">
+            <div id="recentList" class="spot-list"></div>
+          </div>
+          <div id="recentDropdown" class="spot-dropdown" hidden></div>
         </section>
       </div>
     </div>
@@ -904,6 +1114,12 @@
     const recentListEl = document.getElementById("recentList");
     const savedListEl = document.getElementById("savedList");
     const savedCountEl = document.getElementById("savedCount");
+    const recentDropdownEl = document.getElementById("recentDropdown");
+    const savedDropdownEl = document.getElementById("savedDropdown");
+    const recentPanelEl = document.getElementById("recentPanel");
+    const savedPanelEl = document.getElementById("savedPanel");
+    const recentToggleBtn = document.getElementById("recentToggleBtn");
+    const savedToggleBtn = document.getElementById("savedToggleBtn");
     const saveAnywayRow = document.getElementById("saveAnywayRow");
     const cancelSaveBtn = document.getElementById("cancelSaveBtn");
     const saveAnywayBtn = document.getElementById("saveAnywayBtn");
@@ -941,7 +1157,7 @@
 
     function buildShowMapUrl(lat, lng) {
       if (isIOSDevice()) {
-        return `https://maps.apple.com/?ll=${lat},${lng}&q=Saved%20Parking%20Spot`;
+        return `https://maps.apple.com/?ll=${lat},${lng}&q=ParkNous%20Spot`;
       }
       return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
     }
@@ -1083,6 +1299,58 @@
       });
     }
 
+
+    function setPanelOpen(panelEl, dropdownEl, isOpen) {
+      panelEl.classList.toggle("open", isOpen);
+      dropdownEl.hidden = !isOpen;
+    }
+
+    function togglePanelDropdown(panelEl, dropdownEl) {
+      setPanelOpen(panelEl, dropdownEl, dropdownEl.hidden);
+    }
+
+    function createDropdownSpotRow(spot, options = {}) {
+      const row = document.createElement("div");
+      row.className = "dropdown-spot-row";
+
+      const main = document.createElement("div");
+      main.className = "dropdown-main";
+
+      const name = document.createElement("div");
+      name.className = "dropdown-name";
+      name.textContent = options.name || spot.name || `Spot • ${formatDate(spot.savedAtMillis)}`;
+
+      const meta = document.createElement("div");
+      meta.className = "dropdown-meta";
+      meta.textContent = `${formatDate(spot.savedAtMillis)} • ${formatAccuracy(spot.accuracy)}`;
+
+      main.appendChild(name);
+      main.appendChild(meta);
+
+      const show = document.createElement("button");
+      show.className = "dropdown-icon-btn";
+      show.type = "button";
+      show.textContent = "↗";
+      show.title = "Show on map";
+      show.dataset.action = "show";
+      show.dataset.list = options.list;
+      show.dataset.index = String(options.index);
+
+      const second = document.createElement("button");
+      second.className = options.list === "recent" ? "dropdown-icon-btn good" : "dropdown-icon-btn bad";
+      second.type = "button";
+      second.textContent = options.list === "recent" ? "★" : "×";
+      second.title = options.list === "recent" ? "Save with name" : "Delete saved place";
+      second.dataset.action = options.list === "recent" ? "save-name" : "delete";
+      second.dataset.list = options.list;
+      second.dataset.index = String(options.index);
+
+      row.appendChild(main);
+      row.appendChild(show);
+      row.appendChild(second);
+      return row;
+    }
+
     function createSpotItem(spot, options = {}) {
       const item = document.createElement("div");
       item.className = "spot-item";
@@ -1163,34 +1431,59 @@
       savedCountEl.textContent = `${named.length} / ${MAX_NAMED_LOCATIONS}`;
       savedListEl.textContent = "";
       recentListEl.textContent = "";
+      savedDropdownEl.textContent = "";
+      recentDropdownEl.textContent = "";
 
       if (!named.length) {
         const empty = document.createElement("div");
-        empty.className = "empty-note";
-        empty.textContent = "No named locations yet. Save a good spot with a name when you want to keep it.";
+        empty.className = "spot-item";
+        empty.innerHTML = `<div class="empty-note">No named locations yet. Save a good spot with a name when you want to keep it.</div>`;
         savedListEl.appendChild(empty);
+
+        const dropEmpty = document.createElement("div");
+        dropEmpty.className = "empty-note";
+        dropEmpty.textContent = "No named locations yet.";
+        savedDropdownEl.appendChild(dropEmpty);
       } else {
         named.forEach((spot, index) => {
+          const name = spot.name || `Saved place ${index + 1}`;
           savedListEl.appendChild(createSpotItem(spot, {
             list: "named",
             index,
-            name: spot.name || `Saved place ${index + 1}`,
-            badge: "Saved"
+            name,
+            badge: `${index + 1}/${named.length}`
+          }));
+          savedDropdownEl.appendChild(createDropdownSpotRow(spot, {
+            list: "named",
+            index,
+            name
           }));
         });
       }
 
       if (!recent.length) {
         const empty = document.createElement("div");
-        empty.className = "empty-note";
-        empty.textContent = "Recent parking saves will appear here automatically.";
+        empty.className = "spot-item";
+        empty.innerHTML = `<div class="empty-note">Recent parking saves will appear here automatically.</div>`;
         recentListEl.appendChild(empty);
+
+        const dropEmpty = document.createElement("div");
+        dropEmpty.className = "empty-note";
+        dropEmpty.textContent = "No recent spots yet.";
+        recentDropdownEl.appendChild(dropEmpty);
       } else {
         recent.forEach((spot, index) => {
+          const name = `Recent ${index + 1} • ${formatDate(spot.savedAtMillis)}`;
           recentListEl.appendChild(createSpotItem(spot, {
             list: "recent",
             index,
-            badge: "Recent"
+            name,
+            badge: `${index + 1}/${recent.length}`
+          }));
+          recentDropdownEl.appendChild(createDropdownSpotRow(spot, {
+            list: "recent",
+            index,
+            name
           }));
         });
       }
@@ -1906,6 +2199,10 @@
     saveAnywayBtn.addEventListener("click", saveBestFoundAnyway);
     recentListEl.addEventListener("click", handleSpotListClick);
     savedListEl.addEventListener("click", handleSpotListClick);
+    recentDropdownEl.addEventListener("click", handleSpotListClick);
+    savedDropdownEl.addEventListener("click", handleSpotListClick);
+    recentToggleBtn.addEventListener("click", () => togglePanelDropdown(recentPanelEl, recentDropdownEl));
+    savedToggleBtn.addEventListener("click", () => togglePanelDropdown(savedPanelEl, savedDropdownEl));
 
     async function init() {
       renderSpotLists();
