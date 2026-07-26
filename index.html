@@ -2922,6 +2922,9 @@
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
     const HISTORY_KEY = "saveParkingSpotRecentHistoryV1";
     const NAMED_LOCATIONS_KEY = "saveParkingSpotNamedLocationsV1";
+    const PROFILE_ID_KEY = "parknousGuestProfileIdV1";
+    const PROFILE_COOKIE_NAME = "parknous_profile_id";
+    const PROFILE_ID_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
     const MAX_RECENT_SPOTS = 10;
     const MAX_NAMED_LOCATIONS = 10;
 
@@ -3025,6 +3028,77 @@
         (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     }
 
+    function sanitizeProfileId(value) {
+      if (typeof value !== "string") return "";
+      const trimmed = value.trim();
+      return /^[a-zA-Z0-9_-]{18,96}$/.test(trimmed) ? trimmed : "";
+    }
+
+    function getCookieValue(name) {
+      const target = `${encodeURIComponent(name)}=`;
+      const parts = document.cookie ? document.cookie.split(";") : [];
+
+      for (const part of parts) {
+        const trimmed = part.trim();
+        if (trimmed.startsWith(target)) {
+          return decodeURIComponent(trimmed.slice(target.length));
+        }
+      }
+
+      return "";
+    }
+
+    function writeProfileCookie(profileId) {
+      const secure = window.location.protocol === "https:" ? "; Secure" : "";
+      document.cookie = `${encodeURIComponent(PROFILE_COOKIE_NAME)}=${encodeURIComponent(profileId)}; Max-Age=${PROFILE_ID_MAX_AGE_SECONDS}; Path=/; SameSite=Lax${secure}`;
+    }
+
+    function writeProfileLocal(profileId) {
+      try {
+        localStorage.setItem(PROFILE_ID_KEY, profileId);
+      } catch (error) {
+        console.warn("Could not store profile id locally.", error);
+      }
+    }
+
+    function createGuestProfileId() {
+      const bytes = new Uint8Array(18);
+
+      if (window.crypto && window.crypto.getRandomValues) {
+        window.crypto.getRandomValues(bytes);
+      } else {
+        for (let index = 0; index < bytes.length; index += 1) {
+          bytes[index] = Math.floor(Math.random() * 256);
+        }
+      }
+
+      return `pk_${Array.from(bytes)
+        .map((byte) => byte.toString(36).padStart(2, "0"))
+        .join("")}`;
+    }
+
+    function resolveGuestProfileId() {
+      const fromUrl = sanitizeProfileId(params.get("profile") || params.get("p") || "");
+      const fromCookie = sanitizeProfileId(getCookieValue(PROFILE_COOKIE_NAME));
+      let fromLocal = "";
+
+      try {
+        fromLocal = sanitizeProfileId(localStorage.getItem(PROFILE_ID_KEY) || "");
+      } catch (error) {
+        fromLocal = "";
+      }
+
+      const profileId = fromUrl || fromCookie || fromLocal || createGuestProfileId();
+
+      writeProfileCookie(profileId);
+      writeProfileLocal(profileId);
+
+      return profileId;
+    }
+
+    const guestProfileId = resolveGuestProfileId();
+    debugLog("Guest profile ready", { profileId: guestProfileId, mode: currentMode });
+
     function openMapUrl(url) {
       window.location.href = url;
     }
@@ -3122,6 +3196,65 @@
     function writeNamedLocations(spots) {
       writeStoredArray(NAMED_LOCATIONS_KEY, spots.map(normalizeSpot).slice(0, MAX_NAMED_LOCATIONS));
     }
+
+    function spotSortValue(spot) {
+      return Number(spot?.namedAtMillis || spot?.savedAtMillis || 0);
+    }
+
+    function namedSpotKey(spot) {
+      const name = (spot?.name || "").trim().toLowerCase();
+      if (name) return `name:${name}`;
+      if (spot?.id) return `id:${spot.id}`;
+
+      const lat = typeof spot?.lat === "number" ? spot.lat.toFixed(6) : "lat";
+      const lng = typeof spot?.lng === "number" ? spot.lng.toFixed(6) : "lng";
+      return `geo:${lat}:${lng}`;
+    }
+
+    function recentSpotKey(spot) {
+      if (spot?.id) return `id:${spot.id}`;
+
+      const lat = typeof spot?.lat === "number" ? spot.lat.toFixed(6) : "lat";
+      const lng = typeof spot?.lng === "number" ? spot.lng.toFixed(6) : "lng";
+      const timeBucket = Math.round(Number(spot?.savedAtMillis || 0) / 1000);
+      return `geo:${lat}:${lng}:${timeBucket}`;
+    }
+
+    function mergeSpotArrays(localItems, cloudItems, { type = "recent", limit = 10 } = {}) {
+      const keyFn = type === "named" ? namedSpotKey : recentSpotKey;
+      const merged = new Map();
+
+      [...(cloudItems || []), ...(localItems || [])]
+        .map(normalizeSpot)
+        .filter((spot) => typeof spot.lat === "number" && typeof spot.lng === "number")
+        .forEach((spot) => {
+          const key = keyFn(spot);
+          const existing = merged.get(key);
+
+          if (!existing || spotSortValue(spot) >= spotSortValue(existing)) {
+            merged.set(key, { ...existing, ...spot });
+          }
+        });
+
+      return Array.from(merged.values())
+        .sort((a, b) => spotSortValue(b) - spotSortValue(a))
+        .slice(0, limit);
+    }
+
+    function mergeRecentSpots(localItems, cloudItems) {
+      return mergeSpotArrays(localItems, cloudItems, {
+        type: "recent",
+        limit: MAX_RECENT_SPOTS
+      });
+    }
+
+    function mergeNamedLocations(localItems, cloudItems) {
+      return mergeSpotArrays(localItems, cloudItems, {
+        type: "named",
+        limit: MAX_NAMED_LOCATIONS
+      });
+    }
+
 
     function addRecentSpot(spot) {
       const normalized = normalizeSpot(spot);
@@ -3547,6 +3680,10 @@
         `Accuracy: ${formatAccuracy(normalized.accuracy)}`
       );
 
+      syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
+        cloudFailureTitle: "Saved locally"
+      });
+
       return true;
     }
 
@@ -3593,11 +3730,18 @@
         if (savedPanelIndex >= named.length) savedPanelIndex = Math.max(0, named.length - 1);
         writeNamedLocations(named);
         renderSpotLists();
+        syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
+          cloudFailureTitle: "Saved locally"
+        });
       }
     }
 
 
-    function getParkingDocRef(uid) {
+    function getParkingDocRef() {
+      return doc(db, "parknousProfiles", guestProfileId, "parking", "current");
+    }
+
+    function getLegacyParkingDocRef(uid) {
       return doc(db, "users", uid, "parking", "current");
     }
 
@@ -3711,42 +3855,158 @@
         return null;
       });
 
+    async function syncAllParkingDataToCloud(currentSpot = lastKnownSpot || readLocalBackup(), {
+      clearCurrent = false,
+      silent = false,
+      cloudFailureTitle = "Saved locally"
+    } = {}) {
+      try {
+        let user = currentUser;
+
+        if (!user && loginReadyPromise) {
+          user = await loginReadyPromise;
+        }
+
+        if (!user) {
+          if (!silent) setPill(cloudPillEl, "Cloud: offline", "warn");
+          return false;
+        }
+
+        const recentSpots = readRecentSpots();
+        const namedLocations = readNamedLocations();
+
+        const payload = {
+          profileId: guestProfileId,
+          ownerUid: user.uid,
+          recentSpots,
+          namedLocations,
+          updatedAtMillis: Date.now(),
+          savedAt: serverTimestamp()
+        };
+
+        if (clearCurrent) {
+          payload.currentCleared = true;
+          payload.lat = null;
+          payload.lng = null;
+          payload.accuracy = null;
+          payload.source = "cleared";
+          payload.savedAtMillis = null;
+          payload.id = null;
+        } else if (
+          currentSpot &&
+          typeof currentSpot.lat === "number" &&
+          typeof currentSpot.lng === "number"
+        ) {
+          const normalizedSpot = normalizeSpot(currentSpot);
+          Object.assign(payload, normalizedSpot, { currentCleared: false });
+        }
+
+        try {
+          await setDoc(getParkingDocRef(), payload, { merge: true });
+          if (!silent) setPill(cloudPillEl, "Cloud: synced", "ok");
+          debugLog("Cloud profile synced", {
+            profileId: guestProfileId,
+            recent: recentSpots.length,
+            saved: namedLocations.length
+          });
+          return true;
+        } catch (profileError) {
+          console.warn("Profile cloud sync failed. Trying legacy user path.", profileError);
+          debugLog("Profile cloud sync failed", {
+            code: profileError?.code,
+            message: profileError?.message
+          });
+
+          await setDoc(getLegacyParkingDocRef(user.uid), payload, { merge: true });
+          if (!silent) setPill(cloudPillEl, "Cloud: synced fallback", "ok");
+          return true;
+        }
+      } catch (cloudError) {
+        console.error("Cloud sync failed:", cloudError);
+        if (!silent) {
+          setPill(cloudPillEl, "Cloud: pending/failed", "warn");
+
+          if (currentSpot && !clearCurrent) {
+            const normalizedSpot = normalizeSpot(currentSpot);
+            setHeroState(
+              "saved",
+              cloudFailureTitle,
+              "",
+              `Saved: ${formatDate(normalizedSpot.savedAtMillis)} • Accuracy: ${Math.round(normalizedSpot.accuracy || 0)}m`
+            );
+          }
+        }
+
+        return false;
+      }
+    }
+
     async function loadCloudSpot() {
       if (!currentUser) return null;
 
       try {
-        const snap = await getDoc(getParkingDocRef(currentUser.uid));
+        let data = null;
+        let loadedFrom = "profile";
 
-        if (!snap.exists()) {
-          setPill(cloudPillEl, "Cloud: empty");
+        try {
+          const profileSnap = await getDoc(getParkingDocRef());
+          if (profileSnap.exists()) {
+            data = profileSnap.data();
+          }
+        } catch (profileError) {
+          console.warn("Profile cloud load failed. Trying legacy user path.", profileError);
+          debugLog("Profile cloud load failed", {
+            code: profileError?.code,
+            message: profileError?.message
+          });
+        }
+
+        if (!data) {
+          const legacySnap = await getDoc(getLegacyParkingDocRef(currentUser.uid));
+
+          if (legacySnap.exists()) {
+            data = legacySnap.data();
+            loadedFrom = "legacy";
+          }
+        }
+
+        if (!data) {
+          setPill(cloudPillEl, "Cloud: new profile", "ok");
+          await syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), { silent: true });
           return null;
         }
 
-        const data = snap.data();
+        const localRecent = readRecentSpots();
+        const localNamed = readNamedLocations();
+        const mergedRecent = mergeRecentSpots(localRecent, Array.isArray(data.recentSpots) ? data.recentSpots : []);
+        const mergedNamed = mergeNamedLocations(localNamed, Array.isArray(data.namedLocations) ? data.namedLocations : []);
 
-        if (Array.isArray(data.recentSpots)) {
-          writeRecentSpots(data.recentSpots);
-        }
-
-        if (Array.isArray(data.namedLocations)) {
-          writeNamedLocations(data.namedLocations);
-        }
-
+        writeRecentSpots(mergedRecent);
+        writeNamedLocations(mergedNamed);
         renderSpotLists();
 
-        if (typeof data.lat !== "number" || typeof data.lng !== "number") {
-          setPill(cloudPillEl, "Cloud: ready", "ok");
-          return null;
+        debugLog("Cloud data merged", {
+          from: loadedFrom,
+          recent: mergedRecent.length,
+          saved: mergedNamed.length
+        });
+
+        let spot = null;
+
+        if (typeof data.lat === "number" && typeof data.lng === "number") {
+          spot = normalizeSpot({
+            id: data.id || null,
+            lat: data.lat,
+            lng: data.lng,
+            accuracy: data.accuracy || null,
+            source: data.source || "cloud",
+            savedAtMillis: data.savedAtMillis || null
+          });
         }
 
-        const spot = {
-          id: data.id || null,
-          lat: data.lat,
-          lng: data.lng,
-          accuracy: data.accuracy || null,
-          source: data.source || "cloud",
-          savedAtMillis: data.savedAtMillis || null
-        };
+        // Push the merged local+cloud lists back, so saved spots do not disappear
+        // when Safari and the Home Screen app have different local storage.
+        await syncAllParkingDataToCloud(spot || lastKnownSpot || readLocalBackup(), { silent: true });
 
         setPill(cloudPillEl, "Cloud: ready", "ok");
         return spot;
@@ -3989,46 +4249,14 @@
       // First save locally, immediately.
       const normalizedSpot = normalizeSpot(spot);
       saveLocalBackup(normalizedSpot);
-      const recentSpots = addRecentSpot(normalizedSpot);
+      addRecentSpot(normalizedSpot);
       lastKnownSpot = normalizedSpot;
       updateHeroFromSpot(normalizedSpot);
       vibratePattern("success");
 
       // Cloud sync runs in the background.
       // It must never block the NFC save flow.
-      (async () => {
-        try {
-          let user = currentUser;
-
-          if (!user && loginReadyPromise) {
-            user = await loginReadyPromise;
-          }
-
-          if (!user) {
-            setPill(cloudPillEl, "Cloud: offline", "warn");
-            return;
-          }
-
-          await setDoc(getParkingDocRef(user.uid), {
-            ...normalizedSpot,
-            recentSpots,
-            namedLocations: readNamedLocations(),
-            savedAt: serverTimestamp()
-          });
-
-          setPill(cloudPillEl, "Cloud: synced", "ok");
-        } catch (cloudError) {
-          console.error("Cloud sync failed:", cloudError);
-          setPill(cloudPillEl, "Cloud: pending/failed", "warn");
-
-          setHeroState(
-            "saved",
-            cloudFailureTitle,
-            "",
-            `Saved: ${formatDate(normalizedSpot.savedAtMillis)} • Accuracy: ${Math.round(normalizedSpot.accuracy || 0)}m`
-          );
-        }
-      })();
+      syncAllParkingDataToCloud(normalizedSpot, { cloudFailureTitle });
 
       return true;
     }
@@ -4199,15 +4427,10 @@
         sessionStorage.removeItem(SESSION_SAVE_KEY);
         lastKnownSpot = null;
 
-        if (currentUser) {
-          try {
-            await deleteDoc(getParkingDocRef(currentUser.uid));
-            setPill(cloudPillEl, "Cloud: empty");
-          } catch (error) {
-            console.error(error);
-            setPill(cloudPillEl, "Cloud: delete failed", "warn");
-          }
-        }
+        await syncAllParkingDataToCloud(null, {
+          clearCurrent: true,
+          cloudFailureTitle: "Cleared locally"
+        });
 
         setHeroState("waiting", "Current spot cleared", "Recent and saved spots are still saved.");
       } finally {
