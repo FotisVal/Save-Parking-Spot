@@ -2636,6 +2636,139 @@
       }
     }
 
+
+    /* ParkNous v17: no blur outside lists, better centered title, iPhone permission UX */
+    .top {
+      height: 62px;
+      min-height: 62px;
+      padding: 0 12px;
+      border-bottom: none;
+      background: transparent;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .title {
+      width: 100%;
+      height: 62px;
+      min-height: 62px;
+      max-height: 62px;
+      margin: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .title-wordmark {
+      width: min(98vw, 420px);
+      height: 150px;
+      max-height: none;
+      object-fit: contain;
+      object-position: center center;
+      transform: translateY(5px) scale(1.34);
+      transform-origin: center center;
+      display: block;
+      filter:
+        drop-shadow(0 0 12px rgba(255, 216, 77, 0.30))
+        drop-shadow(0 0 30px rgba(255, 216, 77, 0.14));
+    }
+
+    .hero-icon-wrap {
+      width: 98px;
+      height: 98px;
+      margin: 0 auto 8px;
+    }
+
+    .hero-icon {
+      width: 98px;
+      height: 98px;
+    }
+
+    .brand-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      animation: none;
+      transform: none;
+    }
+
+    .hero.searching .brand-logo {
+      width: 100%;
+      height: 100%;
+      animation: logoSpin 4.5s linear infinite, logoPulse 1.05s ease-in-out infinite;
+    }
+
+    .list-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .spot-dropdown {
+      background:
+        radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.10), transparent 36%),
+        #0b0f16;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      top: 72px;
+      max-height: calc(100svh - 88px);
+      box-shadow: 0 22px 58px rgba(0,0,0,0.66);
+    }
+
+    .spot-list.swipe-feedback-left .spot-item {
+      animation: swipeLeftFeedback 0.56s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .spot-list.swipe-feedback-right .spot-item {
+      animation: swipeRightFeedback 0.56s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes swipeLeftFeedback {
+      0% { transform: translateX(6px); opacity: 0.90; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @keyframes swipeRightFeedback {
+      0% { transform: translateX(-6px); opacity: 0.90; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    @media (max-width: 370px) {
+      .top {
+        height: 56px;
+        min-height: 56px;
+      }
+
+      .title {
+        height: 56px;
+        min-height: 56px;
+        max-height: 56px;
+      }
+
+      .title-wordmark {
+        width: min(98vw, 360px);
+        height: 138px;
+        transform: translateY(5px) scale(1.28);
+      }
+
+      .hero-icon-wrap,
+      .hero-icon {
+        width: 84px;
+        height: 84px;
+      }
+
+      .spot-dropdown {
+        top: 66px;
+        max-height: calc(100svh - 82px);
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2897,16 +3030,10 @@
     }
 
     function buildShowMapUrl(lat, lng) {
-      if (isIOSDevice()) {
-        return `https://maps.apple.com/?ll=${lat},${lng}&q=ParkNous%20Spot`;
-      }
       return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
     }
 
     function buildNavigateMapUrl(lat, lng) {
-      if (isIOSDevice()) {
-        return `https://maps.apple.com/?daddr=${lat},${lng}&dirflg=w`;
-      }
       return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking&dir_action=navigate`;
     }
 
@@ -3723,6 +3850,7 @@
         }
 
         function updateSearchingUi(stageLabel = "Finding location") {
+          if (finished) return;
           const now = Date.now();
           if (now - lastUiUpdateAt < LIVE_MIN_UPDATE_INTERVAL_MS) return;
 
@@ -3739,6 +3867,7 @@
         }
 
         function acceptIfGoodEnough(position, source) {
+          if (finished) return true;
           const accuracy = position.coords.accuracy;
           const elapsed = Date.now() - startedAt;
 
@@ -3770,6 +3899,7 @@
         // This does not block the live GPS watch below.
         navigator.geolocation.getCurrentPosition(
           (position) => {
+            if (finished) return;
             debugLog("Cached GPS result", { accuracy: position?.coords?.accuracy });
             maybeUpdateBest(position);
             acceptIfGoodEnough(position, "cached");
@@ -3792,6 +3922,7 @@
           // This parallel one-shot often wakes up the location service faster.
           navigator.geolocation.getCurrentPosition(
             (position) => {
+              if (finished) return;
               debugLog("iOS one-shot GPS result", { accuracy: position?.coords?.accuracy });
               maybeUpdateBest(position);
               acceptIfGoodEnough(position, "ios-one-shot");
@@ -3810,6 +3941,7 @@
         // 2) Start live GPS immediately. No Firebase, old location, or UI load before this.
         watchId = navigator.geolocation.watchPosition(
           (position) => {
+            if (finished) return;
             debugLog("Live GPS result", { accuracy: position?.coords?.accuracy });
             maybeUpdateBest(position);
             updateSearchingUi("Improving GPS...");
@@ -3817,6 +3949,7 @@
             acceptIfGoodEnough(position, "live");
           },
           (error) => {
+            if (finished) return;
             debugLog("Live GPS error", { code: error?.code, message: error?.message });
             if (bestPosition) {
               finishSuccess({
@@ -3828,7 +3961,7 @@
               return;
             }
 
-            finishFailure(new Error("Could not get a usable location."));
+            finishFailure(error || new Error("Could not get a usable location."));
           },
           {
             enableHighAccuracy: true,
@@ -3953,13 +4086,23 @@
         debugLog("Save location failed", { code: error?.code, message: error?.message });
 
         if (error.code === 1) {
-          setHeroState("error", "Location permission denied", "");
+          debugLog("Permission denied by browser/location settings", { ios: isIOSDevice(), userAgent: navigator.userAgent });
+          setHeroState(
+            "error",
+            "Location permission denied",
+            isIOSDevice()
+              ? "iPhone blocked location access. Allow Location for this browser/site once, then use the Home Screen shortcut."
+              : "Please allow location access for this site.",
+            isIOSDevice()
+              ? "Settings → Privacy & Security → Location Services → Safari/Chrome → While Using App"
+              : ""
+          );
         } else if (error.code === 2) {
-          setHeroState("error", "Location unavailable", "");
+          setHeroState("error", "Location unavailable", "Try going near a window or enabling precise location.");
         } else if (error.code === 3) {
-          setHeroState("error", "Location request timed out", "");
+          setHeroState("error", "Location request timed out", "Try again or open the installed shortcut/PWA.");
         } else {
-          setHeroState("error", "Could not get location", "");
+          setHeroState("error", "Could not get location", error?.message || "");
         }
 
         vibratePattern("error");
