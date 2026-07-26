@@ -1,4 +1,4 @@
-const CACHE_NAME = "parknous-v8";
+const CACHE_NAME = "parknous-v12";
 
 const APP_SHELL = [
   "./",
@@ -7,8 +7,9 @@ const APP_SHELL = [
   "./favicon.png",
   "./icon-192.png",
   "./icon-512.png",
-  "./phivimakes-logo-256.webp",
+  "./parknous_onlytext.svg",
   "./phivimakes-logo-192.png",
+  "./phivimakes-logo-256.webp",
   "./phivimakes-logo-512.png"
 ];
 
@@ -44,13 +45,10 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Only handle same-origin requests.
   if (url.origin !== self.location.origin) {
     return;
   }
 
-  // For page navigations: network first, fallback to cached index.html.
-  // This helps the app update quickly after GitHub/Cloudflare deploys.
   if (request.mode === "navigate") {
     event.respondWith(
       fetch(request)
@@ -71,7 +69,6 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // For static assets: cache first, then network.
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
