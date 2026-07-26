@@ -1158,6 +1158,410 @@
         font-size: 0.68rem;
       }
     }
+
+    /* ParkNous v13: one-screen home + overlay lists */
+    .app {
+      height: calc(100svh - 16px);
+      max-height: calc(100svh - 16px);
+    }
+
+    .top {
+      padding: 8px 16px 4px;
+      border-bottom: none;
+      background: transparent;
+    }
+
+    .title {
+      min-height: 40px;
+      gap: 0;
+    }
+
+    .title-logo {
+      display: none;
+    }
+
+    .title-wordmark {
+      width: min(62vw, 190px);
+      height: 32px;
+      transform: none;
+      object-fit: contain;
+    }
+
+    .content {
+      padding: 8px 10px 10px;
+      gap: 8px;
+      display: grid;
+      grid-template-rows: auto auto auto minmax(0, 1fr);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 10px 12px 9px;
+      border-radius: 22px;
+    }
+
+    .hero-icon-wrap {
+      width: 78px;
+      height: 78px;
+      margin: 0 auto 8px;
+    }
+
+    .hero-icon {
+      width: 78px;
+      height: 78px;
+    }
+
+    .hero-title {
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+
+    .hero-text {
+      font-size: 0.76rem;
+      min-height: 0;
+      line-height: 1.25;
+    }
+
+    .hero-meta {
+      margin-top: 5px;
+      font-size: 0.68rem;
+      min-height: 0;
+      line-height: 1.2;
+    }
+
+    .brand-logo {
+      width: 82%;
+      height: 82%;
+      animation: logoSpin 14s linear infinite;
+    }
+
+    .hero.searching .brand-logo {
+      animation: logoSpin 4.5s linear infinite, logoPulse 0.95s ease-in-out infinite;
+    }
+
+    .pill-row {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      overflow-y: hidden;
+      align-items: center;
+      gap: 7px;
+      padding: 0 1px 1px;
+      scrollbar-width: none;
+    }
+
+    .pill-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pill {
+      flex: 0 0 auto;
+      white-space: nowrap;
+      font-size: 0.66rem;
+      padding: 6px 9px;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .show-btn,
+    .nav-btn,
+    .save-named-btn,
+    .clear-btn {
+      grid-column: auto;
+      min-height: 56px;
+      padding: 10px 13px;
+      border-radius: 21px;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      font-size: 1rem;
+    }
+
+    .btn-title {
+      font-size: 0.82rem;
+      line-height: 1.08;
+    }
+
+    .btn-subtitle {
+      font-size: 0.62rem;
+      line-height: 1.08;
+    }
+
+    .spot-panels {
+      display: grid;
+      grid-template-rows: 1fr 1fr;
+      gap: 8px;
+      min-height: 0;
+      overflow: visible;
+      padding-bottom: 0;
+    }
+
+    .spot-panel {
+      position: relative;
+      min-height: 0;
+      padding: 8px;
+      border-radius: 22px;
+      overflow: visible;
+    }
+
+    .spot-panel.open {
+      z-index: 40;
+    }
+
+    .panel-head {
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    .panel-title {
+      font-size: 0.82rem;
+      line-height: 1.05;
+    }
+
+    .panel-note {
+      font-size: 0.62rem;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+
+    .panel-head-right {
+      gap: 6px;
+    }
+
+    .panel-toggle {
+      position: relative;
+      width: 40px;
+      min-height: 40px;
+      height: 40px;
+      border-radius: 14px;
+      padding: 0;
+    }
+
+    .panel-toggle::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 48%;
+      width: 13px;
+      height: 13px;
+      border-right: 4px solid rgba(255,255,255,0.92);
+      border-bottom: 4px solid rgba(255,255,255,0.92);
+      border-radius: 2px;
+      transform: translate(-50%, -60%) rotate(45deg);
+      background: transparent;
+      transition: transform 0.18s ease;
+    }
+
+    .panel-toggle::after {
+      display: none;
+    }
+
+    .spot-panel.open .panel-toggle::before {
+      transform: translate(-50%, -35%) rotate(225deg);
+    }
+
+    .carousel-shell {
+      overflow: visible;
+      border-radius: 16px;
+    }
+
+    .spot-list {
+      display: block;
+      overflow: visible;
+      scroll-snap-type: none;
+      cursor: default;
+    }
+
+    .spot-item {
+      width: 100%;
+      min-width: 0;
+      min-height: 96px;
+      padding: 10px;
+      gap: 8px;
+      border-radius: 17px;
+      scroll-snap-align: none;
+    }
+
+    .spot-row-main {
+      align-items: start;
+      gap: 8px;
+    }
+
+    .spot-name {
+      font-size: 0.82rem;
+      line-height: 1.15;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .spot-meta-small {
+      font-size: 0.66rem;
+      line-height: 1.22;
+      margin-top: 3px;
+    }
+
+    .spot-badge {
+      font-size: 0.68rem;
+      min-width: 44px;
+      text-align: center;
+      padding: 6px 8px;
+    }
+
+    .spot-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .tiny-btn {
+      min-height: 30px;
+      padding: 6px 8px;
+      border-radius: 12px;
+      font-size: 0.62rem;
+    }
+
+    .spot-dropdown {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      top: 58px;
+      z-index: 60;
+      display: grid;
+      gap: 8px;
+      margin: 0;
+      padding: 8px;
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 18px;
+      background: rgba(13, 16, 23, 0.98);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+      backdrop-filter: blur(18px);
+      max-height: min(320px, calc(100svh - 260px));
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+
+    .spot-dropdown::-webkit-scrollbar {
+      display: none;
+    }
+
+    .spot-dropdown[hidden] {
+      display: none;
+    }
+
+    .dropdown-spot-row {
+      grid-template-columns: 1fr auto auto;
+      padding: 9px;
+      border-radius: 14px;
+      cursor: pointer;
+    }
+
+    .dropdown-spot-row.selected {
+      border-color: rgba(53, 208, 127, 0.35);
+      background: rgba(53, 208, 127, 0.11);
+    }
+
+    .dropdown-name {
+      font-size: 0.72rem;
+    }
+
+    .dropdown-meta {
+      font-size: 0.58rem;
+    }
+
+    .dropdown-icon-btn {
+      width: 30px;
+      min-height: 30px;
+      height: 30px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 370px) {
+      .app {
+        height: calc(100svh - 10px);
+        max-height: calc(100svh - 10px);
+      }
+
+      .top {
+        padding-top: 6px;
+      }
+
+      .title-wordmark {
+        width: min(64vw, 170px);
+        height: 28px;
+      }
+
+      .content {
+        padding: 7px 8px 8px;
+        gap: 7px;
+      }
+
+      .hero {
+        padding: 8px 10px;
+      }
+
+      .hero-icon-wrap,
+      .hero-icon {
+        width: 66px;
+        height: 66px;
+      }
+
+      .hero-title {
+        font-size: 0.82rem;
+      }
+
+      .show-btn,
+      .nav-btn,
+      .save-named-btn,
+      .clear-btn {
+        min-height: 50px;
+        padding: 8px 10px;
+      }
+
+      .btn-title {
+        font-size: 0.74rem;
+      }
+
+      .btn-subtitle {
+        font-size: 0.56rem;
+      }
+
+      .spot-item {
+        min-height: 88px;
+      }
+
+      .spot-actions {
+        gap: 5px;
+      }
+
+      .tiny-btn {
+        min-height: 28px;
+        font-size: 0.58rem;
+        padding: 5px 6px;
+      }
+
+      .panel-title {
+        font-size: 0.76rem;
+      }
+
+      .panel-note {
+        font-size: 0.56rem;
+      }
+
+      .panel-toggle {
+        width: 36px;
+        min-height: 36px;
+        height: 36px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -1578,6 +1982,23 @@
       renderSpotLists();
     }
 
+    function selectPanelIndex(listName, index) {
+      const list = listName === "named" ? readNamedLocations() : readRecentSpots();
+      if (!list.length) return;
+
+      const safeIndex = Math.max(0, Math.min(Number(index) || 0, list.length - 1));
+
+      if (listName === "named") {
+        savedPanelIndex = safeIndex;
+        renderSpotLists();
+        setPanelOpen(savedPanelEl, savedDropdownEl, false);
+      } else {
+        recentPanelIndex = safeIndex;
+        renderSpotLists();
+        setPanelOpen(recentPanelEl, recentDropdownEl, false);
+      }
+    }
+
     function enableCarouselSwipe(trackEl, listName) {
       if (!trackEl) return;
 
@@ -1594,9 +2015,11 @@
       trackEl.addEventListener("touchend", (event) => {
         const touch = event.changedTouches[0];
         if (!touch) return;
+
         const dx = touch.clientX - touchStartX;
         const dy = touch.clientY - touchStartY;
-        if (Math.abs(dx) > 36 && Math.abs(dx) > Math.abs(dy)) {
+
+        if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy) + 8) {
           changePanelIndex(listName, dx < 0 ? 1 : -1);
         }
       }, { passive: true });
@@ -1604,7 +2027,9 @@
 
     function createDropdownSpotRow(spot, options = {}) {
       const row = document.createElement("div");
-      row.className = "dropdown-spot-row";
+      row.className = `dropdown-spot-row ${options.selected ? "selected" : ""}`.trim();
+      row.dataset.list = options.list;
+      row.dataset.index = String(options.index);
 
       const main = document.createElement("div");
       main.className = "dropdown-main";
@@ -1755,7 +2180,8 @@
           savedDropdownEl.appendChild(createDropdownSpotRow(rowSpot, {
             list: "named",
             index,
-            name: rowName
+            name: rowName,
+            selected: index === savedPanelIndex
           }));
         });
       }
@@ -1785,7 +2211,8 @@
           recentDropdownEl.appendChild(createDropdownSpotRow(rowSpot, {
             list: "recent",
             index,
-            name: rowName
+            name: rowName,
+            selected: index === recentPanelIndex
           }));
         });
       }
@@ -1859,7 +2286,14 @@
 
     async function handleSpotListClick(event) {
       const button = event.target.closest("button[data-action]");
-      if (!button) return;
+
+      if (!button) {
+        const row = event.target.closest(".dropdown-spot-row[data-list]");
+        if (row) {
+          selectPanelIndex(row.dataset.list, row.dataset.index);
+        }
+        return;
+      }
 
       const spot = getSpotFromList(button.dataset.list, button.dataset.index);
       if (!spot) return;
@@ -1888,7 +2322,9 @@
         });
 
         if (!ok) return;
-        const named = readNamedLocations().filter((_, index) => index !== Number(button.dataset.index));
+        const deleteIndex = Number(button.dataset.index);
+        const named = readNamedLocations().filter((_, index) => index !== deleteIndex);
+        if (savedPanelIndex >= named.length) savedPanelIndex = Math.max(0, named.length - 1);
         writeNamedLocations(named);
         renderSpotLists();
       }
@@ -2208,6 +2644,23 @@
 
         updateSearchingUi("Starting GPS immediately...");
 
+        if (iosMode) {
+          // iOS/Safari sometimes resolves watchPosition slowly when opened from NFC.
+          // This parallel one-shot often wakes up the location service faster.
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              maybeUpdateBest(position);
+              acceptIfGoodEnough(position, "ios-one-shot");
+            },
+            () => {},
+            {
+              enableHighAccuracy: true,
+              maximumAge: 0,
+              timeout: liveTimeoutMs
+            }
+          );
+        }
+
         // 2) Start live GPS immediately. No Firebase, old location, or UI load before this.
         watchId = navigator.geolocation.watchPosition(
           (position) => {
@@ -2240,7 +2693,7 @@
           if (bestPosition) {
             finishSuccess({
               position: bestPosition,
-              accepted: bestPosition.coords.accuracy <= FAST_ACCEPTABLE_ACCURACY_METERS,
+              accepted: bestPosition.coords.accuracy <= fastAccuracyLimit,
               source: "timeout-best"
             });
             return;
