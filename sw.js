@@ -1,4 +1,4 @@
-const CACHE_NAME = "parknous-v13";
+const CACHE_NAME = "parknous-v14";
 
 const APP_SHELL = [
   "./",
