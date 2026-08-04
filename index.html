@@ -2769,6 +2769,25 @@
       }
     }
 
+
+    /* ParkNous v20: list action buttons + share */
+    .tiny-btn.delete-small {
+      border-color: rgba(255, 117, 125, 0.45);
+      background: rgba(255, 117, 125, 0.13);
+      color: #ffd4d7;
+    }
+
+    .dropdown-icon-btn.bad {
+      border-color: rgba(255, 117, 125, 0.45);
+      background: rgba(255, 117, 125, 0.13);
+      color: #ffd4d7;
+    }
+
+    .dropdown-icon-btn:active,
+    .tiny-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
   </style>
 </head>
 <body>
@@ -3367,16 +3386,18 @@
       if (!list.length) return;
 
       const safeIndex = Math.max(0, Math.min(Number(index) || 0, list.length - 1));
+      const selectedSpot = normalizeSpot(list[safeIndex]);
 
       if (listName === "named") {
         savedPanelIndex = safeIndex;
-        renderSpotLists();
-        setPanelOpen(savedPanelEl, savedDropdownEl, false);
       } else {
         recentPanelIndex = safeIndex;
-        renderSpotLists();
-        setPanelOpen(recentPanelEl, recentDropdownEl, false);
       }
+
+      lastKnownSpot = selectedSpot;
+      updateHeroFromSpot(selectedSpot);
+      renderSpotLists();
+      closeAllDropdowns();
     }
 
     function enableCarouselSwipe(trackEl, listName) {
@@ -3425,27 +3446,35 @@
       main.appendChild(name);
       main.appendChild(meta);
 
-      const show = document.createElement("button");
-      show.className = "dropdown-icon-btn";
-      show.type = "button";
-      show.textContent = "↗";
-      show.title = "Show on map";
-      show.dataset.action = "show";
-      show.dataset.list = options.list;
-      show.dataset.index = String(options.index);
+      const primary = document.createElement("button");
+      primary.className = "dropdown-icon-btn";
+      primary.type = "button";
 
-      const second = document.createElement("button");
-      second.className = options.list === "recent" ? "dropdown-icon-btn good" : "dropdown-icon-btn bad";
-      second.type = "button";
-      second.textContent = options.list === "recent" ? "★" : "×";
-      second.title = options.list === "recent" ? "Save with name" : "Delete saved place";
-      second.dataset.action = options.list === "recent" ? "save-name" : "delete";
-      second.dataset.list = options.list;
-      second.dataset.index = String(options.index);
+      if (options.list === "named") {
+        primary.textContent = "↱";
+        primary.title = "Navigate";
+        primary.dataset.action = "navigate";
+      } else {
+        primary.textContent = "↗";
+        primary.title = "Show on map";
+        primary.dataset.action = "show";
+      }
+
+      primary.dataset.list = options.list;
+      primary.dataset.index = String(options.index);
+
+      const del = document.createElement("button");
+      del.className = "dropdown-icon-btn bad";
+      del.type = "button";
+      del.textContent = "×";
+      del.title = options.list === "named" ? "Delete saved spot" : "Delete recent spot";
+      del.dataset.action = "delete";
+      del.dataset.list = options.list;
+      del.dataset.index = String(options.index);
 
       row.appendChild(main);
-      row.appendChild(show);
-      row.appendChild(second);
+      row.appendChild(primary);
+      row.appendChild(del);
       return row;
     }
 
@@ -3478,44 +3507,40 @@
       const actions = document.createElement("div");
       actions.className = "spot-actions";
 
-      const show = document.createElement("button");
-      show.className = "tiny-btn";
-      show.type = "button";
-      show.textContent = "Show";
-      show.dataset.action = "show";
-      show.dataset.list = options.list;
-      show.dataset.index = String(options.index);
+      const primary = document.createElement("button");
+      primary.className = "tiny-btn";
+      primary.type = "button";
 
-      const nav = document.createElement("button");
-      nav.className = "tiny-btn";
-      nav.type = "button";
-      nav.textContent = "Navigate";
-      nav.dataset.action = "navigate";
-      nav.dataset.list = options.list;
-      nav.dataset.index = String(options.index);
-
-      actions.appendChild(show);
-      actions.appendChild(nav);
-
-      if (options.list === "recent") {
-        const save = document.createElement("button");
-        save.className = "tiny-btn save-small";
-        save.type = "button";
-        save.textContent = "Save spot";
-        save.dataset.action = "save-name";
-        save.dataset.list = options.list;
-        save.dataset.index = String(options.index);
-        actions.appendChild(save);
+      if (options.list === "named") {
+        primary.textContent = "Navigate";
+        primary.dataset.action = "navigate";
       } else {
-        const del = document.createElement("button");
-        del.className = "tiny-btn delete-small";
-        del.type = "button";
-        del.textContent = "Delete";
-        del.dataset.action = "delete";
-        del.dataset.list = options.list;
-        del.dataset.index = String(options.index);
-        actions.appendChild(del);
+        primary.textContent = "Show";
+        primary.dataset.action = "show";
       }
+
+      primary.dataset.list = options.list;
+      primary.dataset.index = String(options.index);
+
+      const share = document.createElement("button");
+      share.className = "tiny-btn";
+      share.type = "button";
+      share.textContent = "Share";
+      share.dataset.action = "share";
+      share.dataset.list = options.list;
+      share.dataset.index = String(options.index);
+
+      const del = document.createElement("button");
+      del.className = "tiny-btn delete-small";
+      del.type = "button";
+      del.textContent = "Delete";
+      del.dataset.action = "delete";
+      del.dataset.list = options.list;
+      del.dataset.index = String(options.index);
+
+      actions.appendChild(primary);
+      actions.appendChild(share);
+      actions.appendChild(del);
 
       item.appendChild(main);
       item.appendChild(actions);
@@ -3611,6 +3636,102 @@
       openMapUrl(url);
     }
 
+    function buildSpotShareUrl(spot) {
+      return buildShowMapUrl(spot.lat, spot.lng);
+    }
+
+    function buildSpotShareText(spot) {
+      const label = spot.name ? `${spot.name}` : "my parking spot";
+      return `ParkNous spot: ${label}`;
+    }
+
+    async function copyTextToClipboard(textToCopy) {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(textToCopy);
+        return true;
+      }
+
+      const textarea = document.createElement("textarea");
+      textarea.value = textToCopy;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      textarea.style.top = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+
+      try {
+        document.execCommand("copy");
+        return true;
+      } finally {
+        document.body.removeChild(textarea);
+      }
+    }
+
+    async function shareSpot(spot) {
+      if (!spot) return;
+
+      const url = buildSpotShareUrl(spot);
+      const text = buildSpotShareText(spot);
+      const title = "ParkNous";
+
+      try {
+        if (navigator.share) {
+          await navigator.share({ title, text, url });
+          return;
+        }
+
+        await copyTextToClipboard(`${text}\n${url}`);
+        setHeroState("saved", "Share link copied", text, "Paste it anywhere you want.");
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+
+        console.warn("Share failed.", error);
+
+        try {
+          await copyTextToClipboard(`${text}\n${url}`);
+          setHeroState("saved", "Share link copied", text, "Paste it anywhere you want.");
+        } catch (copyError) {
+          window.prompt("Copy this ParkNous link:", `${text}\n${url}`);
+        }
+      }
+    }
+
+    async function deleteSpotFromList(listName, index) {
+      const numericIndex = Number(index);
+      const list = listName === "named" ? readNamedLocations() : readRecentSpots();
+      const spot = list[numericIndex];
+
+      if (!spot) return;
+
+      const isSavedSpot = listName === "named";
+      const ok = await showConfirmBanner({
+        title: isSavedSpot ? "Delete saved spot?" : "Delete recent spot?",
+        text: isSavedSpot
+          ? `This will remove "${spot.name || "this saved spot"}" from your saved spots.`
+          : "This will remove this spot from recent spots.",
+        confirmLabel: "Delete",
+        cancelLabel: "Keep it"
+      });
+
+      if (!ok) return;
+
+      if (isSavedSpot) {
+        const named = readNamedLocations().filter((_, itemIndex) => itemIndex !== numericIndex);
+        if (savedPanelIndex >= named.length) savedPanelIndex = Math.max(0, named.length - 1);
+        writeNamedLocations(named);
+      } else {
+        const recent = readRecentSpots().filter((_, itemIndex) => itemIndex !== numericIndex);
+        if (recentPanelIndex >= recent.length) recentPanelIndex = Math.max(0, recent.length - 1);
+        writeRecentSpots(recent);
+      }
+
+      renderSpotLists();
+      syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
+        cloudFailureTitle: "Saved locally"
+      });
+    }
+
     async function saveSpotWithName(spot) {
       if (!spot) {
         setHeroState("error", "No location to save", "Save a parking spot first.");
@@ -3698,6 +3819,9 @@
         return;
       }
 
+      event.preventDefault();
+      event.stopPropagation();
+
       const spot = getSpotFromList(button.dataset.list, button.dataset.index);
       if (!spot) return;
 
@@ -3711,28 +3835,18 @@
         return;
       }
 
+      if (button.dataset.action === "share") {
+        await shareSpot(spot);
+        return;
+      }
+
       if (button.dataset.action === "save-name") {
         await saveSpotWithName(spot);
         return;
       }
 
       if (button.dataset.action === "delete") {
-        const ok = await showConfirmBanner({
-          title: "Delete saved spot?",
-          text: `This will remove "${spot.name || "this saved spot"}" from your saved spots.`,
-          confirmLabel: "Delete",
-          cancelLabel: "Keep it"
-        });
-
-        if (!ok) return;
-        const deleteIndex = Number(button.dataset.index);
-        const named = readNamedLocations().filter((_, index) => index !== deleteIndex);
-        if (savedPanelIndex >= named.length) savedPanelIndex = Math.max(0, named.length - 1);
-        writeNamedLocations(named);
-        renderSpotLists();
-        syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
-          cloudFailureTitle: "Saved locally"
-        });
+        await deleteSpotFromList(button.dataset.list, button.dataset.index);
       }
     }
 
