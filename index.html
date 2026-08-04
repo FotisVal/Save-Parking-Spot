@@ -2788,6 +2788,106 @@
       transform: translateY(1px) scale(0.98);
     }
 
+
+    /* ParkNous v21: active spot selection + live split share */
+    .live-actions {
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto auto;
+    }
+
+    .live-nav-btn {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .show-share-split {
+      grid-column: 2;
+      grid-row: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .split-show-btn,
+    .split-share-btn {
+      min-width: 0;
+      width: 100%;
+      min-height: 54px;
+      padding: 9px 8px;
+      border-radius: 19px;
+    }
+
+    .split-show-btn .btn-icon,
+    .split-share-btn .btn-icon {
+      font-size: 0.95rem;
+    }
+
+    .split-show-btn .btn-title,
+    .split-share-btn .btn-title {
+      font-size: 0.70rem;
+    }
+
+    .split-show-btn .btn-subtitle,
+    .split-share-btn .btn-subtitle {
+      font-size: 0.54rem;
+    }
+
+    .share-current-btn {
+      background: linear-gradient(180deg, #48e0bd, #159b85);
+      color: #ffffff;
+      border: 0;
+      box-shadow: 0 13px 28px rgba(13, 148, 136, 0.22);
+    }
+
+    .save-named-btn {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .clear-btn {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .spot-actions.four-actions {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .spot-actions.four-actions .tiny-btn {
+      font-size: 0.54rem;
+      padding: 5px 4px;
+    }
+
+    .dropdown-spot-row.recent-row-actions {
+      grid-template-columns: 1fr auto auto auto;
+    }
+
+    .dropdown-icon-btn.bad,
+    .tiny-btn.delete-small {
+      border-color: rgba(255, 117, 125, 0.45);
+      background: rgba(255, 117, 125, 0.13);
+      color: #ffd4d7;
+    }
+
+    @media (max-width: 370px) {
+      .split-show-btn,
+      .split-share-btn {
+        min-height: 50px;
+        padding: 8px 5px;
+      }
+
+      .split-show-btn .btn-title,
+      .split-share-btn .btn-title {
+        font-size: 0.64rem;
+      }
+
+      .spot-actions.four-actions .tiny-btn {
+        font-size: 0.50rem;
+        padding: 5px 3px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2828,22 +2928,32 @@
         <div id="modePill" class="pill">Mode: checking...</div>
       </div>
 
-      <div class="buttons">
-        <button class="show-btn" id="showBtn">
-          <span class="btn-icon">🗺️</span>
-          <span class="btn-copy">
-            <span class="btn-title">Show</span>
-            <span class="btn-subtitle">Open map</span>
-          </span>
-        </button>
-
-        <button class="nav-btn" id="navigateBtn">
+      <div class="buttons live-actions">
+        <button class="nav-btn live-nav-btn" id="navigateBtn">
           <span class="btn-icon">🧭</span>
           <span class="btn-copy">
             <span class="btn-title">Navigate</span>
             <span class="btn-subtitle">Walking route</span>
           </span>
         </button>
+
+        <div class="show-share-split">
+          <button class="show-btn split-show-btn" id="showBtn">
+            <span class="btn-icon">🗺️</span>
+            <span class="btn-copy">
+              <span class="btn-title">Show</span>
+              <span class="btn-subtitle">Map</span>
+            </span>
+          </button>
+
+          <button class="share-current-btn split-share-btn" id="shareCurrentBtn">
+            <span class="btn-icon">↗</span>
+            <span class="btn-copy">
+              <span class="btn-title">Share</span>
+              <span class="btn-subtitle">Link</span>
+            </span>
+          </button>
+        </div>
 
         <button class="save-named-btn" id="saveNamedBtn">
           <span class="btn-icon">⭐</span>
@@ -2983,6 +3093,7 @@
 
     const showBtn = document.getElementById("showBtn");
     const navigateBtn = document.getElementById("navigateBtn");
+    const shareCurrentBtn = document.getElementById("shareCurrentBtn");
     const saveNamedBtn = document.getElementById("saveNamedBtn");
     const clearBtn = document.getElementById("clearBtn");
     const recentListEl = document.getElementById("recentList");
@@ -3133,6 +3244,7 @@
     function setBusy(isBusy) {
       showBtn.disabled = isBusy;
       navigateBtn.disabled = isBusy;
+      shareCurrentBtn.disabled = isBusy;
       saveNamedBtn.disabled = isBusy;
       clearBtn.disabled = isBusy;
       cancelSaveBtn.disabled = isBusy;
@@ -3398,6 +3510,13 @@
       updateHeroFromSpot(selectedSpot);
       renderSpotLists();
       closeAllDropdowns();
+
+      debugLog("Spot selected from list", {
+        list: listName,
+        index: safeIndex,
+        name: selectedSpot.name || "",
+        accuracy: selectedSpot.accuracy || null
+      });
     }
 
     function enableCarouselSwipe(trackEl, listName) {
@@ -3428,9 +3547,14 @@
 
     function createDropdownSpotRow(spot, options = {}) {
       const row = document.createElement("div");
-      row.className = `dropdown-spot-row ${options.selected ? "selected" : ""}`.trim();
+      row.className = `dropdown-spot-row ${options.selected ? "selected" : ""} ${options.list === "recent" ? "recent-row-actions" : ""}`.trim();
       row.dataset.list = options.list;
       row.dataset.index = String(options.index);
+
+      row.addEventListener("click", (event) => {
+        if (event.target.closest("button[data-action]")) return;
+        selectPanelIndex(options.list, options.index);
+      });
 
       const main = document.createElement("div");
       main.className = "dropdown-main";
@@ -3463,6 +3587,21 @@
       primary.dataset.list = options.list;
       primary.dataset.index = String(options.index);
 
+      row.appendChild(main);
+      row.appendChild(primary);
+
+      if (options.list !== "named") {
+        const save = document.createElement("button");
+        save.className = "dropdown-icon-btn";
+        save.type = "button";
+        save.textContent = "★";
+        save.title = "Save spot";
+        save.dataset.action = "save-name";
+        save.dataset.list = options.list;
+        save.dataset.index = String(options.index);
+        row.appendChild(save);
+      }
+
       const del = document.createElement("button");
       del.className = "dropdown-icon-btn bad";
       del.type = "button";
@@ -3472,15 +3611,13 @@
       del.dataset.list = options.list;
       del.dataset.index = String(options.index);
 
-      row.appendChild(main);
-      row.appendChild(primary);
       row.appendChild(del);
       return row;
     }
 
     function createSpotItem(spot, options = {}) {
       const item = document.createElement("div");
-      item.className = "spot-item";
+      item.className = `spot-item ${options.list === "recent" ? "recent-preview-card" : "saved-preview-card"}`.trim();
 
       const main = document.createElement("div");
       main.className = "spot-row-main";
@@ -3505,7 +3642,7 @@
       main.appendChild(badge);
 
       const actions = document.createElement("div");
-      actions.className = "spot-actions";
+      actions.className = `spot-actions ${options.list === "recent" ? "four-actions" : "three-actions"}`;
 
       const primary = document.createElement("button");
       primary.className = "tiny-btn";
@@ -3521,6 +3658,18 @@
 
       primary.dataset.list = options.list;
       primary.dataset.index = String(options.index);
+      actions.appendChild(primary);
+
+      if (options.list !== "named") {
+        const save = document.createElement("button");
+        save.className = "tiny-btn";
+        save.type = "button";
+        save.textContent = "Save spot";
+        save.dataset.action = "save-name";
+        save.dataset.list = options.list;
+        save.dataset.index = String(options.index);
+        actions.appendChild(save);
+      }
 
       const share = document.createElement("button");
       share.className = "tiny-btn";
@@ -3529,6 +3678,7 @@
       share.dataset.action = "share";
       share.dataset.list = options.list;
       share.dataset.index = String(options.index);
+      actions.appendChild(share);
 
       const del = document.createElement("button");
       del.className = "tiny-btn delete-small";
@@ -3537,9 +3687,6 @@
       del.dataset.action = "delete";
       del.dataset.list = options.list;
       del.dataset.index = String(options.index);
-
-      actions.appendChild(primary);
-      actions.appendChild(share);
       actions.appendChild(del);
 
       item.appendChild(main);
@@ -4466,27 +4613,18 @@
     async function showSavedLocation() {
       hideSaveAnyway();
       setBusy(true);
-      setHeroState("waiting", "Opening saved spot", "");
 
       try {
-        let cloudSpot = null;
+        const chosen = getActivePreviewSpot();
 
-        if (currentUser) {
-          cloudSpot = await loadCloudSpot();
-        }
-
-        const chosen = cloudSpot ? { spot: cloudSpot } : getBestAvailableSpot();
-
-        if (!chosen.spot) {
+        if (!chosen) {
           setHeroState("error", "No saved location found", "");
           return;
         }
 
-        lastKnownSpot = chosen.spot;
-        updateHeroFromSpot(chosen.spot);
-
-        const mapsUrl = buildShowMapUrl(chosen.spot.lat, chosen.spot.lng);
-        openMapUrl(mapsUrl);
+        lastKnownSpot = normalizeSpot(chosen);
+        updateHeroFromSpot(lastKnownSpot);
+        openSpotOnMap(lastKnownSpot, false);
       } finally {
         setBusy(false);
       }
@@ -4495,27 +4633,18 @@
     async function navigateToSavedLocation() {
       hideSaveAnyway();
       setBusy(true);
-      setHeroState("waiting", "Preparing navigation", "");
 
       try {
-        let cloudSpot = null;
+        const chosen = getActivePreviewSpot();
 
-        if (currentUser) {
-          cloudSpot = await loadCloudSpot();
-        }
-
-        const chosen = cloudSpot ? { spot: cloudSpot } : getBestAvailableSpot();
-
-        if (!chosen.spot) {
+        if (!chosen) {
           setHeroState("error", "No saved location found", "");
           return;
         }
 
-        lastKnownSpot = chosen.spot;
-        updateHeroFromSpot(chosen.spot);
-
-        const mapsUrl = buildNavigateMapUrl(chosen.spot.lat, chosen.spot.lng);
-        openMapUrl(mapsUrl);
+        lastKnownSpot = normalizeSpot(chosen);
+        updateHeroFromSpot(lastKnownSpot);
+        openSpotOnMap(lastKnownSpot, true);
       } finally {
         setBusy(false);
       }
@@ -4576,12 +4705,24 @@
     }
 
     async function saveCurrentSpotWithName() {
-      const chosen = lastKnownSpot || readLocalBackup();
+      const chosen = getActivePreviewSpot();
       await saveSpotWithName(chosen);
+    }
+
+    async function shareCurrentSpot() {
+      const chosen = getActivePreviewSpot();
+
+      if (!chosen) {
+        setHeroState("error", "No spot to share", "Save or select a spot first.");
+        return;
+      }
+
+      await shareSpot(chosen);
     }
 
     showBtn.addEventListener("click", showSavedLocation);
     navigateBtn.addEventListener("click", navigateToSavedLocation);
+    shareCurrentBtn.addEventListener("click", shareCurrentSpot);
     saveNamedBtn.addEventListener("click", saveCurrentSpotWithName);
     clearBtn.addEventListener("click", clearSavedLocation);
     cancelSaveBtn.addEventListener("click", cancelSaveAnyway);
