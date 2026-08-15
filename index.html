@@ -2888,6 +2888,73 @@
       }
     }
 
+
+    /* ParkNous v23: dropdown tap changes the same section preview */
+    .dropdown-spot-row {
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .dropdown-spot-row.selected {
+      outline: 1px solid rgba(53, 208, 127, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(53, 208, 127, 0.22);
+    }
+
+    .spot-actions.three-actions {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .spot-actions.four-actions {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .spot-actions.four-actions .tiny-btn {
+      font-size: 0.54rem;
+      padding: 5px 4px;
+    }
+
+    .dropdown-spot-row.recent-row-actions {
+      grid-template-columns: 1fr auto auto auto;
+    }
+
+
+    /* ParkNous v24: fixed list buttons and promote selected row to preview */
+    .dropdown-spot-row {
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .dropdown-spot-row.selected {
+      outline: 1px solid rgba(53, 208, 127, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(53, 208, 127, 0.22);
+    }
+
+    .spot-actions.three-actions {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .spot-actions.four-actions {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .spot-actions.four-actions .tiny-btn {
+      font-size: 0.54rem;
+      padding: 5px 4px;
+    }
+
+    .dropdown-spot-row.recent-row-actions {
+      grid-template-columns: 1fr auto auto auto;
+    }
+
+    .dropdown-icon-btn.bad,
+    .tiny-btn.delete-small {
+      border-color: rgba(255, 117, 125, 0.45);
+      background: rgba(255, 117, 125, 0.13);
+      color: #ffd4d7;
+    }
+
   </style>
 </head>
 <body>
@@ -3119,6 +3186,7 @@
 
     let currentUser = null;
     let lastKnownSpot = null;
+    let activePreviewSpot = null;
     let bestFailedSpot = null;
     let savedPanelIndex = 0;
     let recentPanelIndex = 0;
@@ -3493,29 +3561,52 @@
       }, 480);
     }
 
-    function selectPanelIndex(listName, index) {
-      const list = listName === "named" ? readNamedLocations() : readRecentSpots();
-      if (!list.length) return;
-
-      const safeIndex = Math.max(0, Math.min(Number(index) || 0, list.length - 1));
-      const selectedSpot = normalizeSpot(list[safeIndex]);
+    function selectPanelIndex(listName, index, { closeDropdown = true } = {}) {
+      const safeIndex = Math.max(0, Number(index) || 0);
 
       if (listName === "named") {
-        savedPanelIndex = safeIndex;
+        const named = readNamedLocations();
+        if (!named.length) return;
+
+        const selected = named[safeIndex];
+        if (!selected) return;
+
+        const reordered = [
+          selected,
+          ...named.filter((_, itemIndex) => itemIndex !== safeIndex)
+        ].slice(0, MAX_NAMED_LOCATIONS);
+
+        writeNamedLocations(reordered);
+        savedPanelIndex = 0;
       } else {
-        recentPanelIndex = safeIndex;
+        const recent = readRecentSpots();
+        if (!recent.length) return;
+
+        const selected = recent[safeIndex];
+        if (!selected) return;
+
+        const reordered = [
+          selected,
+          ...recent.filter((_, itemIndex) => itemIndex !== safeIndex)
+        ].slice(0, MAX_RECENT_SPOTS);
+
+        writeRecentSpots(reordered);
+        recentPanelIndex = 0;
       }
 
-      lastKnownSpot = selectedSpot;
-      updateHeroFromSpot(selectedSpot);
       renderSpotLists();
-      closeAllDropdowns();
 
-      debugLog("Spot selected from list", {
-        list: listName,
-        index: safeIndex,
-        name: selectedSpot.name || "",
-        accuracy: selectedSpot.accuracy || null
+      if (closeDropdown) {
+        closeAllDropdowns();
+      }
+
+      syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
+        cloudFailureTitle: "Saved locally"
+      });
+
+      debugLog("Section preview promoted", {
+        section: listName === "named" ? "saved" : "recent",
+        previousIndex: safeIndex
       });
     }
 
@@ -3550,10 +3641,22 @@
       row.className = `dropdown-spot-row ${options.selected ? "selected" : ""} ${options.list === "recent" ? "recent-row-actions" : ""}`.trim();
       row.dataset.list = options.list;
       row.dataset.index = String(options.index);
+      row.setAttribute("role", "button");
+      row.tabIndex = 0;
 
-      row.addEventListener("click", (event) => {
+      function chooseThisRow(event) {
         if (event.target.closest("button[data-action]")) return;
+        event.preventDefault();
+        event.stopPropagation();
         selectPanelIndex(options.list, options.index);
+      }
+
+      row.addEventListener("click", chooseThisRow);
+      row.addEventListener("pointerup", chooseThisRow);
+      row.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          chooseThisRow(event);
+        }
       });
 
       const main = document.createElement("div");
@@ -3719,7 +3822,7 @@
         savedDropdownEl.appendChild(dropEmpty);
       } else {
         const spot = named[savedPanelIndex];
-        const name = spot.name || `Saved place ${savedPanelIndex + 1}`;
+        const name = spot.name || `Saved spot ${savedPanelIndex + 1}`;
         savedListEl.appendChild(createSpotItem(spot, {
           list: "named",
           index: savedPanelIndex,
@@ -3728,7 +3831,7 @@
         }));
 
         named.forEach((rowSpot, index) => {
-          const rowName = rowSpot.name || `Saved place ${index + 1}`;
+          const rowName = rowSpot.name || `Saved spot ${index + 1}`;
           savedDropdownEl.appendChild(createDropdownSpotRow(rowSpot, {
             list: "named",
             index,
@@ -3961,6 +4064,8 @@
       if (!button) {
         const row = event.target.closest(".dropdown-spot-row[data-list]");
         if (row) {
+          event.preventDefault();
+          event.stopPropagation();
           selectPanelIndex(row.dataset.list, row.dataset.index);
         }
         return;
@@ -4511,7 +4616,7 @@
       const normalizedSpot = normalizeSpot(spot);
       saveLocalBackup(normalizedSpot);
       addRecentSpot(normalizedSpot);
-      lastKnownSpot = normalizedSpot;
+      setActivePreviewSpot(normalizedSpot);
       updateHeroFromSpot(normalizedSpot);
       vibratePattern("success");
 
@@ -4601,11 +4706,41 @@
       }
     }
 
-    function getBestAvailableSpot() {
-      if (lastKnownSpot) return { spot: lastKnownSpot };
+    function setActivePreviewSpot(spot) {
+      if (!spot || typeof spot.lat !== "number" || typeof spot.lng !== "number") {
+        activePreviewSpot = null;
+        return null;
+      }
+
+      activePreviewSpot = normalizeSpot(spot);
+      lastKnownSpot = activePreviewSpot;
+      return activePreviewSpot;
+    }
+
+    function getActivePreviewSpot() {
+      if (activePreviewSpot && typeof activePreviewSpot.lat === "number" && typeof activePreviewSpot.lng === "number") {
+        return normalizeSpot(activePreviewSpot);
+      }
+
+      if (lastKnownSpot && typeof lastKnownSpot.lat === "number" && typeof lastKnownSpot.lng === "number") {
+        return normalizeSpot(lastKnownSpot);
+      }
 
       const localSpot = readLocalBackup();
-      if (localSpot) return { spot: localSpot };
+      if (localSpot) return normalizeSpot(localSpot);
+
+      const recent = readRecentSpots();
+      if (recent.length) return normalizeSpot(recent[0]);
+
+      const named = readNamedLocations();
+      if (named.length) return normalizeSpot(named[0]);
+
+      return null;
+    }
+
+    function getBestAvailableSpot() {
+      const activeSpot = getActivePreviewSpot();
+      if (activeSpot) return { spot: activeSpot };
 
       return { spot: null };
     }
@@ -4622,9 +4757,9 @@
           return;
         }
 
-        lastKnownSpot = normalizeSpot(chosen);
-        updateHeroFromSpot(lastKnownSpot);
-        openSpotOnMap(lastKnownSpot, false);
+        const activeSpot = setActivePreviewSpot(chosen);
+        updateHeroFromSpot(activeSpot);
+        openSpotOnMap(activeSpot, false);
       } finally {
         setBusy(false);
       }
@@ -4642,9 +4777,9 @@
           return;
         }
 
-        lastKnownSpot = normalizeSpot(chosen);
-        updateHeroFromSpot(lastKnownSpot);
-        openSpotOnMap(lastKnownSpot, true);
+        const activeSpot = setActivePreviewSpot(chosen);
+        updateHeroFromSpot(activeSpot);
+        openSpotOnMap(activeSpot, true);
       } finally {
         setBusy(false);
       }
@@ -4669,6 +4804,7 @@
         clearLocalBackup();
         sessionStorage.removeItem(SESSION_SAVE_KEY);
         lastKnownSpot = null;
+        activePreviewSpot = null;
 
         await syncAllParkingDataToCloud(null, {
           clearCurrent: true,
@@ -4722,7 +4858,7 @@
 
     showBtn.addEventListener("click", showSavedLocation);
     navigateBtn.addEventListener("click", navigateToSavedLocation);
-    shareCurrentBtn.addEventListener("click", shareCurrentSpot);
+    if (shareCurrentBtn) shareCurrentBtn.addEventListener("click", shareCurrentSpot);
     saveNamedBtn.addEventListener("click", saveCurrentSpotWithName);
     clearBtn.addEventListener("click", clearSavedLocation);
     cancelSaveBtn.addEventListener("click", cancelSaveAnyway);
@@ -4771,7 +4907,7 @@
 
       const localSpot = readLocalBackup();
       if (localSpot) {
-        lastKnownSpot = localSpot;
+        setActivePreviewSpot(localSpot);
         updateHeroFromSpot(localSpot);
       } else {
         setHeroState("waiting", "No saved location", "");
@@ -4784,7 +4920,7 @@
           const cloudSpot = await loadCloudSpot();
 
           if (cloudSpot) {
-            lastKnownSpot = cloudSpot;
+            setActivePreviewSpot(cloudSpot);
             saveLocalBackup(cloudSpot);
             updateHeroFromSpot(cloudSpot);
           }
