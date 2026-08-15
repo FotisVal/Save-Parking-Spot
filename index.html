@@ -2956,14 +2956,45 @@
     }
 
 
-    /* ParkNous v26: modal touch surface for opened lists */
+    /* ParkNous v28: startup restore, cyan lists, safe modal touch layer, swipe */
+    .spot-panel {
+      background:
+        radial-gradient(circle at 86% 12%, rgba(34, 211, 238, 0.16), transparent 35%),
+        linear-gradient(180deg, rgba(34, 211, 238, 0.075), rgba(255,255,255,0.030));
+      border-color: rgba(34, 211, 238, 0.18);
+    }
+
+    .spot-panel.open {
+      border-color: rgba(34, 211, 238, 0.34);
+      box-shadow:
+        0 0 0 1px rgba(34, 211, 238, 0.10),
+        0 18px 38px rgba(0,0,0,0.24);
+    }
+
+    .spot-item {
+      background:
+        radial-gradient(circle at 92% 8%, rgba(34, 211, 238, 0.16), transparent 34%),
+        rgba(7, 23, 31, 0.38);
+      border-color: rgba(34, 211, 238, 0.14);
+    }
+
+    .spot-badge {
+      background: rgba(34, 211, 238, 0.13);
+      border-color: rgba(34, 211, 238, 0.26);
+      color: rgba(218, 250, 255, 0.96);
+    }
+
+    .spot-list {
+      touch-action: pan-y;
+    }
+
     .list-touch-layer {
       position: fixed;
       inset: 0;
       z-index: 5000;
       background: transparent;
       pointer-events: auto;
-      touch-action: auto;
+      touch-action: manipulation;
     }
 
     .list-touch-layer[hidden] {
@@ -2988,11 +3019,11 @@
       display: grid;
       gap: 8px;
       padding: 10px;
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(34, 211, 238, 0.26);
       border-radius: 20px;
       background:
-        radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.12), transparent 40%),
-        rgba(13, 16, 23, 0.985);
+        radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.18), transparent 42%),
+        rgba(8, 18, 26, 0.985);
       box-shadow: 0 22px 58px rgba(0,0,0,0.62);
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
@@ -3011,15 +3042,15 @@
     .touch-list-title {
       font-size: 0.88rem;
       font-weight: 950;
-      color: #ffffff;
+      color: #e5fbff;
     }
 
     .touch-list-close {
       width: 34px;
       height: 34px;
       border-radius: 12px;
-      border: 1px solid rgba(255,255,255,0.14);
-      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(34, 211, 238, 0.20);
+      background: rgba(34, 211, 238, 0.10);
       color: #ffffff;
       font-size: 1rem;
       font-weight: 950;
@@ -3027,93 +3058,24 @@
 
     .touch-list-row {
       display: grid;
-      grid-template-columns: 1fr auto auto;
-      align-items: center;
-      gap: 8px;
-      padding: 10px;
-      border-radius: 15px;
-      border: 1px solid rgba(255,255,255,0.10);
-      background: rgba(255,255,255,0.045);
-      cursor: pointer;
-      user-select: none;
-      -webkit-user-select: none;
-      pointer-events: auto;
-      touch-action: manipulation;
-    }
-
-    .touch-list-row.recent-row-actions {
-      grid-template-columns: 1fr auto auto auto;
-    }
-
-    .touch-list-row.selected {
-      outline: 1px solid rgba(53, 208, 127, 0.58);
-      box-shadow: inset 0 0 0 1px rgba(53, 208, 127, 0.22);
-      background: rgba(53, 208, 127, 0.11);
-    }
-
-    .touch-list-name {
-      font-size: 0.74rem;
-      font-weight: 900;
-      color: #ffffff;
-    }
-
-    .touch-list-meta {
-      margin-top: 2px;
-      font-size: 0.60rem;
-      color: rgba(232, 238, 255, 0.68);
-    }
-
-    .touch-list-btn {
-      width: 34px;
-      min-height: 34px;
-      border-radius: 11px;
-      border: 1px solid rgba(255,255,255,0.12);
-      background: linear-gradient(180deg, rgba(73, 86, 110, 0.95), rgba(37, 45, 61, 0.95));
-      color: #ffffff;
-      font-weight: 950;
-      pointer-events: auto;
-      touch-action: manipulation;
-    }
-
-    .touch-list-btn.bad {
-      border-color: rgba(255, 117, 125, 0.45);
-      background: rgba(255, 117, 125, 0.18);
-      color: #ffd4d7;
-    }
-
-    .touch-list-empty {
-      padding: 12px;
-      border-radius: 14px;
-      color: rgba(232, 238, 255, 0.72);
-      background: rgba(255,255,255,0.05);
-    }
-
-    @media (max-width: 370px) {
-      .list-touch-content {
-        top: 64px;
-        max-height: calc(100svh - 78px);
-      }
-
-      .touch-list-sheet {
-        max-height: calc(100svh - 78px);
-      }
-    }
-
-
-    /* ParkNous v27: separated touch zones + restored preview swipe */
-    .spot-list {
-      touch-action: pan-y;
-    }
-
-    .touch-list-row {
       grid-template-columns: minmax(0, 1fr) 54px 54px;
       align-items: stretch;
       gap: 7px;
       padding: 8px;
+      border-radius: 15px;
+      border: 1px solid rgba(34, 211, 238, 0.13);
+      background: rgba(34, 211, 238, 0.055);
+      pointer-events: auto;
     }
 
     .touch-list-row.recent-row-actions {
       grid-template-columns: minmax(0, 1fr) 54px 54px 54px;
+    }
+
+    .touch-list-row.selected {
+      outline: 1px solid rgba(34, 211, 238, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.22);
+      background: rgba(34, 211, 238, 0.13);
     }
 
     .touch-list-select {
@@ -3121,7 +3083,7 @@
       width: 100%;
       min-height: 48px;
       padding: 8px 9px;
-      border: 1px solid rgba(255,255,255,0.10);
+      border: 1px solid rgba(34, 211, 238, 0.13);
       border-radius: 13px;
       background: rgba(255,255,255,0.045);
       color: inherit;
@@ -3134,7 +3096,25 @@
 
     .touch-list-select:active {
       transform: scale(0.992);
-      background: rgba(53, 208, 127, 0.10);
+      background: rgba(34, 211, 238, 0.13);
+    }
+
+    .touch-list-name {
+      font-size: 0.74rem;
+      font-weight: 900;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .touch-list-meta {
+      margin-top: 2px;
+      font-size: 0.60rem;
+      color: rgba(218, 250, 255, 0.72);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .touch-list-btn {
@@ -3144,23 +3124,41 @@
       font-size: 0.58rem;
       line-height: 1;
       border-radius: 13px;
+      border: 1px solid rgba(34, 211, 238, 0.18);
+      background: linear-gradient(180deg, rgba(45, 101, 122, 0.95), rgba(28, 52, 70, 0.95));
+      color: #ffffff;
+      font-weight: 950;
       pointer-events: auto;
       touch-action: manipulation;
     }
 
-    .touch-list-name {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .touch-list-btn.save {
+      background: linear-gradient(180deg, rgba(52, 211, 170, 0.95), rgba(17, 132, 111, 0.95));
     }
 
-    .touch-list-meta {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    .touch-list-btn.bad {
+      border-color: rgba(255, 117, 125, 0.45);
+      background: rgba(255, 117, 125, 0.18);
+      color: #ffd4d7;
+    }
+
+    .touch-list-empty {
+      padding: 12px;
+      border-radius: 14px;
+      color: rgba(218, 250, 255, 0.72);
+      background: rgba(34, 211, 238, 0.06);
     }
 
     @media (max-width: 370px) {
+      .list-touch-content {
+        top: 64px;
+        max-height: calc(100svh - 78px);
+      }
+
+      .touch-list-sheet {
+        max-height: calc(100svh - 78px);
+      }
+
       .touch-list-row {
         grid-template-columns: minmax(0, 1fr) 48px 48px;
         gap: 6px;
@@ -3205,8 +3203,8 @@
           </div>
         </div>
 
-        <div id="heroTitle" class="hero-title">Starting...</div>
-        <div id="heroText" class="hero-text">Preparing secure storage.</div>
+        <div id="heroTitle" class="hero-title">ParkNous ready</div>
+        <div id="heroText" class="hero-text">Loading saved spots.</div>
         <div id="heroMeta" class="hero-meta"></div>
 
         <div id="saveAnywayRow" class="action-row">
@@ -3442,6 +3440,21 @@
       console.log("[ParkNous]", message, payload || "");
     }
 
+    window.addEventListener("error", (event) => {
+      console.error("ParkNous runtime error:", event.error || event.message);
+      debugLog("Runtime error", {
+        message: event.message || String(event.error || "")
+      });
+    });
+
+    window.addEventListener("unhandledrejection", (event) => {
+      console.error("ParkNous unhandled promise:", event.reason);
+      debugLog("Unhandled promise", {
+        message: event.reason?.message || String(event.reason || "")
+      });
+    });
+
+
     function isNfcSaveMode() {
       return (
         params.get("mode") === "save" ||
@@ -3541,13 +3554,17 @@
     }
 
     function setBusy(isBusy) {
-      showBtn.disabled = isBusy;
-      navigateBtn.disabled = isBusy;
-      shareCurrentBtn.disabled = isBusy;
-      saveNamedBtn.disabled = isBusy;
-      clearBtn.disabled = isBusy;
-      cancelSaveBtn.disabled = isBusy;
-      saveAnywayBtn.disabled = isBusy;
+      [
+        showBtn,
+        navigateBtn,
+        shareCurrentBtn,
+        saveNamedBtn,
+        clearBtn,
+        cancelSaveBtn,
+        saveAnywayBtn
+      ].forEach((button) => {
+        if (button) button.disabled = isBusy;
+      });
     }
 
     function vibratePattern(type) {
@@ -3731,6 +3748,8 @@
     }
 
 
+    let suppressUnderlyingClickUntil = 0;
+
     function anyDropdownOpen() {
       return Boolean(listTouchLayerEl && !listTouchLayerEl.hidden);
     }
@@ -3755,11 +3774,9 @@
       }
     }
 
-    function createTouchLayerRow(spot, { list, index, name, selected = false } = {}) {
+    function buildTouchLayerRow(spot, { list, index, name, selected = false } = {}) {
       const row = document.createElement("div");
       row.className = `touch-list-row ${selected ? "selected" : ""} ${list === "recent" ? "recent-row-actions" : ""}`.trim();
-      row.dataset.list = list;
-      row.dataset.index = String(index);
 
       const select = document.createElement("button");
       select.type = "button";
@@ -3793,7 +3810,7 @@
         primary.dataset.action = "navigate";
       } else {
         primary.textContent = "Show";
-        primary.title = "Show";
+        primary.title = "Show on map";
         primary.dataset.action = "show";
       }
 
@@ -3802,7 +3819,7 @@
       if (list === "recent") {
         const save = document.createElement("button");
         save.type = "button";
-        save.className = "touch-list-btn";
+        save.className = "touch-list-btn save";
         save.textContent = "Save";
         save.title = "Save spot";
         save.dataset.action = "save-name";
@@ -3866,7 +3883,7 @@
             ? (spot.name || `Saved spot ${index + 1}`)
             : `Recent ${index + 1} • ${formatDate(spot.savedAtMillis)}`;
 
-          sheet.appendChild(createTouchLayerRow(spot, {
+          sheet.appendChild(buildTouchLayerRow(spot, {
             list: listName,
             index,
             name,
@@ -3898,10 +3915,10 @@
     }
 
     function toggleTouchLayerList(listName) {
+      const openSheet = listTouchContentEl?.querySelector(".touch-list-sheet");
       const alreadyOpen = listTouchLayerEl &&
         !listTouchLayerEl.hidden &&
-        listTouchContentEl &&
-        listTouchContentEl.querySelector(".touch-list-sheet")?.dataset.list === listName;
+        openSheet?.dataset.list === listName;
 
       if (alreadyOpen) {
         closeAllDropdowns();
@@ -3926,18 +3943,20 @@
       toggleTouchLayerList(listName);
     }
 
-    async function handleTouchLayerAction(event) {
+    async function handleTouchLayerClick(event) {
       if (!listTouchLayerEl || listTouchLayerEl.hidden) return;
 
-      if (event.target === listTouchLayerEl) {
+      const clickedOutsideSheet = event.target === listTouchLayerEl;
+
+      if (clickedOutsideSheet) {
         event.preventDefault();
         event.stopPropagation();
+        suppressUnderlyingClickUntil = Date.now() + 500;
         closeAllDropdowns();
         return;
       }
 
       const button = event.target.closest("button[data-action]");
-
       if (!button) return;
 
       event.preventDefault();
@@ -3975,11 +3994,13 @@
 
       if (action === "save-name") {
         await saveSpotWithName(spot);
+        closeAllDropdowns();
         return;
       }
 
       if (action === "delete") {
         await deleteSpotFromList(listName, index);
+        closeAllDropdowns();
       }
     }
 
@@ -4048,7 +4069,7 @@
         cloudFailureTitle: "Saved locally"
       });
 
-      debugLog("List row selected and promoted", {
+      debugLog("List item promoted to preview", {
         section: listName === "named" ? "saved" : "recent",
         previousIndex: safeIndex
       });
@@ -4095,8 +4116,6 @@
         trackEl.addEventListener("pointercancel", () => {
           pointerActive = false;
         }, { passive: true });
-
-        return;
       }
 
       trackEl.addEventListener("touchstart", (event) => {
@@ -4117,6 +4136,23 @@
       row.className = `dropdown-spot-row ${options.selected ? "selected" : ""} ${options.list === "recent" ? "recent-row-actions" : ""}`.trim();
       row.dataset.list = options.list;
       row.dataset.index = String(options.index);
+      row.setAttribute("role", "button");
+      row.tabIndex = 0;
+
+      function chooseThisRow(event) {
+        if (event.target.closest("button[data-action]")) return;
+        event.preventDefault();
+        event.stopPropagation();
+        selectPanelIndex(options.list, options.index);
+      }
+
+      row.addEventListener("click", chooseThisRow);
+      row.addEventListener("pointerup", chooseThisRow);
+      row.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          chooseThisRow(event);
+        }
+      });
 
       const main = document.createElement("div");
       main.className = "dropdown-main";
@@ -5204,6 +5240,38 @@
       return { spot: null };
     }
 
+    function restoreImmediateFromMemory() {
+      renderSpotLists();
+
+      const localSpot = readLocalBackup();
+      const recent = readRecentSpots();
+      const named = readNamedLocations();
+
+      if (localSpot) {
+        setActivePreviewSpot(localSpot);
+        updateHeroFromSpot(localSpot);
+        setPill(localPillEl, "Local backup: ready", "ok");
+      } else if (recent.length) {
+        const newestRecent = normalizeSpot(recent[0]);
+        setActivePreviewSpot(newestRecent);
+        updateHeroFromSpot(newestRecent);
+        setPill(localPillEl, "Local backup: recent ready", "ok");
+      } else if (named.length) {
+        const firstNamed = normalizeSpot(named[0]);
+        setActivePreviewSpot(firstNamed);
+        updateHeroFromSpot(firstNamed);
+        setPill(localPillEl, "Local backup: saved ready", "ok");
+      } else {
+        setHeroState("waiting", "No saved location", "Save your parking spot to start.");
+        setPill(localPillEl, "Local backup: empty");
+      }
+
+      if (currentMode !== "save") {
+        setPill(modePillEl, "Mode: view only");
+      }
+    }
+
+
     async function showSavedLocation() {
       hideSaveAnyway();
       setBusy(true);
@@ -5326,12 +5394,7 @@
     savedListEl.addEventListener("click", handleSpotListClick);
     recentDropdownEl.addEventListener("click", handleSpotListClick);
     savedDropdownEl.addEventListener("click", handleSpotListClick);
-    if (listBackdropEl) listBackdropEl.addEventListener("click", closeAllDropdowns);
-
-    if (listTouchLayerEl) {
-      listTouchLayerEl.addEventListener("pointerup", handleTouchLayerAction);
-    }
-
+    listBackdropEl.addEventListener("click", closeAllDropdowns);
     recentToggleBtn.addEventListener("click", () => toggleTouchLayerList("recent"));
     savedToggleBtn.addEventListener("click", () => toggleTouchLayerList("named"));
     bindPanelHeaderToggle(recentPanelEl, recentDropdownEl);
@@ -5341,10 +5404,10 @@
 
     async function init() {
       try {
-        setBusy(true);
         renderSpotLists();
 
         if (currentMode === "save") {
+          setBusy(true);
           setPill(modePillEl, "Mode: NFC save", "ok");
           setPill(localPillEl, "Local backup: skipped during save", "warn");
 
@@ -5363,23 +5426,19 @@
             setPill(modePillEl, "Mode: view only");
           }
 
+          setBusy(false);
           return;
         }
 
-        setPill(modePillEl, "Mode: view only");
+        // View mode: show what exists locally immediately.
+        // Do not wait for Firebase, so the app never sits on “Starting”.
+        restoreImmediateFromMemory();
+        setBusy(false);
 
-        const localSpot = readLocalBackup();
-        if (localSpot) {
-          setActivePreviewSpot(localSpot);
-          updateHeroFromSpot(localSpot);
-        } else {
-          setHeroState("waiting", "No saved location", "");
-        }
+        loginReadyPromise
+          .then(async (user) => {
+            if (!user) return;
 
-        try {
-          const user = await loginReadyPromise;
-
-          if (user) {
             const cloudSpot = await loadCloudSpot();
 
             if (cloudSpot) {
@@ -5387,22 +5446,24 @@
               saveLocalBackup(cloudSpot);
               updateHeroFromSpot(cloudSpot);
             }
-          }
-        } catch (error) {
-          console.error(error);
-          debugLog("Cloud load during init failed", {
-            message: error?.message || String(error)
+
+            restoreImmediateFromMemory();
+          })
+          .catch((error) => {
+            console.error(error);
+            debugLog("Background cloud load failed", {
+              message: error?.message || String(error)
+            });
           });
-        }
       } catch (error) {
         console.error("Init failed", error);
         debugLog("Init failed", {
           message: error?.message || String(error)
         });
+
         setPill(modePillEl, "Mode: view only", "warn");
         setPill(localPillEl, "Local backup: ready", "ok");
         setHeroState("waiting", "ParkNous ready", "Open a list or save your parking spot.");
-      } finally {
         setBusy(false);
       }
     }
