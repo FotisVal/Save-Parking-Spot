@@ -2956,7 +2956,7 @@
     }
 
 
-    /* ParkNous v28: startup restore, cyan lists, safe modal touch layer, swipe */
+    /* ParkNous stable list fix: cyan modal lists + swipe */
     .spot-panel {
       background:
         radial-gradient(circle at 86% 12%, rgba(34, 211, 238, 0.16), transparent 35%),
@@ -2988,34 +2988,27 @@
       touch-action: pan-y;
     }
 
-    .list-touch-layer {
+    .spot-list-modal {
       position: fixed;
       inset: 0;
-      z-index: 5000;
+      z-index: 10000;
       background: transparent;
       pointer-events: auto;
       touch-action: manipulation;
     }
 
-    .list-touch-layer[hidden] {
+    .spot-list-modal[hidden] {
       display: none;
     }
 
-    .list-touch-content {
+    .spot-list-modal-sheet {
       position: fixed;
       left: 50%;
       top: 72px;
       width: min(calc(100vw - 28px), 410px);
       max-height: calc(100svh - 88px);
       transform: translateX(-50%);
-      z-index: 5001;
-      pointer-events: auto;
-      touch-action: auto;
-    }
-
-    .touch-list-sheet {
-      width: 100%;
-      max-height: calc(100svh - 88px);
+      z-index: 10001;
       display: grid;
       gap: 8px;
       padding: 10px;
@@ -3031,7 +3024,7 @@
       touch-action: pan-y;
     }
 
-    .touch-list-head {
+    .spot-list-modal-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -3039,13 +3032,13 @@
       padding: 2px 2px 6px;
     }
 
-    .touch-list-title {
+    .spot-list-modal-title {
       font-size: 0.88rem;
       font-weight: 950;
       color: #e5fbff;
     }
 
-    .touch-list-close {
+    .spot-list-modal-close {
       width: 34px;
       height: 34px;
       border-radius: 12px;
@@ -3056,9 +3049,9 @@
       font-weight: 950;
     }
 
-    .touch-list-row {
+    .spot-list-modal-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 54px 54px;
+      grid-template-columns: minmax(0, 1fr) 56px 56px;
       align-items: stretch;
       gap: 7px;
       padding: 8px;
@@ -3068,20 +3061,20 @@
       pointer-events: auto;
     }
 
-    .touch-list-row.recent-row-actions {
-      grid-template-columns: minmax(0, 1fr) 54px 54px 54px;
+    .spot-list-modal-row.recent-actions {
+      grid-template-columns: minmax(0, 1fr) 56px 56px 56px;
     }
 
-    .touch-list-row.selected {
+    .spot-list-modal-row.selected {
       outline: 1px solid rgba(34, 211, 238, 0.58);
       box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.22);
       background: rgba(34, 211, 238, 0.13);
     }
 
-    .touch-list-select {
+    .spot-list-modal-preview {
       min-width: 0;
       width: 100%;
-      min-height: 48px;
+      min-height: 50px;
       padding: 8px 9px;
       border: 1px solid rgba(34, 211, 238, 0.13);
       border-radius: 13px;
@@ -3094,12 +3087,12 @@
       touch-action: manipulation;
     }
 
-    .touch-list-select:active {
+    .spot-list-modal-preview:active {
       transform: scale(0.992);
       background: rgba(34, 211, 238, 0.13);
     }
 
-    .touch-list-name {
+    .spot-list-modal-name {
       font-size: 0.74rem;
       font-weight: 900;
       color: #ffffff;
@@ -3108,7 +3101,7 @@
       text-overflow: ellipsis;
     }
 
-    .touch-list-meta {
+    .spot-list-modal-meta {
       margin-top: 2px;
       font-size: 0.60rem;
       color: rgba(218, 250, 255, 0.72);
@@ -3117,9 +3110,9 @@
       text-overflow: ellipsis;
     }
 
-    .touch-list-btn {
-      width: 54px;
-      min-height: 48px;
+    .spot-list-modal-btn {
+      width: 56px;
+      min-height: 50px;
       padding: 0 4px;
       font-size: 0.58rem;
       line-height: 1;
@@ -3132,17 +3125,17 @@
       touch-action: manipulation;
     }
 
-    .touch-list-btn.save {
+    .spot-list-modal-btn.save {
       background: linear-gradient(180deg, rgba(52, 211, 170, 0.95), rgba(17, 132, 111, 0.95));
     }
 
-    .touch-list-btn.bad {
+    .spot-list-modal-btn.delete {
       border-color: rgba(255, 117, 125, 0.45);
       background: rgba(255, 117, 125, 0.18);
       color: #ffd4d7;
     }
 
-    .touch-list-empty {
+    .spot-list-modal-empty {
       padding: 12px;
       border-radius: 14px;
       color: rgba(218, 250, 255, 0.72);
@@ -3150,31 +3143,27 @@
     }
 
     @media (max-width: 370px) {
-      .list-touch-content {
+      .spot-list-modal-sheet {
         top: 64px;
         max-height: calc(100svh - 78px);
       }
 
-      .touch-list-sheet {
-        max-height: calc(100svh - 78px);
-      }
-
-      .touch-list-row {
-        grid-template-columns: minmax(0, 1fr) 48px 48px;
+      .spot-list-modal-row {
+        grid-template-columns: minmax(0, 1fr) 50px 50px;
         gap: 6px;
         padding: 7px;
       }
 
-      .touch-list-row.recent-row-actions {
-        grid-template-columns: minmax(0, 1fr) 48px 48px 48px;
+      .spot-list-modal-row.recent-actions {
+        grid-template-columns: minmax(0, 1fr) 50px 50px 50px;
       }
 
-      .touch-list-btn {
-        width: 48px;
+      .spot-list-modal-btn {
+        width: 50px;
         font-size: 0.52rem;
       }
 
-      .touch-list-select {
+      .spot-list-modal-preview {
         padding: 8px;
       }
     }
@@ -3203,8 +3192,8 @@
           </div>
         </div>
 
-        <div id="heroTitle" class="hero-title">ParkNous ready</div>
-        <div id="heroText" class="hero-text">Loading saved spots.</div>
+        <div id="heroTitle" class="hero-title">Starting...</div>
+        <div id="heroText" class="hero-text">Preparing secure storage.</div>
         <div id="heroMeta" class="hero-meta"></div>
 
         <div id="saveAnywayRow" class="action-row">
@@ -3300,8 +3289,8 @@
   </div>
 
   <div id="listBackdrop" class="list-backdrop" hidden></div>
-  <div id="listTouchLayer" class="list-touch-layer" hidden>
-    <div id="listTouchContent" class="list-touch-content"></div>
+  <div id="spotListModal" class="spot-list-modal" hidden>
+    <div id="spotListModalSheet" class="spot-list-modal-sheet"></div>
   </div>
 
   <div id="confirmBanner" class="confirm-banner" aria-hidden="true">
@@ -3404,8 +3393,8 @@
     const saveAnywayBtn = document.getElementById("saveAnywayBtn");
 
     const listBackdropEl = document.getElementById("listBackdrop");
-    const listTouchLayerEl = document.getElementById("listTouchLayer");
-    const listTouchContentEl = document.getElementById("listTouchContent");
+    const spotListModalEl = document.getElementById("spotListModal");
+    const spotListModalSheetEl = document.getElementById("spotListModalSheet");
     const confirmBannerEl = document.getElementById("confirmBanner");
     const confirmTitleEl = document.getElementById("confirmTitle");
     const confirmTextEl = document.getElementById("confirmText");
@@ -3439,21 +3428,6 @@
 
       console.log("[ParkNous]", message, payload || "");
     }
-
-    window.addEventListener("error", (event) => {
-      console.error("ParkNous runtime error:", event.error || event.message);
-      debugLog("Runtime error", {
-        message: event.message || String(event.error || "")
-      });
-    });
-
-    window.addEventListener("unhandledrejection", (event) => {
-      console.error("ParkNous unhandled promise:", event.reason);
-      debugLog("Unhandled promise", {
-        message: event.reason?.message || String(event.reason || "")
-      });
-    });
-
 
     function isNfcSaveMode() {
       return (
@@ -3554,17 +3528,13 @@
     }
 
     function setBusy(isBusy) {
-      [
-        showBtn,
-        navigateBtn,
-        shareCurrentBtn,
-        saveNamedBtn,
-        clearBtn,
-        cancelSaveBtn,
-        saveAnywayBtn
-      ].forEach((button) => {
-        if (button) button.disabled = isBusy;
-      });
+      showBtn.disabled = isBusy;
+      navigateBtn.disabled = isBusy;
+      shareCurrentBtn.disabled = isBusy;
+      saveNamedBtn.disabled = isBusy;
+      clearBtn.disabled = isBusy;
+      cancelSaveBtn.disabled = isBusy;
+      saveAnywayBtn.disabled = isBusy;
     }
 
     function vibratePattern(type) {
@@ -3748,10 +3718,10 @@
     }
 
 
-    let suppressUnderlyingClickUntil = 0;
+    let ignoreUnderlyingClickUntil = 0;
 
     function anyDropdownOpen() {
-      return Boolean(listTouchLayerEl && !listTouchLayerEl.hidden);
+      return Boolean(spotListModalEl && !spotListModalEl.hidden);
     }
 
     function closeAllDropdowns() {
@@ -3760,143 +3730,134 @@
 
       if (savedDropdownEl) savedDropdownEl.hidden = true;
       if (recentDropdownEl) recentDropdownEl.hidden = true;
+      if (listBackdropEl) listBackdropEl.hidden = true;
 
-      if (listTouchContentEl) {
-        listTouchContentEl.textContent = "";
+      if (spotListModalSheetEl) {
+        spotListModalSheetEl.textContent = "";
+        spotListModalSheetEl.dataset.list = "";
       }
 
-      if (listTouchLayerEl) {
-        listTouchLayerEl.hidden = true;
-      }
-
-      if (listBackdropEl) {
-        listBackdropEl.hidden = true;
+      if (spotListModalEl) {
+        spotListModalEl.hidden = true;
       }
     }
 
-    function buildTouchLayerRow(spot, { list, index, name, selected = false } = {}) {
+    function createSpotListModalRow(spot, { list, index, name, selected = false } = {}) {
       const row = document.createElement("div");
-      row.className = `touch-list-row ${selected ? "selected" : ""} ${list === "recent" ? "recent-row-actions" : ""}`.trim();
+      row.className = `spot-list-modal-row ${selected ? "selected" : ""} ${list === "recent" ? "recent-actions" : ""}`.trim();
 
-      const select = document.createElement("button");
-      select.type = "button";
-      select.className = "touch-list-select";
-      select.dataset.action = "select";
-      select.dataset.list = list;
-      select.dataset.index = String(index);
-      select.title = "Show this spot in the preview";
+      const previewButton = document.createElement("button");
+      previewButton.type = "button";
+      previewButton.className = "spot-list-modal-preview";
+      previewButton.dataset.modalAction = "preview";
+      previewButton.dataset.list = list;
+      previewButton.dataset.index = String(index);
 
       const title = document.createElement("div");
-      title.className = "touch-list-name";
+      title.className = "spot-list-modal-name";
       title.textContent = name || spot.name || `Spot • ${formatDate(spot.savedAtMillis)}`;
 
       const meta = document.createElement("div");
-      meta.className = "touch-list-meta";
+      meta.className = "spot-list-modal-meta";
       meta.textContent = `${formatDate(spot.savedAtMillis)} • ${formatAccuracy(spot.accuracy)}`;
 
-      select.appendChild(title);
-      select.appendChild(meta);
-      row.appendChild(select);
+      previewButton.appendChild(title);
+      previewButton.appendChild(meta);
+      row.appendChild(previewButton);
 
-      const primary = document.createElement("button");
-      primary.type = "button";
-      primary.className = "touch-list-btn";
-      primary.dataset.list = list;
-      primary.dataset.index = String(index);
+      const primaryButton = document.createElement("button");
+      primaryButton.type = "button";
+      primaryButton.className = "spot-list-modal-btn";
+      primaryButton.dataset.list = list;
+      primaryButton.dataset.index = String(index);
 
       if (list === "named") {
-        primary.textContent = "Nav";
-        primary.title = "Navigate";
-        primary.dataset.action = "navigate";
+        primaryButton.textContent = "Nav";
+        primaryButton.title = "Navigate";
+        primaryButton.dataset.modalAction = "navigate";
       } else {
-        primary.textContent = "Show";
-        primary.title = "Show on map";
-        primary.dataset.action = "show";
+        primaryButton.textContent = "Show";
+        primaryButton.title = "Show";
+        primaryButton.dataset.modalAction = "show";
       }
 
-      row.appendChild(primary);
+      row.appendChild(primaryButton);
 
       if (list === "recent") {
-        const save = document.createElement("button");
-        save.type = "button";
-        save.className = "touch-list-btn save";
-        save.textContent = "Save";
-        save.title = "Save spot";
-        save.dataset.action = "save-name";
-        save.dataset.list = list;
-        save.dataset.index = String(index);
-        row.appendChild(save);
+        const saveButton = document.createElement("button");
+        saveButton.type = "button";
+        saveButton.className = "spot-list-modal-btn save";
+        saveButton.textContent = "Save";
+        saveButton.title = "Save spot";
+        saveButton.dataset.modalAction = "save-name";
+        saveButton.dataset.list = list;
+        saveButton.dataset.index = String(index);
+        row.appendChild(saveButton);
       }
 
-      const del = document.createElement("button");
-      del.type = "button";
-      del.className = "touch-list-btn bad";
-      del.textContent = "Del";
-      del.title = list === "named" ? "Delete saved spot" : "Delete recent spot";
-      del.dataset.action = "delete";
-      del.dataset.list = list;
-      del.dataset.index = String(index);
-      row.appendChild(del);
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "spot-list-modal-btn delete";
+      deleteButton.textContent = "Del";
+      deleteButton.title = list === "named" ? "Delete saved spot" : "Delete recent spot";
+      deleteButton.dataset.modalAction = "delete";
+      deleteButton.dataset.list = list;
+      deleteButton.dataset.index = String(index);
 
+      row.appendChild(deleteButton);
       return row;
     }
 
-    function renderTouchLayerList(listName) {
-      if (!listTouchContentEl) return;
+    function renderSpotListModal(listName) {
+      if (!spotListModalSheetEl) return;
 
-      const list = listName === "named" ? readNamedLocations() : readRecentSpots();
+      const spots = listName === "named" ? readNamedLocations() : readRecentSpots();
       const activeIndex = listName === "named" ? savedPanelIndex : recentPanelIndex;
 
-      listTouchContentEl.textContent = "";
+      spotListModalSheetEl.textContent = "";
+      spotListModalSheetEl.dataset.list = listName;
 
-      const sheet = document.createElement("div");
-      sheet.className = "touch-list-sheet";
-      sheet.dataset.list = listName;
-
-      const head = document.createElement("div");
-      head.className = "touch-list-head";
+      const header = document.createElement("div");
+      header.className = "spot-list-modal-head";
 
       const title = document.createElement("div");
-      title.className = "touch-list-title";
+      title.className = "spot-list-modal-title";
       title.textContent = listName === "named" ? "Saved spots" : "Recent spots";
 
-      const close = document.createElement("button");
-      close.type = "button";
-      close.className = "touch-list-close";
-      close.textContent = "×";
-      close.dataset.action = "close";
+      const closeButton = document.createElement("button");
+      closeButton.type = "button";
+      closeButton.className = "spot-list-modal-close";
+      closeButton.textContent = "×";
+      closeButton.dataset.modalAction = "close";
 
-      head.appendChild(title);
-      head.appendChild(close);
-      sheet.appendChild(head);
+      header.appendChild(title);
+      header.appendChild(closeButton);
+      spotListModalSheetEl.appendChild(header);
 
-      if (!list.length) {
+      if (!spots.length) {
         const empty = document.createElement("div");
-        empty.className = "touch-list-empty";
-        empty.textContent = listName === "named"
-          ? "No saved spots yet."
-          : "No recent spots yet.";
-        sheet.appendChild(empty);
-      } else {
-        list.forEach((spot, index) => {
-          const name = listName === "named"
-            ? (spot.name || `Saved spot ${index + 1}`)
-            : `Recent ${index + 1} • ${formatDate(spot.savedAtMillis)}`;
-
-          sheet.appendChild(buildTouchLayerRow(spot, {
-            list: listName,
-            index,
-            name,
-            selected: index === activeIndex
-          }));
-        });
+        empty.className = "spot-list-modal-empty";
+        empty.textContent = listName === "named" ? "No saved spots yet." : "No recent spots yet.";
+        spotListModalSheetEl.appendChild(empty);
+        return;
       }
 
-      listTouchContentEl.appendChild(sheet);
+      spots.forEach((spot, index) => {
+        const name = listName === "named"
+          ? (spot.name || `Saved spot ${index + 1}`)
+          : `Recent ${index + 1} • ${formatDate(spot.savedAtMillis)}`;
+
+        spotListModalSheetEl.appendChild(createSpotListModalRow(spot, {
+          list: listName,
+          index,
+          name,
+          selected: index === activeIndex
+        }));
+      });
     }
 
-    function openTouchLayerList(listName) {
-      if (!listTouchLayerEl || !listTouchContentEl) return;
+    function openSpotListModal(listName) {
+      if (!spotListModalEl || !spotListModalSheetEl) return;
 
       if (listName === "named") {
         savedPanelEl.classList.add("open");
@@ -3910,29 +3871,28 @@
       if (recentDropdownEl) recentDropdownEl.hidden = true;
       if (listBackdropEl) listBackdropEl.hidden = true;
 
-      renderTouchLayerList(listName);
-      listTouchLayerEl.hidden = false;
+      renderSpotListModal(listName);
+      spotListModalEl.hidden = false;
     }
 
-    function toggleTouchLayerList(listName) {
-      const openSheet = listTouchContentEl?.querySelector(".touch-list-sheet");
-      const alreadyOpen = listTouchLayerEl &&
-        !listTouchLayerEl.hidden &&
-        openSheet?.dataset.list === listName;
+    function toggleSpotListModal(listName) {
+      const alreadyOpen = spotListModalEl &&
+        !spotListModalEl.hidden &&
+        spotListModalSheetEl?.dataset.list === listName;
 
       if (alreadyOpen) {
         closeAllDropdowns();
         return;
       }
 
-      openTouchLayerList(listName);
+      openSpotListModal(listName);
     }
 
     function setPanelOpen(panelEl, dropdownEl, isOpen, updateBackdrop = true) {
       const listName = panelEl === savedPanelEl ? "named" : "recent";
 
       if (isOpen) {
-        openTouchLayerList(listName);
+        openSpotListModal(listName);
       } else {
         closeAllDropdowns();
       }
@@ -3940,29 +3900,27 @@
 
     function togglePanelDropdown(panelEl, dropdownEl) {
       const listName = panelEl === savedPanelEl ? "named" : "recent";
-      toggleTouchLayerList(listName);
+      toggleSpotListModal(listName);
     }
 
-    async function handleTouchLayerClick(event) {
-      if (!listTouchLayerEl || listTouchLayerEl.hidden) return;
+    async function handleSpotListModalClick(event) {
+      if (!spotListModalEl || spotListModalEl.hidden) return;
 
-      const clickedOutsideSheet = event.target === listTouchLayerEl;
-
-      if (clickedOutsideSheet) {
+      if (event.target === spotListModalEl) {
         event.preventDefault();
         event.stopPropagation();
-        suppressUnderlyingClickUntil = Date.now() + 500;
+        ignoreUnderlyingClickUntil = Date.now() + 800;
         closeAllDropdowns();
         return;
       }
 
-      const button = event.target.closest("button[data-action]");
+      const button = event.target.closest("button[data-modal-action]");
       if (!button) return;
 
       event.preventDefault();
       event.stopPropagation();
 
-      const action = button.dataset.action;
+      const action = button.dataset.modalAction;
 
       if (action === "close") {
         closeAllDropdowns();
@@ -3974,7 +3932,7 @@
 
       if (!listName || index === undefined) return;
 
-      if (action === "select") {
+      if (action === "preview") {
         selectPanelIndex(listName, index);
         return;
       }
@@ -4031,11 +3989,9 @@
 
       if (listName === "named") {
         const named = readNamedLocations();
-        if (!named.length) return;
+        if (!named.length || !named[safeIndex]) return;
 
-        const selected = named[safeIndex];
-        if (!selected) return;
-
+        const selected = normalizeSpot(named[safeIndex]);
         const reordered = [
           selected,
           ...named.filter((_, itemIndex) => itemIndex !== safeIndex)
@@ -4045,11 +4001,9 @@
         savedPanelIndex = 0;
       } else {
         const recent = readRecentSpots();
-        if (!recent.length) return;
+        if (!recent.length || !recent[safeIndex]) return;
 
-        const selected = recent[safeIndex];
-        if (!selected) return;
-
+        const selected = normalizeSpot(recent[safeIndex]);
         const reordered = [
           selected,
           ...recent.filter((_, itemIndex) => itemIndex !== safeIndex)
@@ -4069,8 +4023,8 @@
         cloudFailureTitle: "Saved locally"
       });
 
-      debugLog("List item promoted to preview", {
-        section: listName === "named" ? "saved" : "recent",
+      debugLog("List item moved to first preview position", {
+        list: listName,
         previousIndex: safeIndex
       });
     }
@@ -5240,38 +5194,6 @@
       return { spot: null };
     }
 
-    function restoreImmediateFromMemory() {
-      renderSpotLists();
-
-      const localSpot = readLocalBackup();
-      const recent = readRecentSpots();
-      const named = readNamedLocations();
-
-      if (localSpot) {
-        setActivePreviewSpot(localSpot);
-        updateHeroFromSpot(localSpot);
-        setPill(localPillEl, "Local backup: ready", "ok");
-      } else if (recent.length) {
-        const newestRecent = normalizeSpot(recent[0]);
-        setActivePreviewSpot(newestRecent);
-        updateHeroFromSpot(newestRecent);
-        setPill(localPillEl, "Local backup: recent ready", "ok");
-      } else if (named.length) {
-        const firstNamed = normalizeSpot(named[0]);
-        setActivePreviewSpot(firstNamed);
-        updateHeroFromSpot(firstNamed);
-        setPill(localPillEl, "Local backup: saved ready", "ok");
-      } else {
-        setHeroState("waiting", "No saved location", "Save your parking spot to start.");
-        setPill(localPillEl, "Local backup: empty");
-      }
-
-      if (currentMode !== "save") {
-        setPill(modePillEl, "Mode: view only");
-      }
-    }
-
-
     async function showSavedLocation() {
       hideSaveAnyway();
       setBusy(true);
@@ -5390,80 +5312,92 @@
     clearBtn.addEventListener("click", clearSavedLocation);
     cancelSaveBtn.addEventListener("click", cancelSaveAnyway);
     saveAnywayBtn.addEventListener("click", saveBestFoundAnyway);
+
     recentListEl.addEventListener("click", handleSpotListClick);
     savedListEl.addEventListener("click", handleSpotListClick);
     recentDropdownEl.addEventListener("click", handleSpotListClick);
     savedDropdownEl.addEventListener("click", handleSpotListClick);
-    listBackdropEl.addEventListener("click", closeAllDropdowns);
-    recentToggleBtn.addEventListener("click", () => toggleTouchLayerList("recent"));
-    savedToggleBtn.addEventListener("click", () => toggleTouchLayerList("named"));
+
+    if (listBackdropEl) {
+      listBackdropEl.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeAllDropdowns();
+      });
+    }
+
+    if (spotListModalEl) {
+      spotListModalEl.addEventListener("click", handleSpotListModalClick);
+    }
+
+    document.addEventListener("click", (event) => {
+      if (Date.now() < ignoreUnderlyingClickUntil) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, true);
+
+    recentToggleBtn.addEventListener("click", () => toggleSpotListModal("recent"));
+    savedToggleBtn.addEventListener("click", () => toggleSpotListModal("named"));
+
     bindPanelHeaderToggle(recentPanelEl, recentDropdownEl);
     bindPanelHeaderToggle(savedPanelEl, savedDropdownEl);
     enableCarouselSwipe(recentListEl, "recent");
     enableCarouselSwipe(savedListEl, "named");
 
     async function init() {
-      try {
-        renderSpotLists();
+      renderSpotLists();
+      setBusy(true);
 
-        if (currentMode === "save") {
-          setBusy(true);
-          setPill(modePillEl, "Mode: NFC save", "ok");
-          setPill(localPillEl, "Local backup: skipped during save", "warn");
+      if (currentMode === "save") {
+        setPill(modePillEl, "Mode: NFC save", "ok");
+        setPill(localPillEl, "Local backup: skipped during save", "warn");
 
-          setHeroState(
-            "searching",
-            "Saving your parking spot",
-            "Starting GPS immediately...",
-            "Previous location will not be loaded during NFC save."
-          );
+        setHeroState(
+          "searching",
+          "Saving your parking spot",
+          "Starting GPS immediately...",
+          "Previous location will not be loaded during NFC save."
+        );
 
-          const savedSuccessfully = await saveParkingLocation();
+        // NFC flow:
+        // Start GPS/save first. Do not load old location. Do not wait for Firebase.
+        const savedSuccessfully = await saveParkingLocation();
 
-          if (savedSuccessfully) {
-            sessionStorage.setItem(SESSION_SAVE_KEY, "true");
-            clearSaveModeFromUrl();
-            setPill(modePillEl, "Mode: view only");
-          }
-
-          setBusy(false);
-          return;
+        if (savedSuccessfully) {
+          sessionStorage.setItem(SESSION_SAVE_KEY, "true");
+          clearSaveModeFromUrl();
+          setPill(modePillEl, "Mode: view only");
         }
 
-        // View mode: show what exists locally immediately.
-        // Do not wait for Firebase, so the app never sits on “Starting”.
-        restoreImmediateFromMemory();
-        setBusy(false);
+        return;
+      }
 
-        loginReadyPromise
-          .then(async (user) => {
-            if (!user) return;
+      setPill(modePillEl, "Mode: view only");
 
-            const cloudSpot = await loadCloudSpot();
+      const localSpot = readLocalBackup();
+      if (localSpot) {
+        setActivePreviewSpot(localSpot);
+        updateHeroFromSpot(localSpot);
+      } else {
+        setHeroState("waiting", "No saved location", "");
+      }
 
-            if (cloudSpot) {
-              setActivePreviewSpot(cloudSpot);
-              saveLocalBackup(cloudSpot);
-              updateHeroFromSpot(cloudSpot);
-            }
+      try {
+        const user = await loginReadyPromise;
 
-            restoreImmediateFromMemory();
-          })
-          .catch((error) => {
-            console.error(error);
-            debugLog("Background cloud load failed", {
-              message: error?.message || String(error)
-            });
-          });
+        if (user) {
+          const cloudSpot = await loadCloudSpot();
+
+          if (cloudSpot) {
+            setActivePreviewSpot(cloudSpot);
+            saveLocalBackup(cloudSpot);
+            updateHeroFromSpot(cloudSpot);
+          }
+        }
       } catch (error) {
-        console.error("Init failed", error);
-        debugLog("Init failed", {
-          message: error?.message || String(error)
-        });
-
-        setPill(modePillEl, "Mode: view only", "warn");
-        setPill(localPillEl, "Local backup: ready", "ok");
-        setHeroState("waiting", "ParkNous ready", "Open a list or save your parking spot.");
+        console.error(error);
+      } finally {
         setBusy(false);
       }
     }
