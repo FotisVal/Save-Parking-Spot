@@ -2955,6 +2955,219 @@
       color: #ffd4d7;
     }
 
+
+    /* ParkNous v31: list-only fix on stable v24 base */
+    .spot-panel {
+      background:
+        radial-gradient(circle at 86% 12%, rgba(34, 211, 238, 0.16), transparent 35%),
+        linear-gradient(180deg, rgba(34, 211, 238, 0.075), rgba(255,255,255,0.030));
+      border-color: rgba(34, 211, 238, 0.18);
+    }
+
+    .spot-panel.open {
+      border-color: rgba(34, 211, 238, 0.34);
+      box-shadow:
+        0 0 0 1px rgba(34, 211, 238, 0.10),
+        0 18px 38px rgba(0,0,0,0.24);
+    }
+
+    .spot-item {
+      background:
+        radial-gradient(circle at 92% 8%, rgba(34, 211, 238, 0.16), transparent 34%),
+        rgba(7, 23, 31, 0.38);
+      border-color: rgba(34, 211, 238, 0.14);
+    }
+
+    .spot-badge {
+      background: rgba(34, 211, 238, 0.13);
+      border-color: rgba(34, 211, 238, 0.26);
+      color: rgba(218, 250, 255, 0.96);
+    }
+
+    .spot-list {
+      touch-action: pan-y;
+    }
+
+    .spot-list-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: transparent;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+
+    .spot-list-modal[hidden] {
+      display: none;
+    }
+
+    .spot-list-modal-sheet {
+      position: fixed;
+      left: 50%;
+      top: 72px;
+      width: min(calc(100vw - 28px), 410px);
+      max-height: calc(100svh - 88px);
+      transform: translateX(-50%);
+      z-index: 10001;
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      border: 1px solid rgba(34, 211, 238, 0.26);
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(34, 211, 238, 0.18), transparent 42%),
+        rgba(8, 18, 26, 0.985);
+      box-shadow: 0 22px 58px rgba(0,0,0,0.62);
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      pointer-events: auto;
+      touch-action: pan-y;
+    }
+
+    .spot-list-modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 2px 2px 6px;
+    }
+
+    .spot-list-modal-title {
+      font-size: 0.88rem;
+      font-weight: 950;
+      color: #e5fbff;
+    }
+
+    .spot-list-modal-close {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      border: 1px solid rgba(34, 211, 238, 0.20);
+      background: rgba(34, 211, 238, 0.10);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 950;
+    }
+
+    .spot-list-modal-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 56px 56px;
+      align-items: stretch;
+      gap: 7px;
+      padding: 8px;
+      border-radius: 15px;
+      border: 1px solid rgba(34, 211, 238, 0.13);
+      background: rgba(34, 211, 238, 0.055);
+      pointer-events: auto;
+    }
+
+    .spot-list-modal-row.recent-actions {
+      grid-template-columns: minmax(0, 1fr) 56px 56px 56px;
+    }
+
+    .spot-list-modal-row.selected {
+      outline: 1px solid rgba(34, 211, 238, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.22);
+      background: rgba(34, 211, 238, 0.13);
+    }
+
+    .spot-list-modal-preview {
+      min-width: 0;
+      width: 100%;
+      min-height: 50px;
+      padding: 8px 9px;
+      border: 1px solid rgba(34, 211, 238, 0.13);
+      border-radius: 13px;
+      background: rgba(255,255,255,0.045);
+      color: inherit;
+      text-align: left;
+      display: block;
+      overflow: hidden;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+
+    .spot-list-modal-preview:active {
+      transform: scale(0.992);
+      background: rgba(34, 211, 238, 0.13);
+    }
+
+    .spot-list-modal-name {
+      font-size: 0.74rem;
+      font-weight: 900;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .spot-list-modal-meta {
+      margin-top: 2px;
+      font-size: 0.60rem;
+      color: rgba(218, 250, 255, 0.72);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .spot-list-modal-btn {
+      width: 56px;
+      min-height: 50px;
+      padding: 0 4px;
+      font-size: 0.58rem;
+      line-height: 1;
+      border-radius: 13px;
+      border: 1px solid rgba(34, 211, 238, 0.18);
+      background: linear-gradient(180deg, rgba(45, 101, 122, 0.95), rgba(28, 52, 70, 0.95));
+      color: #ffffff;
+      font-weight: 950;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+
+    .spot-list-modal-btn.save {
+      background: linear-gradient(180deg, rgba(52, 211, 170, 0.95), rgba(17, 132, 111, 0.95));
+    }
+
+    .spot-list-modal-btn.delete {
+      border-color: rgba(255, 117, 125, 0.45);
+      background: rgba(255, 117, 125, 0.18);
+      color: #ffd4d7;
+    }
+
+    .spot-list-modal-empty {
+      padding: 12px;
+      border-radius: 14px;
+      color: rgba(218, 250, 255, 0.72);
+      background: rgba(34, 211, 238, 0.06);
+    }
+
+    @media (max-width: 370px) {
+      .spot-list-modal-sheet {
+        top: 64px;
+        max-height: calc(100svh - 78px);
+      }
+
+      .spot-list-modal-row {
+        grid-template-columns: minmax(0, 1fr) 50px 50px;
+        gap: 6px;
+        padding: 7px;
+      }
+
+      .spot-list-modal-row.recent-actions {
+        grid-template-columns: minmax(0, 1fr) 50px 50px 50px;
+      }
+
+      .spot-list-modal-btn {
+        width: 50px;
+        font-size: 0.52rem;
+      }
+
+      .spot-list-modal-preview {
+        padding: 8px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -3076,6 +3289,9 @@
   </div>
 
   <div id="listBackdrop" class="list-backdrop" hidden></div>
+  <div id="spotListModal" class="spot-list-modal" hidden>
+    <div id="spotListModalSheet" class="spot-list-modal-sheet"></div>
+  </div>
 
   <div id="confirmBanner" class="confirm-banner" aria-hidden="true">
     <div id="confirmTitle" class="confirm-title">Are you sure?</div>
@@ -3177,6 +3393,8 @@
     const saveAnywayBtn = document.getElementById("saveAnywayBtn");
 
     const listBackdropEl = document.getElementById("listBackdrop");
+    const spotListModalEl = document.getElementById("spotListModal");
+    const spotListModalSheetEl = document.getElementById("spotListModalSheet");
     const confirmBannerEl = document.getElementById("confirmBanner");
     const confirmTitleEl = document.getElementById("confirmTitle");
     const confirmTextEl = document.getElementById("confirmText");
@@ -3500,33 +3718,254 @@
     }
 
 
+    let ignoreUnderlyingClickUntil = 0;
+
     function anyDropdownOpen() {
-      return !savedDropdownEl.hidden || !recentDropdownEl.hidden;
+      return Boolean(spotListModalEl && !spotListModalEl.hidden);
     }
 
     function updateListBackdrop() {
-      if (!listBackdropEl) return;
-      listBackdropEl.hidden = !anyDropdownOpen();
+      if (listBackdropEl) {
+        listBackdropEl.hidden = true;
+      }
     }
 
     function closeAllDropdowns() {
-      setPanelOpen(savedPanelEl, savedDropdownEl, false, false);
-      setPanelOpen(recentPanelEl, recentDropdownEl, false, false);
-      updateListBackdrop();
+      savedPanelEl.classList.remove("open");
+      recentPanelEl.classList.remove("open");
+
+      if (savedDropdownEl) savedDropdownEl.hidden = true;
+      if (recentDropdownEl) recentDropdownEl.hidden = true;
+      if (listBackdropEl) listBackdropEl.hidden = true;
+
+      if (spotListModalSheetEl) {
+        spotListModalSheetEl.textContent = "";
+        spotListModalSheetEl.dataset.list = "";
+      }
+
+      if (spotListModalEl) {
+        spotListModalEl.hidden = true;
+      }
+    }
+
+    function createSpotListModalRow(spot, { list, index, name, selected = false } = {}) {
+      const row = document.createElement("div");
+      row.className = `spot-list-modal-row ${selected ? "selected" : ""} ${list === "recent" ? "recent-actions" : ""}`.trim();
+
+      const previewButton = document.createElement("button");
+      previewButton.type = "button";
+      previewButton.className = "spot-list-modal-preview";
+      previewButton.dataset.modalAction = "preview";
+      previewButton.dataset.list = list;
+      previewButton.dataset.index = String(index);
+
+      const title = document.createElement("div");
+      title.className = "spot-list-modal-name";
+      title.textContent = name || spot.name || `Spot • ${formatDate(spot.savedAtMillis)}`;
+
+      const meta = document.createElement("div");
+      meta.className = "spot-list-modal-meta";
+      meta.textContent = `${formatDate(spot.savedAtMillis)} • ${formatAccuracy(spot.accuracy)}`;
+
+      previewButton.appendChild(title);
+      previewButton.appendChild(meta);
+      row.appendChild(previewButton);
+
+      const primaryButton = document.createElement("button");
+      primaryButton.type = "button";
+      primaryButton.className = "spot-list-modal-btn";
+      primaryButton.dataset.list = list;
+      primaryButton.dataset.index = String(index);
+
+      if (list === "named") {
+        primaryButton.textContent = "Nav";
+        primaryButton.title = "Navigate";
+        primaryButton.dataset.modalAction = "navigate";
+      } else {
+        primaryButton.textContent = "Show";
+        primaryButton.title = "Show";
+        primaryButton.dataset.modalAction = "show";
+      }
+
+      row.appendChild(primaryButton);
+
+      if (list === "recent") {
+        const saveButton = document.createElement("button");
+        saveButton.type = "button";
+        saveButton.className = "spot-list-modal-btn save";
+        saveButton.textContent = "Save";
+        saveButton.title = "Save spot";
+        saveButton.dataset.modalAction = "save-name";
+        saveButton.dataset.list = list;
+        saveButton.dataset.index = String(index);
+        row.appendChild(saveButton);
+      }
+
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "spot-list-modal-btn delete";
+      deleteButton.textContent = "Del";
+      deleteButton.title = list === "named" ? "Delete saved spot" : "Delete recent spot";
+      deleteButton.dataset.modalAction = "delete";
+      deleteButton.dataset.list = list;
+      deleteButton.dataset.index = String(index);
+      row.appendChild(deleteButton);
+
+      return row;
+    }
+
+    function renderSpotListModal(listName) {
+      if (!spotListModalSheetEl) return;
+
+      const spots = listName === "named" ? readNamedLocations() : readRecentSpots();
+      const activeIndex = listName === "named" ? savedPanelIndex : recentPanelIndex;
+
+      spotListModalSheetEl.textContent = "";
+      spotListModalSheetEl.dataset.list = listName;
+
+      const header = document.createElement("div");
+      header.className = "spot-list-modal-head";
+
+      const title = document.createElement("div");
+      title.className = "spot-list-modal-title";
+      title.textContent = listName === "named" ? "Saved spots" : "Recent spots";
+
+      const closeButton = document.createElement("button");
+      closeButton.type = "button";
+      closeButton.className = "spot-list-modal-close";
+      closeButton.textContent = "×";
+      closeButton.dataset.modalAction = "close";
+
+      header.appendChild(title);
+      header.appendChild(closeButton);
+      spotListModalSheetEl.appendChild(header);
+
+      if (!spots.length) {
+        const empty = document.createElement("div");
+        empty.className = "spot-list-modal-empty";
+        empty.textContent = listName === "named" ? "No saved spots yet." : "No recent spots yet.";
+        spotListModalSheetEl.appendChild(empty);
+        return;
+      }
+
+      spots.forEach((spot, index) => {
+        const name = listName === "named"
+          ? (spot.name || `Saved spot ${index + 1}`)
+          : `Recent ${index + 1} • ${formatDate(spot.savedAtMillis)}`;
+
+        spotListModalSheetEl.appendChild(createSpotListModalRow(spot, {
+          list: listName,
+          index,
+          name,
+          selected: index === activeIndex
+        }));
+      });
+    }
+
+    function openSpotListModal(listName) {
+      if (!spotListModalEl || !spotListModalSheetEl) return;
+
+      if (listName === "named") {
+        savedPanelEl.classList.add("open");
+        recentPanelEl.classList.remove("open");
+      } else {
+        recentPanelEl.classList.add("open");
+        savedPanelEl.classList.remove("open");
+      }
+
+      if (savedDropdownEl) savedDropdownEl.hidden = true;
+      if (recentDropdownEl) recentDropdownEl.hidden = true;
+      if (listBackdropEl) listBackdropEl.hidden = true;
+
+      renderSpotListModal(listName);
+      spotListModalEl.hidden = false;
+    }
+
+    function toggleSpotListModal(listName) {
+      const alreadyOpen = spotListModalEl &&
+        !spotListModalEl.hidden &&
+        spotListModalSheetEl?.dataset.list === listName;
+
+      if (alreadyOpen) {
+        closeAllDropdowns();
+        return;
+      }
+
+      openSpotListModal(listName);
     }
 
     function setPanelOpen(panelEl, dropdownEl, isOpen, updateBackdrop = true) {
-      panelEl.classList.toggle("open", isOpen);
-      dropdownEl.hidden = !isOpen;
-      if (updateBackdrop) updateListBackdrop();
+      const listName = panelEl === savedPanelEl ? "named" : "recent";
+
+      if (isOpen) {
+        openSpotListModal(listName);
+      } else {
+        closeAllDropdowns();
+      }
     }
 
     function togglePanelDropdown(panelEl, dropdownEl) {
-      const shouldOpen = dropdownEl.hidden;
-      if (panelEl !== savedPanelEl) setPanelOpen(savedPanelEl, savedDropdownEl, false, false);
-      if (panelEl !== recentPanelEl) setPanelOpen(recentPanelEl, recentDropdownEl, false, false);
-      setPanelOpen(panelEl, dropdownEl, shouldOpen);
-      updateListBackdrop();
+      const listName = panelEl === savedPanelEl ? "named" : "recent";
+      toggleSpotListModal(listName);
+    }
+
+    async function handleSpotListModalClick(event) {
+      if (!spotListModalEl || spotListModalEl.hidden) return;
+
+      if (event.target === spotListModalEl) {
+        event.preventDefault();
+        event.stopPropagation();
+        ignoreUnderlyingClickUntil = Date.now() + 800;
+        closeAllDropdowns();
+        return;
+      }
+
+      const button = event.target.closest("button[data-modal-action]");
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      const action = button.dataset.modalAction;
+
+      if (action === "close") {
+        closeAllDropdowns();
+        return;
+      }
+
+      const listName = button.dataset.list;
+      const index = button.dataset.index;
+
+      if (!listName || index === undefined) return;
+
+      if (action === "preview") {
+        selectPanelIndex(listName, index);
+        return;
+      }
+
+      const spot = getSpotFromList(listName, index);
+      if (!spot) return;
+
+      if (action === "show") {
+        openSpotOnMap(spot, false);
+        return;
+      }
+
+      if (action === "navigate") {
+        openSpotOnMap(spot, true);
+        return;
+      }
+
+      if (action === "save-name") {
+        await saveSpotWithName(spot);
+        closeAllDropdowns();
+        return;
+      }
+
+      if (action === "delete") {
+        await deleteSpotFromList(listName, index);
+        closeAllDropdowns();
+      }
     }
 
     function bindPanelHeaderToggle(panelEl, dropdownEl) {
@@ -3566,11 +4005,9 @@
 
       if (listName === "named") {
         const named = readNamedLocations();
-        if (!named.length) return;
+        if (!named.length || !named[safeIndex]) return;
 
-        const selected = named[safeIndex];
-        if (!selected) return;
-
+        const selected = normalizeSpot(named[safeIndex]);
         const reordered = [
           selected,
           ...named.filter((_, itemIndex) => itemIndex !== safeIndex)
@@ -3580,11 +4017,9 @@
         savedPanelIndex = 0;
       } else {
         const recent = readRecentSpots();
-        if (!recent.length) return;
+        if (!recent.length || !recent[safeIndex]) return;
 
-        const selected = recent[safeIndex];
-        if (!selected) return;
-
+        const selected = normalizeSpot(recent[safeIndex]);
         const reordered = [
           selected,
           ...recent.filter((_, itemIndex) => itemIndex !== safeIndex)
@@ -3604,8 +4039,8 @@
         cloudFailureTitle: "Saved locally"
       });
 
-      debugLog("Section preview promoted", {
-        section: listName === "named" ? "saved" : "recent",
+      debugLog("List item moved to preview", {
+        list: listName,
         previousIndex: safeIndex
       });
     }
@@ -3613,26 +4048,56 @@
     function enableCarouselSwipe(trackEl, listName) {
       if (!trackEl) return;
 
-      let touchStartX = 0;
-      let touchStartY = 0;
+      let startX = 0;
+      let startY = 0;
+      let startedOnButton = false;
+      let pointerActive = false;
+
+      function recordStart(clientX, clientY, target) {
+        startX = clientX;
+        startY = clientY;
+        startedOnButton = Boolean(target?.closest?.("button"));
+      }
+
+      function maybeSwipe(clientX, clientY) {
+        if (startedOnButton || anyDropdownOpen()) return;
+
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+
+        if (Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) + 8) {
+          changePanelIndex(listName, dx < 0 ? 1 : -1);
+        }
+      }
+
+      if (window.PointerEvent) {
+        trackEl.addEventListener("pointerdown", (event) => {
+          if (!event.isPrimary) return;
+          pointerActive = true;
+          recordStart(event.clientX, event.clientY, event.target);
+        }, { passive: true });
+
+        trackEl.addEventListener("pointerup", (event) => {
+          if (!event.isPrimary || !pointerActive) return;
+          pointerActive = false;
+          maybeSwipe(event.clientX, event.clientY);
+        }, { passive: true });
+
+        trackEl.addEventListener("pointercancel", () => {
+          pointerActive = false;
+        }, { passive: true });
+      }
 
       trackEl.addEventListener("touchstart", (event) => {
         const touch = event.changedTouches[0];
         if (!touch) return;
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
+        recordStart(touch.clientX, touch.clientY, event.target);
       }, { passive: true });
 
       trackEl.addEventListener("touchend", (event) => {
         const touch = event.changedTouches[0];
         if (!touch) return;
-
-        const dx = touch.clientX - touchStartX;
-        const dy = touch.clientY - touchStartY;
-
-        if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy) + 8) {
-          changePanelIndex(listName, dx < 0 ? 1 : -1);
-        }
+        maybeSwipe(touch.clientX, touch.clientY);
       }, { passive: true });
     }
 
@@ -4867,9 +5332,24 @@
     savedListEl.addEventListener("click", handleSpotListClick);
     recentDropdownEl.addEventListener("click", handleSpotListClick);
     savedDropdownEl.addEventListener("click", handleSpotListClick);
-    listBackdropEl.addEventListener("click", closeAllDropdowns);
-    recentToggleBtn.addEventListener("click", () => togglePanelDropdown(recentPanelEl, recentDropdownEl));
-    savedToggleBtn.addEventListener("click", () => togglePanelDropdown(savedPanelEl, savedDropdownEl));
+    listBackdropEl.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      closeAllDropdowns();
+    });
+
+    if (spotListModalEl) {
+      spotListModalEl.addEventListener("click", handleSpotListModalClick);
+    }
+
+    document.addEventListener("click", (event) => {
+      if (Date.now() < ignoreUnderlyingClickUntil) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, true);
+    recentToggleBtn.addEventListener("click", () => toggleSpotListModal("recent"));
+    savedToggleBtn.addEventListener("click", () => toggleSpotListModal("named"));
     bindPanelHeaderToggle(recentPanelEl, recentDropdownEl);
     bindPanelHeaderToggle(savedPanelEl, savedDropdownEl);
     enableCarouselSwipe(recentListEl, "recent");
