@@ -2956,7 +2956,7 @@
     }
 
 
-    /* ParkNous v28: startup restore, cyan lists, safe modal touch layer, swipe */
+    /* ParkNous v29: stable startup, safe modal list, restored swipe, cyan lists */
     .spot-panel {
       background:
         radial-gradient(circle at 86% 12%, rgba(34, 211, 238, 0.16), transparent 35%),
@@ -2988,34 +2988,27 @@
       touch-action: pan-y;
     }
 
-    .list-touch-layer {
+    .list-modal-layer {
       position: fixed;
       inset: 0;
-      z-index: 5000;
+      z-index: 10000;
       background: transparent;
       pointer-events: auto;
       touch-action: manipulation;
     }
 
-    .list-touch-layer[hidden] {
+    .list-modal-layer[hidden] {
       display: none;
     }
 
-    .list-touch-content {
+    .list-modal-sheet {
       position: fixed;
       left: 50%;
       top: 72px;
       width: min(calc(100vw - 28px), 410px);
       max-height: calc(100svh - 88px);
       transform: translateX(-50%);
-      z-index: 5001;
-      pointer-events: auto;
-      touch-action: auto;
-    }
-
-    .touch-list-sheet {
-      width: 100%;
-      max-height: calc(100svh - 88px);
+      z-index: 10001;
       display: grid;
       gap: 8px;
       padding: 10px;
@@ -3031,7 +3024,7 @@
       touch-action: pan-y;
     }
 
-    .touch-list-head {
+    .modal-list-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -3039,13 +3032,13 @@
       padding: 2px 2px 6px;
     }
 
-    .touch-list-title {
+    .modal-list-title {
       font-size: 0.88rem;
       font-weight: 950;
       color: #e5fbff;
     }
 
-    .touch-list-close {
+    .modal-list-close {
       width: 34px;
       height: 34px;
       border-radius: 12px;
@@ -3056,9 +3049,9 @@
       font-weight: 950;
     }
 
-    .touch-list-row {
+    .modal-list-row {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 54px 54px;
+      grid-template-columns: minmax(0, 1fr) 56px 56px;
       align-items: stretch;
       gap: 7px;
       padding: 8px;
@@ -3068,20 +3061,20 @@
       pointer-events: auto;
     }
 
-    .touch-list-row.recent-row-actions {
-      grid-template-columns: minmax(0, 1fr) 54px 54px 54px;
+    .modal-list-row.recent-row-actions {
+      grid-template-columns: minmax(0, 1fr) 56px 56px 56px;
     }
 
-    .touch-list-row.selected {
+    .modal-list-row.selected {
       outline: 1px solid rgba(34, 211, 238, 0.58);
       box-shadow: inset 0 0 0 1px rgba(34, 211, 238, 0.22);
       background: rgba(34, 211, 238, 0.13);
     }
 
-    .touch-list-select {
+    .modal-list-select {
       min-width: 0;
       width: 100%;
-      min-height: 48px;
+      min-height: 50px;
       padding: 8px 9px;
       border: 1px solid rgba(34, 211, 238, 0.13);
       border-radius: 13px;
@@ -3094,12 +3087,12 @@
       touch-action: manipulation;
     }
 
-    .touch-list-select:active {
+    .modal-list-select:active {
       transform: scale(0.992);
       background: rgba(34, 211, 238, 0.13);
     }
 
-    .touch-list-name {
+    .modal-list-name {
       font-size: 0.74rem;
       font-weight: 900;
       color: #ffffff;
@@ -3108,7 +3101,7 @@
       text-overflow: ellipsis;
     }
 
-    .touch-list-meta {
+    .modal-list-meta {
       margin-top: 2px;
       font-size: 0.60rem;
       color: rgba(218, 250, 255, 0.72);
@@ -3117,9 +3110,9 @@
       text-overflow: ellipsis;
     }
 
-    .touch-list-btn {
-      width: 54px;
-      min-height: 48px;
+    .modal-list-btn {
+      width: 56px;
+      min-height: 50px;
       padding: 0 4px;
       font-size: 0.58rem;
       line-height: 1;
@@ -3132,17 +3125,17 @@
       touch-action: manipulation;
     }
 
-    .touch-list-btn.save {
+    .modal-list-btn.save {
       background: linear-gradient(180deg, rgba(52, 211, 170, 0.95), rgba(17, 132, 111, 0.95));
     }
 
-    .touch-list-btn.bad {
+    .modal-list-btn.bad {
       border-color: rgba(255, 117, 125, 0.45);
       background: rgba(255, 117, 125, 0.18);
       color: #ffd4d7;
     }
 
-    .touch-list-empty {
+    .modal-list-empty {
       padding: 12px;
       border-radius: 14px;
       color: rgba(218, 250, 255, 0.72);
@@ -3150,31 +3143,27 @@
     }
 
     @media (max-width: 370px) {
-      .list-touch-content {
+      .list-modal-sheet {
         top: 64px;
         max-height: calc(100svh - 78px);
       }
 
-      .touch-list-sheet {
-        max-height: calc(100svh - 78px);
-      }
-
-      .touch-list-row {
-        grid-template-columns: minmax(0, 1fr) 48px 48px;
+      .modal-list-row {
+        grid-template-columns: minmax(0, 1fr) 50px 50px;
         gap: 6px;
         padding: 7px;
       }
 
-      .touch-list-row.recent-row-actions {
-        grid-template-columns: minmax(0, 1fr) 48px 48px 48px;
+      .modal-list-row.recent-row-actions {
+        grid-template-columns: minmax(0, 1fr) 50px 50px 50px;
       }
 
-      .touch-list-btn {
-        width: 48px;
+      .modal-list-btn {
+        width: 50px;
         font-size: 0.52rem;
       }
 
-      .touch-list-select {
+      .modal-list-select {
         padding: 8px;
       }
     }
@@ -3300,8 +3289,8 @@
   </div>
 
   <div id="listBackdrop" class="list-backdrop" hidden></div>
-  <div id="listTouchLayer" class="list-touch-layer" hidden>
-    <div id="listTouchContent" class="list-touch-content"></div>
+  <div id="listModalLayer" class="list-modal-layer" hidden>
+    <div id="listModalSheet" class="list-modal-sheet"></div>
   </div>
 
   <div id="confirmBanner" class="confirm-banner" aria-hidden="true">
@@ -3404,8 +3393,8 @@
     const saveAnywayBtn = document.getElementById("saveAnywayBtn");
 
     const listBackdropEl = document.getElementById("listBackdrop");
-    const listTouchLayerEl = document.getElementById("listTouchLayer");
-    const listTouchContentEl = document.getElementById("listTouchContent");
+    const listModalLayerEl = document.getElementById("listModalLayer");
+    const listModalSheetEl = document.getElementById("listModalSheet");
     const confirmBannerEl = document.getElementById("confirmBanner");
     const confirmTitleEl = document.getElementById("confirmTitle");
     const confirmTextEl = document.getElementById("confirmText");
@@ -3751,7 +3740,7 @@
     let suppressUnderlyingClickUntil = 0;
 
     function anyDropdownOpen() {
-      return Boolean(listTouchLayerEl && !listTouchLayerEl.hidden);
+      return Boolean(listModalLayerEl && !listModalLayerEl.hidden);
     }
 
     function closeAllDropdowns() {
@@ -3761,12 +3750,13 @@
       if (savedDropdownEl) savedDropdownEl.hidden = true;
       if (recentDropdownEl) recentDropdownEl.hidden = true;
 
-      if (listTouchContentEl) {
-        listTouchContentEl.textContent = "";
+      if (listModalSheetEl) {
+        listModalSheetEl.textContent = "";
+        listModalSheetEl.dataset.list = "";
       }
 
-      if (listTouchLayerEl) {
-        listTouchLayerEl.hidden = true;
+      if (listModalLayerEl) {
+        listModalLayerEl.hidden = true;
       }
 
       if (listBackdropEl) {
@@ -3774,44 +3764,44 @@
       }
     }
 
-    function buildTouchLayerRow(spot, { list, index, name, selected = false } = {}) {
+    function createModalListRow(spot, { list, index, name, selected = false } = {}) {
       const row = document.createElement("div");
-      row.className = `touch-list-row ${selected ? "selected" : ""} ${list === "recent" ? "recent-row-actions" : ""}`.trim();
+      row.className = `modal-list-row ${selected ? "selected" : ""} ${list === "recent" ? "recent-row-actions" : ""}`.trim();
 
-      const select = document.createElement("button");
-      select.type = "button";
-      select.className = "touch-list-select";
-      select.dataset.action = "select";
-      select.dataset.list = list;
-      select.dataset.index = String(index);
-      select.title = "Show this spot in the preview";
+      const selectButton = document.createElement("button");
+      selectButton.type = "button";
+      selectButton.className = "modal-list-select";
+      selectButton.dataset.modalAction = "select";
+      selectButton.dataset.list = list;
+      selectButton.dataset.index = String(index);
+      selectButton.title = "Preview this spot";
 
       const title = document.createElement("div");
-      title.className = "touch-list-name";
+      title.className = "modal-list-name";
       title.textContent = name || spot.name || `Spot • ${formatDate(spot.savedAtMillis)}`;
 
       const meta = document.createElement("div");
-      meta.className = "touch-list-meta";
+      meta.className = "modal-list-meta";
       meta.textContent = `${formatDate(spot.savedAtMillis)} • ${formatAccuracy(spot.accuracy)}`;
 
-      select.appendChild(title);
-      select.appendChild(meta);
-      row.appendChild(select);
+      selectButton.appendChild(title);
+      selectButton.appendChild(meta);
+      row.appendChild(selectButton);
 
       const primary = document.createElement("button");
       primary.type = "button";
-      primary.className = "touch-list-btn";
+      primary.className = "modal-list-btn";
       primary.dataset.list = list;
       primary.dataset.index = String(index);
 
       if (list === "named") {
         primary.textContent = "Nav";
         primary.title = "Navigate";
-        primary.dataset.action = "navigate";
+        primary.dataset.modalAction = "navigate";
       } else {
         primary.textContent = "Show";
-        primary.title = "Show on map";
-        primary.dataset.action = "show";
+        primary.title = "Show";
+        primary.dataset.modalAction = "show";
       }
 
       row.appendChild(primary);
@@ -3819,10 +3809,10 @@
       if (list === "recent") {
         const save = document.createElement("button");
         save.type = "button";
-        save.className = "touch-list-btn save";
+        save.className = "modal-list-btn save";
         save.textContent = "Save";
         save.title = "Save spot";
-        save.dataset.action = "save-name";
+        save.dataset.modalAction = "save-name";
         save.dataset.list = list;
         save.dataset.index = String(index);
         row.appendChild(save);
@@ -3830,10 +3820,10 @@
 
       const del = document.createElement("button");
       del.type = "button";
-      del.className = "touch-list-btn bad";
+      del.className = "modal-list-btn bad";
       del.textContent = "Del";
       del.title = list === "named" ? "Delete saved spot" : "Delete recent spot";
-      del.dataset.action = "delete";
+      del.dataset.modalAction = "delete";
       del.dataset.list = list;
       del.dataset.index = String(index);
       row.appendChild(del);
@@ -3841,62 +3831,58 @@
       return row;
     }
 
-    function renderTouchLayerList(listName) {
-      if (!listTouchContentEl) return;
+    function renderModalList(listName) {
+      if (!listModalSheetEl) return;
 
       const list = listName === "named" ? readNamedLocations() : readRecentSpots();
       const activeIndex = listName === "named" ? savedPanelIndex : recentPanelIndex;
 
-      listTouchContentEl.textContent = "";
+      listModalSheetEl.textContent = "";
+      listModalSheetEl.dataset.list = listName;
 
-      const sheet = document.createElement("div");
-      sheet.className = "touch-list-sheet";
-      sheet.dataset.list = listName;
-
-      const head = document.createElement("div");
-      head.className = "touch-list-head";
+      const header = document.createElement("div");
+      header.className = "modal-list-head";
 
       const title = document.createElement("div");
-      title.className = "touch-list-title";
+      title.className = "modal-list-title";
       title.textContent = listName === "named" ? "Saved spots" : "Recent spots";
 
       const close = document.createElement("button");
       close.type = "button";
-      close.className = "touch-list-close";
+      close.className = "modal-list-close";
       close.textContent = "×";
-      close.dataset.action = "close";
+      close.dataset.modalAction = "close";
 
-      head.appendChild(title);
-      head.appendChild(close);
-      sheet.appendChild(head);
+      header.appendChild(title);
+      header.appendChild(close);
+      listModalSheetEl.appendChild(header);
 
       if (!list.length) {
         const empty = document.createElement("div");
-        empty.className = "touch-list-empty";
+        empty.className = "modal-list-empty";
         empty.textContent = listName === "named"
           ? "No saved spots yet."
           : "No recent spots yet.";
-        sheet.appendChild(empty);
-      } else {
-        list.forEach((spot, index) => {
-          const name = listName === "named"
-            ? (spot.name || `Saved spot ${index + 1}`)
-            : `Recent ${index + 1} • ${formatDate(spot.savedAtMillis)}`;
-
-          sheet.appendChild(buildTouchLayerRow(spot, {
-            list: listName,
-            index,
-            name,
-            selected: index === activeIndex
-          }));
-        });
+        listModalSheetEl.appendChild(empty);
+        return;
       }
 
-      listTouchContentEl.appendChild(sheet);
+      list.forEach((spot, index) => {
+        const name = listName === "named"
+          ? (spot.name || `Saved spot ${index + 1}`)
+          : `Recent ${index + 1} • ${formatDate(spot.savedAtMillis)}`;
+
+        listModalSheetEl.appendChild(createModalListRow(spot, {
+          list: listName,
+          index,
+          name,
+          selected: index === activeIndex
+        }));
+      });
     }
 
-    function openTouchLayerList(listName) {
-      if (!listTouchLayerEl || !listTouchContentEl) return;
+    function openModalList(listName) {
+      if (!listModalLayerEl || !listModalSheetEl) return;
 
       if (listName === "named") {
         savedPanelEl.classList.add("open");
@@ -3910,29 +3896,28 @@
       if (recentDropdownEl) recentDropdownEl.hidden = true;
       if (listBackdropEl) listBackdropEl.hidden = true;
 
-      renderTouchLayerList(listName);
-      listTouchLayerEl.hidden = false;
+      renderModalList(listName);
+      listModalLayerEl.hidden = false;
     }
 
-    function toggleTouchLayerList(listName) {
-      const openSheet = listTouchContentEl?.querySelector(".touch-list-sheet");
-      const alreadyOpen = listTouchLayerEl &&
-        !listTouchLayerEl.hidden &&
-        openSheet?.dataset.list === listName;
+    function toggleModalList(listName) {
+      const isSameOpen = listModalLayerEl &&
+        !listModalLayerEl.hidden &&
+        listModalSheetEl?.dataset.list === listName;
 
-      if (alreadyOpen) {
+      if (isSameOpen) {
         closeAllDropdowns();
         return;
       }
 
-      openTouchLayerList(listName);
+      openModalList(listName);
     }
 
     function setPanelOpen(panelEl, dropdownEl, isOpen, updateBackdrop = true) {
       const listName = panelEl === savedPanelEl ? "named" : "recent";
 
       if (isOpen) {
-        openTouchLayerList(listName);
+        openModalList(listName);
       } else {
         closeAllDropdowns();
       }
@@ -3940,29 +3925,27 @@
 
     function togglePanelDropdown(panelEl, dropdownEl) {
       const listName = panelEl === savedPanelEl ? "named" : "recent";
-      toggleTouchLayerList(listName);
+      toggleModalList(listName);
     }
 
-    async function handleTouchLayerClick(event) {
-      if (!listTouchLayerEl || listTouchLayerEl.hidden) return;
+    async function handleModalListEvent(event) {
+      if (!listModalLayerEl || listModalLayerEl.hidden) return;
 
-      const clickedOutsideSheet = event.target === listTouchLayerEl;
-
-      if (clickedOutsideSheet) {
+      if (event.target === listModalLayerEl) {
         event.preventDefault();
         event.stopPropagation();
-        suppressUnderlyingClickUntil = Date.now() + 500;
+        suppressUnderlyingClickUntil = Date.now() + 900;
         closeAllDropdowns();
         return;
       }
 
-      const button = event.target.closest("button[data-action]");
+      const button = event.target.closest("button[data-modal-action]");
       if (!button) return;
 
       event.preventDefault();
       event.stopPropagation();
 
-      const action = button.dataset.action;
+      const action = button.dataset.modalAction;
 
       if (action === "close") {
         closeAllDropdowns();
@@ -3975,7 +3958,7 @@
       if (!listName || index === undefined) return;
 
       if (action === "select") {
-        selectPanelIndex(listName, index);
+        promoteSpotToPreview(listName, index);
         return;
       }
 
@@ -4027,52 +4010,7 @@
     }
 
     function selectPanelIndex(listName, index, { closeDropdown = true } = {}) {
-      const safeIndex = Math.max(0, Number(index) || 0);
-
-      if (listName === "named") {
-        const named = readNamedLocations();
-        if (!named.length) return;
-
-        const selected = named[safeIndex];
-        if (!selected) return;
-
-        const reordered = [
-          selected,
-          ...named.filter((_, itemIndex) => itemIndex !== safeIndex)
-        ].slice(0, MAX_NAMED_LOCATIONS);
-
-        writeNamedLocations(reordered);
-        savedPanelIndex = 0;
-      } else {
-        const recent = readRecentSpots();
-        if (!recent.length) return;
-
-        const selected = recent[safeIndex];
-        if (!selected) return;
-
-        const reordered = [
-          selected,
-          ...recent.filter((_, itemIndex) => itemIndex !== safeIndex)
-        ].slice(0, MAX_RECENT_SPOTS);
-
-        writeRecentSpots(reordered);
-        recentPanelIndex = 0;
-      }
-
-      renderSpotLists();
-
-      if (closeDropdown) {
-        closeAllDropdowns();
-      }
-
-      syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
-        cloudFailureTitle: "Saved locally"
-      });
-
-      debugLog("List item promoted to preview", {
-        section: listName === "named" ? "saved" : "recent",
-        previousIndex: safeIndex
-      });
+      promoteSpotToPreview(listName, index, { closeList: closeDropdown });
     }
 
     function enableCarouselSwipe(trackEl, listName) {
@@ -5240,6 +5178,7 @@
       return { spot: null };
     }
 
+
     function restoreImmediateFromMemory() {
       renderSpotLists();
 
@@ -5248,18 +5187,16 @@
       const named = readNamedLocations();
 
       if (localSpot) {
-        setActivePreviewSpot(localSpot);
-        updateHeroFromSpot(localSpot);
+        const activeSpot = setActivePreviewSpot(localSpot);
+        updateHeroFromSpot(activeSpot);
         setPill(localPillEl, "Local backup: ready", "ok");
       } else if (recent.length) {
-        const newestRecent = normalizeSpot(recent[0]);
-        setActivePreviewSpot(newestRecent);
+        const newestRecent = setActivePreviewSpot(recent[0]);
         updateHeroFromSpot(newestRecent);
         setPill(localPillEl, "Local backup: recent ready", "ok");
       } else if (named.length) {
-        const firstNamed = normalizeSpot(named[0]);
-        setActivePreviewSpot(firstNamed);
-        updateHeroFromSpot(firstNamed);
+        const firstSaved = setActivePreviewSpot(named[0]);
+        updateHeroFromSpot(firstSaved);
         setPill(localPillEl, "Local backup: saved ready", "ok");
       } else {
         setHeroState("waiting", "No saved location", "Save your parking spot to start.");
@@ -5271,6 +5208,57 @@
       }
     }
 
+    function promoteSpotToPreview(listName, index, { closeList = true } = {}) {
+      const safeIndex = Math.max(0, Number(index) || 0);
+      let selected = null;
+
+      if (listName === "named") {
+        const named = readNamedLocations();
+        if (!named.length || !named[safeIndex]) return null;
+
+        selected = normalizeSpot(named[safeIndex]);
+
+        const reordered = [
+          selected,
+          ...named.filter((_, itemIndex) => itemIndex !== safeIndex)
+        ].slice(0, MAX_NAMED_LOCATIONS);
+
+        writeNamedLocations(reordered);
+        savedPanelIndex = 0;
+      } else {
+        const recent = readRecentSpots();
+        if (!recent.length || !recent[safeIndex]) return null;
+
+        selected = normalizeSpot(recent[safeIndex]);
+
+        const reordered = [
+          selected,
+          ...recent.filter((_, itemIndex) => itemIndex !== safeIndex)
+        ].slice(0, MAX_RECENT_SPOTS);
+
+        writeRecentSpots(reordered);
+        recentPanelIndex = 0;
+      }
+
+      setActivePreviewSpot(selected);
+      updateHeroFromSpot(selected);
+      renderSpotLists();
+
+      if (closeList) {
+        closeAllDropdowns();
+      }
+
+      syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
+        cloudFailureTitle: "Saved locally"
+      });
+
+      debugLog("Spot promoted to preview", {
+        list: listName,
+        previousIndex: safeIndex
+      });
+
+      return selected;
+    }
 
     async function showSavedLocation() {
       hideSaveAnyway();
@@ -5390,13 +5378,45 @@
     clearBtn.addEventListener("click", clearSavedLocation);
     cancelSaveBtn.addEventListener("click", cancelSaveAnyway);
     saveAnywayBtn.addEventListener("click", saveBestFoundAnyway);
+
     recentListEl.addEventListener("click", handleSpotListClick);
     savedListEl.addEventListener("click", handleSpotListClick);
+
+    // Legacy hidden dropdown handlers stay harmless. The real opened list uses listModalLayer.
     recentDropdownEl.addEventListener("click", handleSpotListClick);
     savedDropdownEl.addEventListener("click", handleSpotListClick);
-    listBackdropEl.addEventListener("click", closeAllDropdowns);
-    recentToggleBtn.addEventListener("click", () => toggleTouchLayerList("recent"));
-    savedToggleBtn.addEventListener("click", () => toggleTouchLayerList("named"));
+
+    if (listBackdropEl) {
+      listBackdropEl.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        closeAllDropdowns();
+      });
+    }
+
+    if (listModalLayerEl) {
+      listModalLayerEl.addEventListener("pointerdown", (event) => {
+        if (event.target === listModalLayerEl) {
+          event.preventDefault();
+          event.stopPropagation();
+          suppressUnderlyingClickUntil = Date.now() + 900;
+          closeAllDropdowns();
+        }
+      }, { passive: false });
+
+      listModalLayerEl.addEventListener("click", handleModalListEvent);
+    }
+
+    document.addEventListener("click", (event) => {
+      if (Date.now() < suppressUnderlyingClickUntil) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, true);
+
+    recentToggleBtn.addEventListener("click", () => toggleModalList("recent"));
+    savedToggleBtn.addEventListener("click", () => toggleModalList("named"));
+
     bindPanelHeaderToggle(recentPanelEl, recentDropdownEl);
     bindPanelHeaderToggle(savedPanelEl, savedDropdownEl);
     enableCarouselSwipe(recentListEl, "recent");
@@ -5430,8 +5450,8 @@
           return;
         }
 
-        // View mode: show what exists locally immediately.
-        // Do not wait for Firebase, so the app never sits on “Starting”.
+        // View mode: restore local data immediately.
+        // Cloud merge runs afterwards and must not block the UI.
         restoreImmediateFromMemory();
         setBusy(false);
 
