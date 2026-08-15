@@ -3099,6 +3099,88 @@
       }
     }
 
+
+    /* ParkNous v27: separated touch zones + restored preview swipe */
+    .spot-list {
+      touch-action: pan-y;
+    }
+
+    .touch-list-row {
+      grid-template-columns: minmax(0, 1fr) 54px 54px;
+      align-items: stretch;
+      gap: 7px;
+      padding: 8px;
+    }
+
+    .touch-list-row.recent-row-actions {
+      grid-template-columns: minmax(0, 1fr) 54px 54px 54px;
+    }
+
+    .touch-list-select {
+      min-width: 0;
+      width: 100%;
+      min-height: 48px;
+      padding: 8px 9px;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 13px;
+      background: rgba(255,255,255,0.045);
+      color: inherit;
+      text-align: left;
+      display: block;
+      overflow: hidden;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+
+    .touch-list-select:active {
+      transform: scale(0.992);
+      background: rgba(53, 208, 127, 0.10);
+    }
+
+    .touch-list-btn {
+      width: 54px;
+      min-height: 48px;
+      padding: 0 4px;
+      font-size: 0.58rem;
+      line-height: 1;
+      border-radius: 13px;
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+
+    .touch-list-name {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .touch-list-meta {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    @media (max-width: 370px) {
+      .touch-list-row {
+        grid-template-columns: minmax(0, 1fr) 48px 48px;
+        gap: 6px;
+        padding: 7px;
+      }
+
+      .touch-list-row.recent-row-actions {
+        grid-template-columns: minmax(0, 1fr) 48px 48px 48px;
+      }
+
+      .touch-list-btn {
+        width: 48px;
+        font-size: 0.52rem;
+      }
+
+      .touch-list-select {
+        padding: 8px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -3679,8 +3761,13 @@
       row.dataset.list = list;
       row.dataset.index = String(index);
 
-      const main = document.createElement("div");
-      main.className = "touch-list-main";
+      const select = document.createElement("button");
+      select.type = "button";
+      select.className = "touch-list-select";
+      select.dataset.action = "select";
+      select.dataset.list = list;
+      select.dataset.index = String(index);
+      select.title = "Show this spot in the preview";
 
       const title = document.createElement("div");
       title.className = "touch-list-name";
@@ -3690,9 +3777,9 @@
       meta.className = "touch-list-meta";
       meta.textContent = `${formatDate(spot.savedAtMillis)} • ${formatAccuracy(spot.accuracy)}`;
 
-      main.appendChild(title);
-      main.appendChild(meta);
-      row.appendChild(main);
+      select.appendChild(title);
+      select.appendChild(meta);
+      row.appendChild(select);
 
       const primary = document.createElement("button");
       primary.type = "button";
@@ -3701,11 +3788,11 @@
       primary.dataset.index = String(index);
 
       if (list === "named") {
-        primary.textContent = "↱";
+        primary.textContent = "Nav";
         primary.title = "Navigate";
         primary.dataset.action = "navigate";
       } else {
-        primary.textContent = "↗";
+        primary.textContent = "Show";
         primary.title = "Show";
         primary.dataset.action = "show";
       }
@@ -3716,7 +3803,7 @@
         const save = document.createElement("button");
         save.type = "button";
         save.className = "touch-list-btn";
-        save.textContent = "★";
+        save.textContent = "Save";
         save.title = "Save spot";
         save.dataset.action = "save-name";
         save.dataset.list = list;
@@ -3727,7 +3814,7 @@
       const del = document.createElement("button");
       del.type = "button";
       del.className = "touch-list-btn bad";
-      del.textContent = "×";
+      del.textContent = "Del";
       del.title = list === "named" ? "Delete saved spot" : "Delete recent spot";
       del.dataset.action = "delete";
       del.dataset.list = list;
@@ -3842,8 +3929,7 @@
     async function handleTouchLayerAction(event) {
       if (!listTouchLayerEl || listTouchLayerEl.hidden) return;
 
-      const closeButton = event.target.closest('button[data-action="close"]');
-      if (closeButton) {
+      if (event.target === listTouchLayerEl) {
         event.preventDefault();
         event.stopPropagation();
         closeAllDropdowns();
@@ -3851,30 +3937,28 @@
       }
 
       const button = event.target.closest("button[data-action]");
-      const row = event.target.closest(".touch-list-row[data-list]");
 
-      if (!button && !row) {
-        if (event.target === listTouchLayerEl) {
-          event.preventDefault();
-          event.stopPropagation();
-          closeAllDropdowns();
-        }
-        return;
-      }
+      if (!button) return;
 
       event.preventDefault();
       event.stopPropagation();
 
-      if (!button && row) {
-        selectPanelIndex(row.dataset.list, row.dataset.index);
+      const action = button.dataset.action;
+
+      if (action === "close") {
+        closeAllDropdowns();
         return;
       }
 
       const listName = button.dataset.list;
       const index = button.dataset.index;
-      const action = button.dataset.action;
 
       if (!listName || index === undefined) return;
+
+      if (action === "select") {
+        selectPanelIndex(listName, index);
+        return;
+      }
 
       const spot = getSpotFromList(listName, index);
       if (!spot) return;
@@ -3973,26 +4057,58 @@
     function enableCarouselSwipe(trackEl, listName) {
       if (!trackEl) return;
 
-      let touchStartX = 0;
-      let touchStartY = 0;
+      let startX = 0;
+      let startY = 0;
+      let startedOnButton = false;
+      let pointerActive = false;
+
+      function recordStart(clientX, clientY, target) {
+        startX = clientX;
+        startY = clientY;
+        startedOnButton = Boolean(target?.closest?.("button"));
+      }
+
+      function maybeSwipe(clientX, clientY) {
+        if (startedOnButton || anyDropdownOpen()) return;
+
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+
+        if (Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) + 8) {
+          changePanelIndex(listName, dx < 0 ? 1 : -1);
+        }
+      }
+
+      if (window.PointerEvent) {
+        trackEl.addEventListener("pointerdown", (event) => {
+          if (!event.isPrimary) return;
+          pointerActive = true;
+          recordStart(event.clientX, event.clientY, event.target);
+        }, { passive: true });
+
+        trackEl.addEventListener("pointerup", (event) => {
+          if (!event.isPrimary || !pointerActive) return;
+          pointerActive = false;
+          maybeSwipe(event.clientX, event.clientY);
+        }, { passive: true });
+
+        trackEl.addEventListener("pointercancel", () => {
+          pointerActive = false;
+        }, { passive: true });
+
+        return;
+      }
 
       trackEl.addEventListener("touchstart", (event) => {
         const touch = event.changedTouches[0];
         if (!touch) return;
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
+        recordStart(touch.clientX, touch.clientY, event.target);
       }, { passive: true });
 
       trackEl.addEventListener("touchend", (event) => {
         const touch = event.changedTouches[0];
         if (!touch) return;
-
-        const dx = touch.clientX - touchStartX;
-        const dy = touch.clientY - touchStartY;
-
-        if (Math.abs(dx) > 34 && Math.abs(dx) > Math.abs(dy) + 8) {
-          changePanelIndex(listName, dx < 0 ? 1 : -1);
-        }
+        maybeSwipe(touch.clientX, touch.clientY);
       }, { passive: true });
     }
 
@@ -5214,13 +5330,6 @@
 
     if (listTouchLayerEl) {
       listTouchLayerEl.addEventListener("pointerup", handleTouchLayerAction);
-      listTouchLayerEl.addEventListener("click", (event) => {
-        if (event.target === listTouchLayerEl) {
-          event.preventDefault();
-          event.stopPropagation();
-          closeAllDropdowns();
-        }
-      });
     }
 
     recentToggleBtn.addEventListener("click", () => toggleTouchLayerList("recent"));
