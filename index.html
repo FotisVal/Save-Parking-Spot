@@ -2955,6 +2955,75 @@
       color: #ffd4d7;
     }
 
+
+    /* ParkNous v25: real touch layer for opened lists */
+    .list-touch-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      background: transparent;
+      pointer-events: auto;
+      touch-action: auto;
+    }
+
+    .list-touch-layer[hidden] {
+      display: none;
+    }
+
+    .list-touch-content {
+      position: fixed;
+      left: 50%;
+      top: 72px;
+      width: min(calc(100vw - 28px), 410px);
+      max-height: calc(100svh - 88px);
+      transform: translateX(-50%);
+      z-index: 5001;
+      pointer-events: auto;
+      touch-action: auto;
+    }
+
+    .list-touch-content .spot-dropdown {
+      position: relative;
+      left: auto;
+      right: auto;
+      top: auto;
+      width: 100%;
+      max-height: calc(100svh - 88px);
+      transform: none;
+      pointer-events: auto;
+      touch-action: pan-y;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .list-touch-content .dropdown-spot-row,
+    .list-touch-content button {
+      pointer-events: auto;
+      touch-action: manipulation;
+    }
+
+    .dropdown-spot-row {
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .dropdown-spot-row.selected {
+      outline: 1px solid rgba(53, 208, 127, 0.58);
+      box-shadow: inset 0 0 0 1px rgba(53, 208, 127, 0.22);
+    }
+
+    @media (max-width: 370px) {
+      .list-touch-content {
+        top: 64px;
+        max-height: calc(100svh - 78px);
+      }
+
+      .list-touch-content .spot-dropdown {
+        max-height: calc(100svh - 78px);
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -3076,6 +3145,9 @@
   </div>
 
   <div id="listBackdrop" class="list-backdrop" hidden></div>
+  <div id="listTouchLayer" class="list-touch-layer" hidden>
+    <div id="listTouchContent" class="list-touch-content"></div>
+  </div>
 
   <div id="confirmBanner" class="confirm-banner" aria-hidden="true">
     <div id="confirmTitle" class="confirm-title">Are you sure?</div>
@@ -3177,6 +3249,8 @@
     const saveAnywayBtn = document.getElementById("saveAnywayBtn");
 
     const listBackdropEl = document.getElementById("listBackdrop");
+    const listTouchLayerEl = document.getElementById("listTouchLayer");
+    const listTouchContentEl = document.getElementById("listTouchContent");
     const confirmBannerEl = document.getElementById("confirmBanner");
     const confirmTitleEl = document.getElementById("confirmTitle");
     const confirmTextEl = document.getElementById("confirmText");
@@ -3504,39 +3578,76 @@
       return !savedDropdownEl.hidden || !recentDropdownEl.hidden;
     }
 
+    function isDropdownMountedInTouchLayer(dropdownEl) {
+      return dropdownEl && dropdownEl.parentElement === listTouchContentEl;
+    }
+
+    function mountDropdownInTouchLayer(dropdownEl) {
+      if (!listTouchContentEl || !dropdownEl) return;
+      listTouchContentEl.textContent = "";
+      listTouchContentEl.appendChild(dropdownEl);
+    }
+
+    function restoreDropdownToPanel(panelEl, dropdownEl) {
+      if (!panelEl || !dropdownEl) return;
+      if (isDropdownMountedInTouchLayer(dropdownEl)) {
+        panelEl.appendChild(dropdownEl);
+      }
+    }
+
     function updateListBackdrop() {
-      if (!listBackdropEl) return;
-      listBackdropEl.hidden = !anyDropdownOpen();
+      const open = anyDropdownOpen();
+
+      if (listBackdropEl) {
+        listBackdropEl.hidden = true;
+      }
+
+      if (listTouchLayerEl) {
+        listTouchLayerEl.hidden = !open;
+      }
     }
 
     function closeAllDropdowns() {
-      setPanelOpen(savedPanelEl, savedDropdownEl, false, false);
-      setPanelOpen(recentPanelEl, recentDropdownEl, false, false);
+      savedPanelEl.classList.remove("open");
+      recentPanelEl.classList.remove("open");
+
+      savedDropdownEl.hidden = true;
+      recentDropdownEl.hidden = true;
+
+      restoreDropdownToPanel(savedPanelEl, savedDropdownEl);
+      restoreDropdownToPanel(recentPanelEl, recentDropdownEl);
+
+      if (listTouchContentEl) {
+        listTouchContentEl.textContent = "";
+      }
+
       updateListBackdrop();
     }
 
     function setPanelOpen(panelEl, dropdownEl, isOpen, updateBackdrop = true) {
-      panelEl.classList.toggle("open", isOpen);
-      dropdownEl.hidden = !isOpen;
+      if (isOpen) {
+        const otherPanel = panelEl === savedPanelEl ? recentPanelEl : savedPanelEl;
+        const otherDropdown = dropdownEl === savedDropdownEl ? recentDropdownEl : savedDropdownEl;
+
+        otherPanel.classList.remove("open");
+        otherDropdown.hidden = true;
+        restoreDropdownToPanel(otherPanel, otherDropdown);
+
+        panelEl.classList.add("open");
+        dropdownEl.hidden = false;
+        mountDropdownInTouchLayer(dropdownEl);
+      } else {
+        panelEl.classList.remove("open");
+        dropdownEl.hidden = true;
+        restoreDropdownToPanel(panelEl, dropdownEl);
+      }
+
       if (updateBackdrop) updateListBackdrop();
     }
 
     function togglePanelDropdown(panelEl, dropdownEl) {
       const shouldOpen = dropdownEl.hidden;
-      if (panelEl !== savedPanelEl) setPanelOpen(savedPanelEl, savedDropdownEl, false, false);
-      if (panelEl !== recentPanelEl) setPanelOpen(recentPanelEl, recentDropdownEl, false, false);
       setPanelOpen(panelEl, dropdownEl, shouldOpen);
-      updateListBackdrop();
-    }
-
-    function bindPanelHeaderToggle(panelEl, dropdownEl) {
-      const head = panelEl.querySelector(".panel-head");
-      if (!head) return;
-
-      head.addEventListener("click", (event) => {
-        if (event.target.closest("button") || event.target.closest("a")) return;
-        togglePanelDropdown(panelEl, dropdownEl);
-      });
     }
 
     function changePanelIndex(listName, delta) {
@@ -3604,7 +3715,7 @@
         cloudFailureTitle: "Saved locally"
       });
 
-      debugLog("Section preview promoted", {
+      debugLog("Touch layer selection promoted to section preview", {
         section: listName === "named" ? "saved" : "recent",
         previousIndex: safeIndex
       });
@@ -3651,7 +3762,6 @@
         selectPanelIndex(options.list, options.index);
       }
 
-      row.addEventListener("click", chooseThisRow);
       row.addEventListener("pointerup", chooseThisRow);
       row.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
@@ -4868,6 +4978,22 @@
     recentDropdownEl.addEventListener("click", handleSpotListClick);
     savedDropdownEl.addEventListener("click", handleSpotListClick);
     listBackdropEl.addEventListener("click", closeAllDropdowns);
+
+    listTouchLayerEl.addEventListener("pointerup", (event) => {
+      if (event.target === listTouchLayerEl) {
+        event.preventDefault();
+        event.stopPropagation();
+        closeAllDropdowns();
+      }
+    });
+
+    listTouchLayerEl.addEventListener("click", (event) => {
+      if (event.target === listTouchLayerEl) {
+        event.preventDefault();
+        event.stopPropagation();
+        closeAllDropdowns();
+      }
+    });
     recentToggleBtn.addEventListener("click", () => togglePanelDropdown(recentPanelEl, recentDropdownEl));
     savedToggleBtn.addEventListener("click", () => togglePanelDropdown(savedPanelEl, savedDropdownEl));
     bindPanelHeaderToggle(recentPanelEl, recentDropdownEl);
