@@ -3937,6 +3937,550 @@
       }
     }
 
+
+    /* ParkNous v34: practical cockpit layout fix */
+    .app {
+      width: min(100%, 430px);
+      height: calc(100dvh - 12px);
+      max-height: calc(100dvh - 12px);
+    }
+
+    .top {
+      padding: 8px 12px 0 !important;
+    }
+
+    .title {
+      min-height: 56px !important;
+      display: grid !important;
+      place-items: center !important;
+      margin: 0 !important;
+      line-height: 1 !important;
+    }
+
+    .title-wordmark {
+      display: none !important;
+    }
+
+    .title::before {
+      content: "PARKNOUS";
+      font-size: clamp(2.35rem, 11vw, 3.45rem);
+      line-height: 0.95;
+      letter-spacing: 0.08em;
+      font-weight: 1000;
+      color: #ffd166;
+      text-shadow:
+        0 0 10px rgba(255, 209, 102, 0.28),
+        0 0 24px rgba(255, 173, 51, 0.18);
+    }
+
+    .content {
+      gap: 8px !important;
+      padding: 7px 10px 10px !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+    }
+
+    .drive-console {
+      min-height: 420px !important;
+      height: 420px !important;
+      border-radius: 28px !important;
+      overflow: hidden !important;
+    }
+
+    .drive-console::before {
+      top: 62px !important;
+      width: 270px !important;
+      height: 270px !important;
+      opacity: 0.72 !important;
+    }
+
+    .drive-console::after {
+      top: 91px !important;
+      width: 172px !important;
+      height: 172px !important;
+    }
+
+    .drive-console .hero {
+      top: 107px !important;
+      width: 158px !important;
+      height: 158px !important;
+      min-height: 158px !important;
+      max-height: 158px !important;
+      padding: 10px 12px 9px !important;
+      border-width: 2px !important;
+      box-shadow:
+        0 0 0 6px rgba(5, 10, 15, 0.96),
+        0 0 0 9px rgba(255,255,255,0.08),
+        0 0 0 11px rgba(34,211,238,0.16),
+        0 16px 34px rgba(0,0,0,0.44),
+        inset 0 0 24px rgba(34,211,238,0.09) !important;
+    }
+
+    .drive-console .hero-icon-wrap,
+    .drive-console .hero-icon {
+      width: 44px !important;
+      height: 44px !important;
+      margin-bottom: 3px !important;
+    }
+
+    .drive-console .brand-logo {
+      width: 38px !important;
+      height: 38px !important;
+      max-width: 38px !important;
+      max-height: 38px !important;
+    }
+
+    .drive-console .hero-title {
+      max-width: 132px !important;
+      min-height: 0 !important;
+      max-height: 38px !important;
+      font-size: clamp(0.78rem, 3.35vw, 0.98rem) !important;
+      line-height: 1.08 !important;
+      white-space: normal !important;
+      overflow: hidden !important;
+      text-overflow: clip !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+    }
+
+    .drive-console .hero-text {
+      max-width: 132px !important;
+      max-height: 28px !important;
+      font-size: 0.62rem !important;
+      line-height: 1.12 !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .drive-console .hero-meta {
+      max-width: 132px !important;
+      max-height: 15px !important;
+      margin-top: 1px !important;
+      font-size: 0.52rem !important;
+      line-height: 1.08 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .drive-console .live-actions > button,
+    .drive-console .show-share-split > button {
+      box-shadow:
+        0 10px 22px rgba(0,0,0,0.30),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 0 16px rgba(34,211,238,0.13) !important;
+    }
+
+    .drive-console .split-show-btn,
+    .drive-console .live-nav-btn,
+    .drive-console .split-share-btn,
+    .drive-console .save-named-btn {
+      width: 126px !important;
+      min-height: 91px !important;
+      padding: 11px 8px 10px !important;
+      border-radius: 30px !important;
+      gap: 5px !important;
+    }
+
+    .drive-console .split-show-btn {
+      left: 22px !important;
+      top: 52px !important;
+      border-radius: 42px 28px 30px 48px !important;
+    }
+
+    .drive-console .live-nav-btn {
+      right: 22px !important;
+      top: 52px !important;
+      border-radius: 28px 42px 48px 30px !important;
+    }
+
+    .drive-console .save-named-btn {
+      left: 22px !important;
+      top: 254px !important;
+      border-radius: 48px 30px 28px 42px !important;
+    }
+
+    .drive-console .split-share-btn {
+      right: 22px !important;
+      top: 254px !important;
+      border-radius: 30px 48px 42px 28px !important;
+    }
+
+    .drive-console .clear-btn {
+      top: 341px !important;
+      width: 62px !important;
+      height: 62px !important;
+      min-height: 62px !important;
+      padding: 5px !important;
+      border-radius: 999px !important;
+      overflow: hidden !important;
+    }
+
+    .drive-console .clear-btn .btn-icon {
+      font-size: 1.15rem !important;
+      line-height: 1 !important;
+    }
+
+    .drive-console .clear-btn .btn-title {
+      display: block !important;
+      max-width: 48px !important;
+      font-size: 0.44rem !important;
+      line-height: 1 !important;
+      color: #ff9aa0 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: clip !important;
+    }
+
+    .drive-console .btn-icon {
+      font-size: 1.35rem !important;
+    }
+
+    .drive-console .btn-title {
+      font-size: 0.72rem !important;
+      line-height: 1.02 !important;
+      white-space: nowrap !important;
+    }
+
+    .drive-console .btn-subtitle {
+      font-size: 0.50rem !important;
+      line-height: 1.05 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .spot-panels {
+      height: 245px !important;
+      min-height: 245px !important;
+      padding: 7px !important;
+      border-radius: 24px !important;
+      align-items: stretch !important;
+    }
+
+    .spot-panel {
+      height: 100% !important;
+      min-height: 0 !important;
+      display: grid !important;
+      grid-template-rows: auto minmax(0, 1fr) !important;
+      padding: 7px !important;
+      overflow: hidden !important;
+    }
+
+    .spot-panel + .spot-panel {
+      border-left: 1px solid rgba(255,255,255,0.12) !important;
+    }
+
+    .panel-head {
+      min-width: 0 !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      gap: 5px !important;
+      margin-bottom: 6px !important;
+      align-items: start !important;
+    }
+
+    .panel-title {
+      font-size: 0.64rem !important;
+      line-height: 1.02 !important;
+      letter-spacing: 0.2px !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .panel-note {
+      font-size: 0.48rem !important;
+      line-height: 1.05 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .panel-head-right {
+      display: flex !important;
+      align-items: center !important;
+      gap: 4px !important;
+    }
+
+    .panel-head-right .panel-note {
+      max-width: 34px !important;
+      text-align: right !important;
+    }
+
+    .panel-toggle {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      border-radius: 14px !important;
+    }
+
+    .panel-toggle::before {
+      width: 12px !important;
+      height: 12px !important;
+      border-width: 0 4px 4px 0 !important;
+    }
+
+    .carousel-shell {
+      min-height: 0 !important;
+      height: 100% !important;
+      border-radius: 15px !important;
+      overflow: hidden !important;
+    }
+
+    .spot-list {
+      height: 100% !important;
+      min-height: 0 !important;
+      overflow-x: auto !important;
+      overflow-y: hidden !important;
+    }
+
+    .spot-item {
+      height: 100% !important;
+      min-height: 0 !important;
+      max-height: 100% !important;
+      display: grid !important;
+      grid-template-rows: minmax(0, 1fr) auto !important;
+      gap: 6px !important;
+      padding: 8px !important;
+      overflow: hidden !important;
+    }
+
+    .spot-row-main {
+      min-width: 0 !important;
+      min-height: 0 !important;
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      gap: 6px !important;
+      align-items: start !important;
+      overflow: hidden !important;
+    }
+
+    .spot-row-main > div:first-child {
+      min-width: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .spot-name {
+      font-size: 0.70rem !important;
+      line-height: 1.10 !important;
+      max-height: 2.20em !important;
+      min-width: 0 !important;
+      max-width: 100% !important;
+      white-space: normal !important;
+      overflow: hidden !important;
+      display: -webkit-box !important;
+      -webkit-line-clamp: 2 !important;
+      -webkit-box-orient: vertical !important;
+      word-break: normal !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    .spot-meta-small {
+      margin-top: 3px !important;
+      font-size: 0.47rem !important;
+      line-height: 1.12 !important;
+      max-width: 100% !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .spot-badge {
+      max-width: 42px !important;
+      padding: 4px 6px !important;
+      font-size: 0.52rem !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .spot-actions,
+    .spot-actions.four-actions {
+      display: grid !important;
+      gap: 4px !important;
+      min-width: 0 !important;
+    }
+
+    .spot-actions.three-actions {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    .spot-actions.four-actions {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .tiny-btn,
+    .spot-actions.four-actions .tiny-btn {
+      min-width: 0 !important;
+      min-height: 27px !important;
+      padding: 4px 2px !important;
+      border-radius: 10px !important;
+      font-size: 0.43rem !important;
+      line-height: 1 !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    @media (max-width: 390px) {
+      .title {
+        min-height: 50px !important;
+      }
+
+      .drive-console {
+        height: 396px !important;
+        min-height: 396px !important;
+      }
+
+      .drive-console::before {
+        top: 60px !important;
+        width: 244px !important;
+        height: 244px !important;
+      }
+
+      .drive-console::after {
+        top: 88px !important;
+        width: 154px !important;
+        height: 154px !important;
+      }
+
+      .drive-console .hero {
+        top: 102px !important;
+        width: 140px !important;
+        height: 140px !important;
+        min-height: 140px !important;
+        max-height: 140px !important;
+        padding: 8px 9px !important;
+      }
+
+      .drive-console .hero-icon-wrap,
+      .drive-console .hero-icon {
+        width: 36px !important;
+        height: 36px !important;
+      }
+
+      .drive-console .brand-logo {
+        width: 31px !important;
+        height: 31px !important;
+      }
+
+      .drive-console .hero-title {
+        max-width: 116px !important;
+        font-size: 0.76rem !important;
+      }
+
+      .drive-console .hero-text {
+        max-width: 116px !important;
+        font-size: 0.54rem !important;
+      }
+
+      .drive-console .hero-meta {
+        max-width: 116px !important;
+        font-size: 0.47rem !important;
+      }
+
+      .drive-console .split-show-btn,
+      .drive-console .live-nav-btn,
+      .drive-console .split-share-btn,
+      .drive-console .save-named-btn {
+        width: 108px !important;
+        min-height: 84px !important;
+        padding: 9px 6px !important;
+      }
+
+      .drive-console .split-show-btn {
+        left: 14px !important;
+        top: 54px !important;
+      }
+
+      .drive-console .live-nav-btn {
+        right: 14px !important;
+        top: 54px !important;
+      }
+
+      .drive-console .save-named-btn {
+        left: 14px !important;
+        top: 238px !important;
+      }
+
+      .drive-console .split-share-btn {
+        right: 14px !important;
+        top: 238px !important;
+      }
+
+      .drive-console .clear-btn {
+        top: 321px !important;
+        width: 56px !important;
+        height: 56px !important;
+        min-height: 56px !important;
+      }
+
+      .drive-console .btn-icon {
+        font-size: 1.10rem !important;
+      }
+
+      .drive-console .btn-title {
+        font-size: 0.60rem !important;
+      }
+
+      .drive-console .btn-subtitle {
+        font-size: 0.45rem !important;
+      }
+
+      .spot-panels {
+        height: 232px !important;
+        min-height: 232px !important;
+        padding: 5px !important;
+      }
+
+      .spot-panel {
+        padding: 5px !important;
+      }
+
+      .panel-title {
+        font-size: 0.56rem !important;
+      }
+
+      .panel-note {
+        font-size: 0.43rem !important;
+      }
+
+      .panel-toggle {
+        width: 30px !important;
+        height: 30px !important;
+        min-width: 30px !important;
+      }
+
+      .spot-item {
+        padding: 6px !important;
+      }
+
+      .spot-name {
+        font-size: 0.60rem !important;
+      }
+
+      .spot-meta-small {
+        font-size: 0.41rem !important;
+      }
+
+      .spot-badge {
+        max-width: 36px !important;
+        font-size: 0.44rem !important;
+        padding: 4px 5px !important;
+      }
+
+      .tiny-btn,
+      .spot-actions.four-actions .tiny-btn {
+        min-height: 24px !important;
+        font-size: 0.38rem !important;
+      }
+    }
+
   </style>
 </head>
 <body>
