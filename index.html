@@ -3264,6 +3264,679 @@
       }
     }
 
+
+    /* ParkNous v33: cockpit command console redesign */
+    .app {
+      width: min(100%, 430px);
+      height: calc(100dvh - 20px);
+      max-height: calc(100dvh - 20px);
+    }
+
+    .top {
+      padding: 7px 12px 2px;
+    }
+
+    .title {
+      min-height: 46px;
+    }
+
+    .title-wordmark {
+      width: min(88%, 350px);
+      max-height: 48px;
+      object-fit: contain;
+      filter:
+        drop-shadow(0 0 16px rgba(255, 216, 77, 0.22))
+        drop-shadow(0 0 7px rgba(255, 191, 77, 0.10));
+    }
+
+    .content {
+      gap: 8px;
+      padding: 8px 10px 10px;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+
+    .drive-console {
+      position: relative;
+      min-height: 506px;
+      flex: 0 0 auto;
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 50% 34%, rgba(34, 211, 238, 0.12), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,0.030), rgba(255,255,255,0.010));
+      border: 1px solid rgba(34, 211, 238, 0.10);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.04),
+        0 16px 34px rgba(0,0,0,0.18);
+      overflow: hidden;
+    }
+
+    .drive-console::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50px;
+      width: 308px;
+      height: 308px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background:
+        radial-gradient(circle, transparent 48%, rgba(34, 211, 238, 0.13) 49%, transparent 51%),
+        conic-gradient(from 220deg, rgba(34,211,238,0.0), rgba(34,211,238,0.42), rgba(255,216,77,0.30), rgba(34,211,238,0.0));
+      opacity: 0.62;
+      pointer-events: none;
+      filter: blur(0.2px);
+    }
+
+    .drive-console::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 70px;
+      width: 210px;
+      height: 210px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      border: 1px solid rgba(34,211,238,0.26);
+      box-shadow:
+        0 0 0 9px rgba(34,211,238,0.030),
+        0 0 28px rgba(34,211,238,0.16);
+      pointer-events: none;
+    }
+
+    .drive-console .pill-row {
+      display: none !important;
+    }
+
+    .drive-console .hero {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      top: 95px;
+      width: 194px;
+      height: 194px;
+      min-height: 194px;
+      max-height: 194px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      padding: 17px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2px;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(34,211,238,0.09), transparent 54%),
+        linear-gradient(180deg, rgba(19, 26, 36, 0.99), rgba(7, 10, 15, 0.99));
+      border: 2px solid rgba(34, 211, 238, 0.48);
+      box-shadow:
+        0 0 0 7px rgba(6, 12, 18, 0.96),
+        0 0 0 11px rgba(255,255,255,0.10),
+        0 0 0 13px rgba(34,211,238,0.16),
+        0 18px 38px rgba(0,0,0,0.45),
+        inset 0 0 28px rgba(34,211,238,0.08);
+      overflow: visible;
+    }
+
+    .drive-console .hero::before {
+      border-radius: 999px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.08), transparent 42%),
+        radial-gradient(circle at 50% 0%, rgba(255,216,77,0.10), transparent 40%);
+    }
+
+    .drive-console .hero-icon-wrap {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 4px;
+      flex: 0 0 auto;
+    }
+
+    .drive-console .hero-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(34, 211, 238, 0.32);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 0 18px rgba(34,211,238,0.18);
+    }
+
+    .drive-console .brand-logo {
+      width: 52px;
+      height: 52px;
+      max-width: 52px;
+      max-height: 52px;
+    }
+
+    .drive-console .radar-ring,
+    .drive-console .radar-ring-2 {
+      border-width: 2px;
+    }
+
+    .drive-console .hero-title {
+      min-height: 0;
+      max-width: 160px;
+      margin: 0;
+      font-size: clamp(1.02rem, 4.4vw, 1.28rem);
+      line-height: 1.04;
+      font-weight: 1000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.1px;
+    }
+
+    .drive-console .hero-text {
+      min-height: 0;
+      max-width: 162px;
+      max-height: 34px;
+      padding: 0;
+      font-size: 0.76rem;
+      line-height: 1.14;
+      color: rgba(218,250,255,0.92);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .drive-console .hero-meta {
+      min-height: 0;
+      max-width: 162px;
+      max-height: 28px;
+      margin-top: 2px;
+      padding: 0;
+      font-size: 0.64rem;
+      line-height: 1.08;
+      color: rgba(232,238,255,0.70);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .drive-console .action-row.show {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 12px;
+      z-index: 20;
+    }
+
+    .drive-console .live-actions {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      display: block;
+      pointer-events: none;
+    }
+
+    .drive-console .live-actions > button,
+    .drive-console .show-share-split > button {
+      position: absolute;
+      pointer-events: auto;
+      margin: 0;
+      border: 1px solid rgba(34, 211, 238, 0.24);
+      background:
+        linear-gradient(180deg, rgba(28, 43, 58, 0.98), rgba(9, 15, 23, 0.98));
+      color: white;
+      box-shadow:
+        0 10px 22px rgba(0,0,0,0.26),
+        inset 0 1px 0 rgba(255,255,255,0.08),
+        0 0 18px rgba(34,211,238,0.10);
+      backdrop-filter: blur(8px);
+      transform: none;
+      transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+    }
+
+    .drive-console .live-actions > button:active,
+    .drive-console .show-share-split > button:active {
+      transform: scale(0.975);
+      filter: brightness(1.08);
+    }
+
+    .drive-console .show-share-split {
+      display: contents;
+    }
+
+    .drive-console .split-show-btn,
+    .drive-console .live-nav-btn,
+    .drive-console .split-share-btn,
+    .drive-console .save-named-btn {
+      width: 142px;
+      min-height: 116px;
+      padding: 16px 12px 13px;
+      border-radius: 36px;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 7px;
+      text-align: center;
+    }
+
+    .drive-console .split-show-btn {
+      left: 15px;
+      top: 46px;
+      border-radius: 44px 30px 36px 58px;
+      background:
+        radial-gradient(circle at 35% 20%, rgba(56,189,248,0.24), transparent 40%),
+        linear-gradient(180deg, rgba(22, 51, 70, 0.98), rgba(9, 17, 27, 0.98));
+    }
+
+    .drive-console .live-nav-btn {
+      right: 15px;
+      top: 46px;
+      border-radius: 30px 44px 58px 36px;
+      background:
+        radial-gradient(circle at 65% 20%, rgba(56,189,248,0.22), transparent 40%),
+        linear-gradient(180deg, rgba(18, 46, 66, 0.98), rgba(8, 16, 26, 0.98));
+    }
+
+    .drive-console .save-named-btn {
+      left: 15px;
+      top: 285px;
+      border-radius: 58px 34px 34px 44px;
+      border-color: rgba(52, 211, 170, 0.30);
+      background:
+        radial-gradient(circle at 38% 25%, rgba(52,211,170,0.26), transparent 42%),
+        linear-gradient(180deg, rgba(18, 72, 64, 0.98), rgba(7, 26, 28, 0.98));
+    }
+
+    .drive-console .split-share-btn {
+      right: 15px;
+      top: 285px;
+      border-radius: 34px 58px 44px 34px;
+      border-color: rgba(52, 211, 170, 0.30);
+      background:
+        radial-gradient(circle at 62% 25%, rgba(52,211,170,0.26), transparent 42%),
+        linear-gradient(180deg, rgba(18, 70, 62, 0.98), rgba(8, 28, 28, 0.98));
+    }
+
+    .drive-console .clear-btn {
+      left: 50%;
+      top: 390px;
+      width: 78px;
+      height: 78px;
+      min-height: 78px;
+      padding: 7px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      border-color: rgba(255, 117, 125, 0.48);
+      background:
+        radial-gradient(circle at 50% 28%, rgba(255,117,125,0.25), transparent 48%),
+        linear-gradient(180deg, rgba(65, 19, 25, 0.98), rgba(14, 10, 13, 0.98));
+      box-shadow:
+        0 0 0 5px rgba(255,117,125,0.045),
+        0 0 18px rgba(255,117,125,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .drive-console .clear-btn:active {
+      transform: translateX(-50%) scale(0.96);
+    }
+
+    .drive-console .btn-icon {
+      font-size: 1.55rem;
+      line-height: 1;
+    }
+
+    .drive-console .clear-btn .btn-icon {
+      font-size: 1.36rem;
+    }
+
+    .drive-console .btn-copy {
+      gap: 2px;
+      justify-items: center;
+    }
+
+    .drive-console .btn-title {
+      font-size: 0.82rem;
+      line-height: 1.02;
+      font-weight: 1000;
+      letter-spacing: 0.2px;
+      text-transform: uppercase;
+      white-space: normal;
+    }
+
+    .drive-console .split-show-btn .btn-title::after {
+      content: "";
+    }
+
+    .drive-console .btn-subtitle {
+      font-size: 0.58rem;
+      line-height: 1.05;
+      font-weight: 800;
+      color: rgba(218, 250, 255, 0.76);
+    }
+
+    .drive-console .clear-btn .btn-title {
+      font-size: 0.56rem;
+      color: #ff8f94;
+    }
+
+    .drive-console .clear-btn .btn-subtitle {
+      display: none;
+    }
+
+    .spot-panels {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 0;
+      flex: 0 0 auto;
+      min-height: 0;
+      padding: 8px;
+      border-radius: 24px;
+      border: 1px solid rgba(34, 211, 238, 0.28);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(34, 211, 238, 0.10), transparent 44%),
+        radial-gradient(circle at 100% 0%, rgba(255, 216, 77, 0.075), transparent 44%),
+        rgba(7, 14, 22, 0.78);
+      box-shadow:
+        0 16px 34px rgba(0,0,0,0.24),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      overflow: hidden;
+    }
+
+    .spot-panel {
+      min-width: 0;
+      border: 0;
+      box-shadow: none;
+      border-radius: 18px;
+      padding: 8px;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    .spot-panel + .spot-panel {
+      border-left: 1px solid rgba(255,255,255,0.11);
+      border-radius: 0 18px 18px 0;
+    }
+
+    .panel-head {
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 6px;
+      margin-bottom: 7px;
+    }
+
+    .panel-title {
+      font-size: 0.78rem;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      color: rgba(218,250,255,0.98);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .panel-note {
+      font-size: 0.56rem;
+      line-height: 1.12;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .panel-head-right {
+      gap: 5px;
+    }
+
+    .panel-toggle {
+      width: 38px;
+      height: 38px;
+      border-radius: 16px;
+      flex: 0 0 auto;
+      border-color: rgba(34,211,238,0.22);
+      background: rgba(34,211,238,0.09);
+    }
+
+    .panel-toggle::before {
+      width: 14px;
+      height: 14px;
+      border-width: 0 4px 4px 0;
+    }
+
+    .carousel-shell {
+      min-width: 0;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    .spot-list {
+      min-width: 0;
+    }
+
+    .spot-item {
+      min-width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+      gap: 7px;
+      padding: 9px;
+      border-radius: 15px;
+      background:
+        radial-gradient(circle at 90% 12%, rgba(34, 211, 238, 0.13), transparent 35%),
+        rgba(0,0,0,0.18);
+    }
+
+    .spot-row-main {
+      min-width: 0;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+    }
+
+    .spot-row-main > div:first-child {
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .spot-name {
+      min-width: 0;
+      max-width: 100%;
+      font-size: clamp(0.72rem, 3.2vw, 0.82rem);
+      line-height: 1.12;
+      font-weight: 1000;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: normal !important;
+      overflow-wrap: normal !important;
+    }
+
+    .spot-meta-small {
+      min-width: 0;
+      max-width: 100%;
+      margin-top: 4px;
+      font-size: 0.54rem;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .spot-badge {
+      font-size: 0.56rem;
+      padding: 5px 7px;
+      max-width: 48px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: #69f6ff;
+      border-color: rgba(34,211,238,0.36);
+      background: rgba(34,211,238,0.11);
+    }
+
+    .spot-actions {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .spot-actions.four-actions {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .tiny-btn,
+    .spot-actions.four-actions .tiny-btn {
+      min-width: 0;
+      min-height: 30px;
+      padding: 5px 3px;
+      border-radius: 11px;
+      font-size: 0.48rem;
+      line-height: 1;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      background: linear-gradient(180deg, rgba(56,64,82,0.95), rgba(24,31,43,0.95));
+    }
+
+    .tiny-btn.delete-small {
+      color: #ffd4d7;
+      border-color: rgba(255,117,125,0.42);
+      background: rgba(255,117,125,0.15);
+    }
+
+    .spot-list-modal-preview,
+    .spot-list-modal-name,
+    .spot-list-modal-meta {
+      min-width: 0;
+      max-width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      word-break: normal !important;
+      overflow-wrap: normal !important;
+    }
+
+    @media (max-width: 390px) {
+      .drive-console {
+        min-height: 486px;
+      }
+
+      .drive-console::before {
+        top: 48px;
+        width: 280px;
+        height: 280px;
+      }
+
+      .drive-console::after {
+        top: 67px;
+        width: 194px;
+        height: 194px;
+      }
+
+      .drive-console .hero {
+        top: 92px;
+        width: 176px;
+        height: 176px;
+        min-height: 176px;
+        max-height: 176px;
+      }
+
+      .drive-console .hero-icon-wrap,
+      .drive-console .hero-icon {
+        width: 50px;
+        height: 50px;
+      }
+
+      .drive-console .brand-logo {
+        width: 44px;
+        height: 44px;
+      }
+
+      .drive-console .hero-title {
+        max-width: 148px;
+        font-size: 1rem;
+      }
+
+      .drive-console .hero-text {
+        max-width: 148px;
+        font-size: 0.68rem;
+      }
+
+      .drive-console .hero-meta {
+        max-width: 148px;
+        font-size: 0.58rem;
+      }
+
+      .drive-console .split-show-btn,
+      .drive-console .live-nav-btn,
+      .drive-console .split-share-btn,
+      .drive-console .save-named-btn {
+        width: 122px;
+        min-height: 106px;
+        padding: 12px 8px;
+      }
+
+      .drive-console .split-show-btn,
+      .drive-console .live-nav-btn {
+        top: 48px;
+      }
+
+      .drive-console .save-named-btn,
+      .drive-console .split-share-btn {
+        top: 278px;
+      }
+
+      .drive-console .clear-btn {
+        top: 380px;
+        width: 68px;
+        height: 68px;
+        min-height: 68px;
+      }
+
+      .drive-console .btn-icon {
+        font-size: 1.32rem;
+      }
+
+      .drive-console .btn-title {
+        font-size: 0.70rem;
+      }
+
+      .drive-console .btn-subtitle {
+        font-size: 0.50rem;
+      }
+
+      .spot-panels {
+        padding: 6px;
+      }
+
+      .spot-panel {
+        padding: 6px;
+      }
+
+      .panel-title {
+        font-size: 0.68rem;
+      }
+
+      .panel-note {
+        font-size: 0.50rem;
+      }
+
+      .panel-toggle {
+        width: 34px;
+        height: 34px;
+      }
+
+      .spot-item {
+        padding: 7px;
+      }
+
+      .spot-name {
+        font-size: 0.64rem;
+      }
+
+      .spot-meta-small {
+        font-size: 0.48rem;
+      }
+
+      .tiny-btn,
+      .spot-actions.four-actions .tiny-btn {
+        font-size: 0.42rem;
+        min-height: 28px;
+        padding: 4px 2px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -3273,6 +3946,7 @@
     </div>
 
     <div class="content">
+      <section class="drive-console">
       <div id="hero" class="hero waiting">
         <div class="hero-icon-wrap">
           <div class="radar-ring"></div>
@@ -3334,17 +4008,19 @@
         <button class="save-named-btn" id="saveNamedBtn">
           <span class="btn-icon">⭐</span>
           <span class="btn-copy">
-            <span class="btn-title">Save current spot</span>
+            <span class="btn-title">Save</span>
+            <span class="btn-subtitle">Current spot</span>
           </span>
         </button>
 
         <button class="clear-btn" id="clearBtn">
           <span class="btn-icon">🗑️</span>
           <span class="btn-copy">
-            <span class="btn-title">Clear current spot</span>
+            <span class="btn-title">Delete</span>
           </span>
         </button>
       </div>
+      </section>
 
       <div class="spot-panels">
         <section id="savedPanel" class="spot-panel compact-panel">
@@ -4311,7 +4987,7 @@
       primary.type = "button";
 
       if (options.list === "named") {
-        primary.textContent = "Navigate";
+        primary.textContent = "Nav";
         primary.dataset.action = "navigate";
       } else {
         primary.textContent = "Show";
@@ -4326,7 +5002,7 @@
         const save = document.createElement("button");
         save.className = "tiny-btn";
         save.type = "button";
-        save.textContent = "Save spot";
+        save.textContent = "Save";
         save.dataset.action = "save-name";
         save.dataset.list = options.list;
         save.dataset.index = String(options.index);
