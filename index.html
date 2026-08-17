@@ -13,6 +13,7 @@
   <link rel="manifest" href="manifest.json" />
     <link rel="preload" as="image" href="./favicon.png" />
   <link rel="preload" as="image" href="./parknous_onlytext.svg" />
+  <link rel="preload" as="image" href="./template_UI_parknous.png?v=37" />
   <meta name="theme-color" content="#0a0d12" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -3876,6 +3877,51 @@
       }
     }
 
+
+    /* ParkNous v37: render template as a real image layer, not CSS background */
+    .template-board {
+      background:
+        linear-gradient(180deg, rgba(4, 9, 14, 0.98), rgba(0, 4, 8, 0.99)) !important;
+    }
+
+    .template-bg-img {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: none !important;
+      object-fit: fill !important;
+      object-position: center center !important;
+      display: block !important;
+      opacity: 1 !important;
+      pointer-events: none !important;
+      user-select: none !important;
+      -webkit-user-drag: none !important;
+    }
+
+    .template-board .hero,
+    .template-board .live-actions,
+    .template-board .spot-panels {
+      position: absolute !important;
+    }
+
+    .template-board .hero {
+      z-index: 15 !important;
+    }
+
+    .template-board .live-actions {
+      z-index: 35 !important;
+    }
+
+    .template-board .spot-panels {
+      z-index: 28 !important;
+    }
+
+    html.template-mode .template-bg-img {
+      opacity: 0.70 !important;
+    }
+
   </style>
 </head>
 <body>
@@ -3886,6 +3932,7 @@
 
     <div class="content">
       <section class="template-board" aria-label="ParkNous home">
+        <img class="template-bg-img" src="./template_UI_parknous.png?v=37" alt="" aria-hidden="true" decoding="async" fetchpriority="high" />
         <div id="hero" class="hero waiting">
           <div class="hero-icon-wrap">
             <div class="radar-ring"></div>
