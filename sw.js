@@ -1,4 +1,4 @@
-const CACHE_NAME = "parknous-v38";
+const CACHE_NAME = "parknous-v40";
 
 const APP_SHELL = [
   "./",
@@ -52,13 +52,16 @@ self.addEventListener("fetch", (event) => {
       fetch(request, { cache: "no-store" })
         .then((response) => {
           const responseClone = response.clone();
+
           caches.open(CACHE_NAME).then((cache) => {
             cache.put("./index.html", responseClone);
           });
+
           return response;
         })
         .catch(async () => (await caches.match("./index.html")) || Response.error())
     );
+
     return;
   }
 
@@ -72,6 +75,7 @@ self.addEventListener("fetch", (event) => {
         }
 
         const responseClone = networkResponse.clone();
+
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(request, responseClone);
         });
