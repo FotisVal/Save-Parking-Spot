@@ -1,4 +1,4 @@
-const CACHE_NAME = "parknous-v37";
+const CACHE_NAME = "parknous-v38";
 
 const APP_SHELL = [
   "./",
@@ -16,7 +16,9 @@ const APP_SHELL = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) =>
+      Promise.allSettled(APP_SHELL.map((url) => cache.add(url)))
+    )
   );
 
   self.skipWaiting();
@@ -25,15 +27,12 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
-      Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-
-          return null;
-        })
-      )
+      Promise.all(keys.map((key) => {
+        if (key !== CACHE_NAME) {
+          return caches.delete(key);
+        }
+        return null;
+      }))
     )
   );
 
@@ -46,35 +45,26 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  if (url.origin !== self.location.origin) {
-    return;
-  }
+  if (url.origin !== self.location.origin) return;
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request)
+      fetch(request, { cache: "no-store" })
         .then((response) => {
           const responseClone = response.clone();
-
           caches.open(CACHE_NAME).then((cache) => {
             cache.put("./index.html", responseClone);
           });
-
           return response;
         })
-        .catch(async () => {
-          return (await caches.match("./index.html")) || Response.error();
-        })
+        .catch(async () => (await caches.match("./index.html")) || Response.error())
     );
-
     return;
   }
 
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+      if (cachedResponse) return cachedResponse;
 
       return fetch(request).then((networkResponse) => {
         if (!networkResponse || networkResponse.status !== 200) {
@@ -82,7 +72,6 @@ self.addEventListener("fetch", (event) => {
         }
 
         const responseClone = networkResponse.clone();
-
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(request, responseClone);
         });
