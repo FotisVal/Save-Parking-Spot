@@ -1,4 +1,4 @@
-const CACHE_NAME = "parknous-v35";
+const CACHE_NAME = "parknous-v36";
 
 const APP_SHELL = [
   "./",
@@ -8,6 +8,7 @@ const APP_SHELL = [
   "./icon-192.png",
   "./icon-512.png",
   "./parknous_onlytext.svg",
+  "./template_UI_parknous.png",
   "./phivimakes-logo-192.png",
   "./phivimakes-logo-256.webp",
   "./phivimakes-logo-512.png"
