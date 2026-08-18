@@ -1815,6 +1815,489 @@
       }
     }
 
+
+    /* ParkNous v47: higher title, separate logo, current status restored, saved car navigate */
+    .top {
+      display: grid !important;
+      position: absolute !important;
+      left: 0 !important;
+      right: 0 !important;
+      top: 0 !important;
+      height: 6.0% !important;
+      min-height: 42px !important;
+      z-index: 40 !important;
+      place-items: start center !important;
+      padding: 0 30px !important;
+      pointer-events: none !important;
+      overflow: visible !important;
+    }
+
+    .title {
+      display: grid !important;
+      place-items: start center !important;
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      overflow: visible !important;
+    }
+
+    .title-wordmark {
+      display: block !important;
+      width: min(92%, 365px) !important;
+      max-height: none !important;
+      height: auto !important;
+      object-fit: contain !important;
+      transform: translateY(-54px) !important;
+      filter:
+        drop-shadow(0 0 10px rgba(255, 209, 102, 0.22))
+        drop-shadow(0 0 22px rgba(255, 174, 53, 0.14)) !important;
+      pointer-events: none !important;
+    }
+
+    .top-center-logo {
+      position: absolute !important;
+      left: 50% !important;
+      top: 8.4% !important;
+      width: 104px !important;
+      height: 104px !important;
+      transform: translateX(-50%) !important;
+      z-index: 38 !important;
+      object-fit: contain !important;
+      pointer-events: none !important;
+      filter:
+        drop-shadow(0 0 12px rgba(51, 231, 242, 0.18))
+        drop-shadow(0 8px 14px rgba(0, 0, 0, 0.38)) !important;
+    }
+
+    .template-bg-img,
+    .image-fallback {
+      pointer-events: none !important;
+    }
+
+    /* Normal CSS/HTML hotspots only, no click proxy */
+    .live-actions {
+      position: absolute !important;
+      inset: 0 !important;
+      z-index: 90 !important;
+      pointer-events: none !important;
+      display: block !important;
+    }
+
+    .live-actions > button,
+    .cockpit-btn,
+    .cockpit-delete {
+      position: absolute !important;
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
+      cursor: pointer !important;
+      background: rgba(51, 231, 242, 0.001) !important;
+      border: 1px solid transparent !important;
+      color: transparent !important;
+      box-shadow: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      z-index: 91 !important;
+      -webkit-tap-highlight-color: rgba(51, 231, 242, 0.25) !important;
+    }
+
+    .live-actions > button:active,
+    .cockpit-btn:active,
+    .cockpit-delete:active {
+      background: rgba(51, 231, 242, 0.18) !important;
+      border-color: rgba(51, 231, 242, 0.36) !important;
+    }
+
+    .live-actions > button .btn-icon,
+    .live-actions > button .btn-copy,
+    .cockpit-btn .btn-icon,
+    .cockpit-btn .btn-copy,
+    .cockpit-delete .btn-icon,
+    .cockpit-delete .btn-copy {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .cockpit-show {
+      left: 6.5% !important;
+      top: 17.0% !important;
+      width: 34.0% !important;
+      height: 17.0% !important;
+      border-radius: 48px 30px 34px 58px !important;
+    }
+
+    .cockpit-navigate {
+      right: 6.5% !important;
+      top: 17.0% !important;
+      width: 34.0% !important;
+      height: 17.0% !important;
+      border-radius: 30px 48px 58px 34px !important;
+    }
+
+    .cockpit-save {
+      left: 6.4% !important;
+      top: 46.2% !important;
+      width: 34.0% !important;
+      height: 16.8% !important;
+      border-radius: 58px 34px 30px 48px !important;
+    }
+
+    .cockpit-share {
+      right: 6.4% !important;
+      top: 46.2% !important;
+      width: 34.0% !important;
+      height: 16.8% !important;
+      border-radius: 34px 58px 48px 30px !important;
+    }
+
+    .cockpit-delete {
+      left: 50% !important;
+      top: 58.4% !important;
+      width: 17% !important;
+      height: 8.8% !important;
+      min-height: 0 !important;
+      transform: translateX(-50%) !important;
+      border-radius: 999px !important;
+    }
+
+    .cockpit-delete:active {
+      transform: translateX(-50%) scale(0.95) !important;
+    }
+
+    /* Center: CURRENT SPOT / status / date / time / accuracy */
+    .hero {
+      z-index: 35 !important;
+      pointer-events: none !important;
+      top: 29.8% !important;
+      width: 43.0% !important;
+      height: 21.4% !important;
+      padding: 8px 12px !important;
+      justify-content: center !important;
+      align-items: center !important;
+      gap: 0 !important;
+      background: transparent !important;
+      overflow: hidden !important;
+    }
+
+    .hero-icon-wrap,
+    .hero-icon,
+    .brand-logo,
+    .hero-title,
+    .hero-text,
+    .hero::after {
+      display: none !important;
+    }
+
+    .hero-meta {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .hero-status-block {
+      display: grid !important;
+      gap: 4px !important;
+      margin-bottom: 9px !important;
+      text-align: center !important;
+      pointer-events: none !important;
+      text-shadow: 0 2px 9px rgba(0,0,0,0.96) !important;
+    }
+
+    #heroCurrentLabel {
+      color: #33e7f2 !important;
+      font-size: clamp(0.58rem, 2.9vw, 0.74rem) !important;
+      line-height: 1 !important;
+      font-weight: 950 !important;
+      letter-spacing: 0.08em !important;
+    }
+
+    #heroStatusWord {
+      color: #ffffff !important;
+      font-size: clamp(1.12rem, 5.55vw, 1.48rem) !important;
+      line-height: 1 !important;
+      font-weight: 1000 !important;
+      letter-spacing: 0.02em !important;
+    }
+
+    .hero-meta-stack {
+      display: grid !important;
+      gap: 4px !important;
+      width: 100% !important;
+      max-width: 160px !important;
+      margin: 0 !important;
+      color: rgba(232,238,255,0.92) !important;
+      font-size: clamp(0.54rem, 2.65vw, 0.70rem) !important;
+      line-height: 1.05 !important;
+      font-weight: 820 !important;
+      text-align: center !important;
+      text-shadow: 0 2px 9px rgba(0,0,0,0.96) !important;
+      pointer-events: none !important;
+    }
+
+    .hero-meta-stack > div {
+      max-width: 160px !important;
+      min-height: 1em !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    #heroMetaDate {
+      color: rgba(232,238,255,0.96) !important;
+      font-size: 1.02em !important;
+      font-weight: 900 !important;
+    }
+
+    #heroMetaTime {
+      color: rgba(218,250,255,0.94) !important;
+    }
+
+    #heroMetaAccuracy {
+      color: #33e7f2 !important;
+      font-size: 0.92em !important;
+    }
+
+    .hero-meta-arc {
+      display: none !important;
+    }
+
+    /* Lists: left info, right vertical buttons */
+    .spot-panels {
+      z-index: 45 !important;
+      left: 5.3% !important;
+      right: 5.3% !important;
+      top: 68.0% !important;
+      bottom: 3.6% !important;
+      background: transparent !important;
+      pointer-events: auto !important;
+    }
+
+    .spot-panel {
+      grid-template-rows: 34px minmax(0, 1fr) !important;
+      padding: 10px 12px 12px !important;
+      background: transparent !important;
+      pointer-events: auto !important;
+    }
+
+    .spot-panel + .spot-panel {
+      border-left: 0 !important;
+    }
+
+    .panel-title,
+    .panel-head > div:first-child .panel-note {
+      display: none !important;
+    }
+
+    .panel-head {
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      margin: 0 !important;
+      pointer-events: auto !important;
+    }
+
+    .panel-head-right {
+      justify-self: end !important;
+      align-items: center !important;
+      gap: 6px !important;
+      pointer-events: auto !important;
+    }
+
+    .panel-head-right .panel-note {
+      max-width: 44px !important;
+      font-size: 0.54rem !important;
+      color: #52f7ff !important;
+      font-weight: 950 !important;
+      pointer-events: none !important;
+    }
+
+    .panel-toggle {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      border-radius: 12px !important;
+      pointer-events: auto !important;
+      z-index: 70 !important;
+    }
+
+    .panel-toggle::before {
+      width: 9px !important;
+      height: 9px !important;
+      border-width: 0 3px 3px 0 !important;
+    }
+
+    .spot-item {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) 58px !important;
+      grid-template-rows: 1fr !important;
+      gap: 9px !important;
+      padding: 10px !important;
+      border-radius: 16px !important;
+      background: rgba(2, 9, 16, 0.31) !important;
+      overflow: hidden !important;
+      pointer-events: auto !important;
+    }
+
+    .spot-row-main {
+      grid-column: 1 !important;
+      grid-row: 1 !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+      align-content: center !important;
+      gap: 5px !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .spot-row-main > div:first-child {
+      min-width: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .spot-badge {
+      justify-self: start !important;
+      margin-top: 4px !important;
+      min-width: 42px !important;
+      max-width: 52px !important;
+      padding: 6px 7px !important;
+      font-size: 0.56rem !important;
+    }
+
+    .spot-name {
+      max-width: 100% !important;
+      font-size: clamp(0.74rem, 3.75vw, 0.94rem) !important;
+      line-height: 1.12 !important;
+      max-height: 2.25em !important;
+    }
+
+    .spot-meta-small {
+      max-width: 100% !important;
+      margin-top: 5px !important;
+      font-size: 0.46rem !important;
+      line-height: 1.16 !important;
+    }
+
+    .spot-actions,
+    .spot-actions.three-actions,
+    .spot-actions.four-actions {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      align-content: stretch !important;
+      gap: 7px !important;
+      min-width: 0 !important;
+      height: 100% !important;
+      pointer-events: auto !important;
+    }
+
+    .tiny-btn {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      height: auto !important;
+      padding: 5px 3px !important;
+      border-radius: 11px !important;
+      font-size: 0.48rem !important;
+      line-height: 1 !important;
+      pointer-events: auto !important;
+      z-index: 75 !important;
+    }
+
+    .tiny-btn.delete-small {
+      color: #ffd7db !important;
+      border-color: rgba(255, 107, 114, 0.50) !important;
+      background: rgba(255, 107, 114, 0.20) !important;
+    }
+
+    .spot-list-modal-row.saved-actions {
+      grid-template-columns: minmax(0, 1fr) 54px 54px 54px 54px !important;
+    }
+
+    @media (max-width: 390px) {
+      .title-wordmark {
+        transform: translateY(-46px) !important;
+      }
+
+      .top-center-logo {
+        top: 8.0% !important;
+        width: 88px !important;
+        height: 88px !important;
+      }
+
+      .hero {
+        top: 30.2% !important;
+        width: 42.0% !important;
+        height: 20.8% !important;
+      }
+
+      .hero-status-block {
+        gap: 3px !important;
+        margin-bottom: 7px !important;
+      }
+
+      #heroCurrentLabel {
+        font-size: 0.50rem !important;
+      }
+
+      #heroStatusWord {
+        font-size: 1.04rem !important;
+      }
+
+      .hero-meta-stack {
+        max-width: 138px !important;
+        font-size: 0.48rem !important;
+        gap: 3px !important;
+      }
+
+      .hero-meta-stack > div {
+        max-width: 138px !important;
+      }
+
+      .spot-panel {
+        grid-template-rows: 31px minmax(0, 1fr) !important;
+        padding: 9px 9px 11px !important;
+      }
+
+      .panel-toggle {
+        width: 25px !important;
+        height: 25px !important;
+        min-width: 25px !important;
+      }
+
+      .spot-item {
+        grid-template-columns: minmax(0, 1fr) 50px !important;
+        gap: 7px !important;
+        padding: 8px !important;
+      }
+
+      .spot-name {
+        font-size: 0.62rem !important;
+      }
+
+      .spot-meta-small {
+        font-size: 0.38rem !important;
+      }
+
+      .spot-badge {
+        min-width: 36px !important;
+        max-width: 44px !important;
+        font-size: 0.46rem !important;
+        padding: 5px 6px !important;
+      }
+
+      .spot-actions,
+      .spot-actions.three-actions,
+      .spot-actions.four-actions {
+        gap: 5px !important;
+      }
+
+      .tiny-btn {
+        font-size: 0.39rem !important;
+        border-radius: 10px !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -1877,6 +2360,10 @@
           <div id="heroTitle" class="hero-title">Starting...</div>
           <div id="heroText" class="hero-text">Preparing secure storage.</div>
           <div id="heroMeta" class="hero-meta"></div>
+          <div id="heroStatusBlock" class="hero-status-block" aria-hidden="true">
+            <div id="heroCurrentLabel">CURRENT SPOT</div>
+            <div id="heroStatusWord">SAVED</div>
+          </div>
           <div id="heroMetaStack" class="hero-meta-stack" aria-hidden="true">
             <div id="heroMetaDate"></div>
             <div id="heroMetaTime"></div>
@@ -2618,7 +3105,21 @@
         return;
       }
 
-      if (action === "navigate") {
+      if (action === "car-navigate") {
+          const selectedSpot = getSpotFromAction(list, index);
+          if (!selectedSpot) return;
+
+          const lat = Number(selectedSpot.lat);
+          const lng = Number(selectedSpot.lng);
+
+          if (Number.isFinite(lat) && Number.isFinite(lng)) {
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`, "_blank", "noopener");
+          }
+
+          return;
+        }
+
+        if (action === "navigate") {
         openSpotOnMap(spot, true);
         return;
       }
@@ -4093,12 +4594,28 @@
 
   <script>
     (() => {
-      const syncHeroMetaStack = () => {
+      const getStatusWord = () => {
+        const hero = document.getElementById("hero");
+        const title = document.getElementById("heroTitle");
+        const raw = (title?.textContent || "").trim().toLowerCase();
+
+        if (raw.includes("search") || raw.includes("gps") || hero?.classList.contains("searching")) return "SEARCHING";
+        if (raw.includes("saving")) return "SAVING";
+        if (raw.includes("saved") || raw.includes("location saved") || hero?.classList.contains("saved")) return "SAVED";
+        if (raw.includes("cleared") || raw.includes("clear")) return "CLEARED";
+        if (raw.includes("starting") || raw.includes("preparing") || hero?.classList.contains("waiting")) return "STARTING";
+        if (raw.includes("error") || hero?.classList.contains("error")) return "ERROR";
+        return raw ? raw.toUpperCase().slice(0, 14) : "CURRENT";
+      };
+
+      const syncHeroDisplay = () => {
         const source = document.getElementById("heroMeta");
         const dateEl = document.getElementById("heroMetaDate");
         const timeEl = document.getElementById("heroMetaTime");
         const accEl = document.getElementById("heroMetaAccuracy");
+        const statusEl = document.getElementById("heroStatusWord");
 
+        if (statusEl) statusEl.textContent = getStatusWord();
         if (!source || !dateEl || !timeEl || !accEl) return;
 
         const raw = (source.textContent || "")
@@ -4111,9 +4628,7 @@
         let accuracy = "";
 
         const accuracyMatch = raw.match(/Accuracy:\s*([^•]+)/i);
-        if (accuracyMatch) {
-          accuracy = `Accuracy: ${accuracyMatch[1].trim()}`;
-        }
+        if (accuracyMatch) accuracy = `Accuracy: ${accuracyMatch[1].trim()}`;
 
         const clean = raw
           .replace(/•\s*Accuracy:\s*[^•]+/i, "")
@@ -4121,7 +4636,6 @@
           .trim();
 
         const dateTimeMatch = clean.match(/(\d{1,2}\/\d{1,2}\/\d{4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?)/);
-
         if (dateTimeMatch) {
           date = dateTimeMatch[1];
           time = dateTimeMatch[2];
@@ -4135,18 +4649,36 @@
       };
 
       window.addEventListener("DOMContentLoaded", () => {
+        const title = document.getElementById("heroTitle");
         const meta = document.getElementById("heroMeta");
-        syncHeroMetaStack();
+        const hero = document.getElementById("hero");
 
-        if (meta) {
-          new MutationObserver(syncHeroMetaStack).observe(meta, {
+        syncHeroDisplay();
+
+        if (title) {
+          new MutationObserver(syncHeroDisplay).observe(title, {
             childList: true,
             characterData: true,
             subtree: true
           });
         }
 
-        setInterval(syncHeroMetaStack, 900);
+        if (meta) {
+          new MutationObserver(syncHeroDisplay).observe(meta, {
+            childList: true,
+            characterData: true,
+            subtree: true
+          });
+        }
+
+        if (hero) {
+          new MutationObserver(syncHeroDisplay).observe(hero, {
+            attributes: true,
+            attributeFilter: ["class"]
+          });
+        }
+
+        setInterval(syncHeroDisplay, 900);
       });
     })();
   </script>
