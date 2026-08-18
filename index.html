@@ -2298,6 +2298,108 @@
       }
     }
 
+
+    /* ParkNous v48: title really top + saved Nav button visible */
+    .top {
+      top: 0 !important;
+      height: 3.4% !important;
+      min-height: 28px !important;
+      padding: 0 20px !important;
+      z-index: 44 !important;
+      overflow: visible !important;
+      pointer-events: none !important;
+    }
+
+    .title-wordmark {
+      width: min(94%, 380px) !important;
+      transform: translateY(-150px) !important;
+      pointer-events: none !important;
+    }
+
+    .top-center-logo {
+      top: 10.4% !important;
+      width: 92px !important;
+      height: 92px !important;
+      z-index: 39 !important;
+      pointer-events: none !important;
+    }
+
+    .template-bg-img,
+    .image-fallback,
+    .hero,
+    .top,
+    .top-center-logo,
+    .title-wordmark {
+      pointer-events: none !important;
+    }
+
+    .live-actions {
+      z-index: 92 !important;
+      pointer-events: none !important;
+    }
+
+    .live-actions > button,
+    .cockpit-btn,
+    .cockpit-delete {
+      pointer-events: auto !important;
+      z-index: 93 !important;
+    }
+
+    .hero {
+      top: 29.8% !important;
+      z-index: 35 !important;
+    }
+
+    /* Saved preview now has Show / Nav / Share / Delete in one right column. */
+    #savedPanel .spot-actions,
+    #savedPanel .spot-actions.three-actions,
+    #savedPanel .spot-actions.four-actions {
+      grid-template-columns: 1fr !important;
+      grid-template-rows: repeat(4, minmax(0, 1fr)) !important;
+      gap: 5px !important;
+      height: 100% !important;
+    }
+
+    #savedPanel .spot-item {
+      grid-template-columns: minmax(0, 1fr) 56px !important;
+    }
+
+    #savedPanel .tiny-btn {
+      font-size: 0.43rem !important;
+      padding: 4px 3px !important;
+    }
+
+    .spot-list-modal-row.saved-actions {
+      grid-template-columns: minmax(0, 1fr) 54px 54px 54px 54px !important;
+    }
+
+    @media (max-width: 390px) {
+      .title-wordmark {
+        transform: translateY(-130px) !important;
+      }
+
+      .top-center-logo {
+        top: 10.0% !important;
+        width: 82px !important;
+        height: 82px !important;
+      }
+
+      #savedPanel .spot-item {
+        grid-template-columns: minmax(0, 1fr) 49px !important;
+      }
+
+      #savedPanel .spot-actions,
+      #savedPanel .spot-actions.three-actions,
+      #savedPanel .spot-actions.four-actions {
+        gap: 4px !important;
+      }
+
+      #savedPanel .tiny-btn {
+        font-size: 0.36rem !important;
+        padding: 3px 2px !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -2943,6 +3045,19 @@
 
       row.appendChild(primaryButton);
 
+      if (list === "named") {
+        const modalNavButton = document.createElement("button");
+        modalNavButton.type = "button";
+        modalNavButton.className = "spot-list-modal-btn";
+        modalNavButton.textContent = "Nav";
+        modalNavButton.title = "Navigate by car";
+        modalNavButton.dataset.modalAction = "car-navigate";
+        modalNavButton.dataset.list = list;
+        modalNavButton.dataset.index = String(index);
+        row.appendChild(modalNavButton);
+        row.classList.add("saved-actions");
+      }
+
       if (list === "recent") {
         const saveButton = document.createElement("button");
         saveButton.type = "button";
@@ -3104,22 +3219,7 @@
         openSpotOnMap(spot, false);
         return;
       }
-
-      if (action === "car-navigate") {
-          const selectedSpot = getSpotFromAction(list, index);
-          if (!selectedSpot) return;
-
-          const lat = Number(selectedSpot.lat);
-          const lng = Number(selectedSpot.lng);
-
-          if (Number.isFinite(lat) && Number.isFinite(lng)) {
-            window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`, "_blank", "noopener");
-          }
-
-          return;
-        }
-
-        if (action === "navigate") {
+if (action === "navigate") {
         openSpotOnMap(spot, true);
         return;
       }
@@ -3393,6 +3493,18 @@
       primary.dataset.list = options.list;
       primary.dataset.index = String(options.index);
       actions.appendChild(primary);
+
+      if (options.list === "named") {
+        const carNavigate = document.createElement("button");
+        carNavigate.className = "tiny-btn";
+        carNavigate.type = "button";
+        carNavigate.textContent = "Nav";
+        carNavigate.title = "Navigate by car";
+        carNavigate.dataset.action = "car-navigate";
+        carNavigate.dataset.list = options.list;
+        carNavigate.dataset.index = String(options.index);
+        actions.appendChild(carNavigate);
+      }
 
       if (options.list !== "named") {
         const save = document.createElement("button");
@@ -3710,6 +3822,17 @@
 
       if (button.dataset.action === "show") {
         openSpotOnMap(spot, false);
+        return;
+      }
+
+      if (button.dataset.action === "car-navigate") {
+        const lat = Number(spot.lat);
+        const lng = Number(spot.lng);
+
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`, "_blank", "noopener");
+        }
+
         return;
       }
 
