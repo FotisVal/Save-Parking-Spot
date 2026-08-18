@@ -1547,6 +1547,378 @@
       }
     }
 
+
+    /* ParkNous v44: hard clickable zones + right-side vertical list actions */
+    .top {
+      display: grid !important;
+      top: 0 !important;
+      height: 6.8% !important;
+      min-height: 46px !important;
+      padding: 0 34px !important;
+      place-items: start center !important;
+      z-index: 60 !important;
+      overflow: visible !important;
+      pointer-events: none !important;
+    }
+
+    .title {
+      height: 100% !important;
+      align-items: start !important;
+      justify-items: center !important;
+      overflow: visible !important;
+    }
+
+    .title-wordmark {
+      width: min(90%, 350px) !important;
+      max-height: none !important;
+      height: auto !important;
+      object-fit: contain !important;
+      transform: translateY(-18px) !important;
+      filter:
+        drop-shadow(0 0 10px rgba(255, 209, 102, 0.24))
+        drop-shadow(0 0 20px rgba(255, 174, 53, 0.14)) !important;
+    }
+
+    .live-actions {
+      z-index: 120 !important;
+      pointer-events: none !important;
+    }
+
+    .cockpit-btn,
+    .cockpit-delete,
+    .live-actions > button {
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
+      z-index: 121 !important;
+    }
+
+    .hero {
+      z-index: 35 !important;
+      pointer-events: none !important;
+      top: 27.3% !important;
+      width: 44.0% !important;
+      height: 22.3% !important;
+      padding: 6px 10px 10px !important;
+      justify-content: flex-start !important;
+      gap: 0 !important;
+    }
+
+    .hero-icon-wrap {
+      width: 70px !important;
+      height: 70px !important;
+      margin: 0 0 0 !important;
+    }
+
+    .hero-icon {
+      width: 70px !important;
+      height: 70px !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .brand-logo {
+      width: 64px !important;
+      height: 64px !important;
+      max-width: 64px !important;
+      max-height: 64px !important;
+      object-fit: contain !important;
+    }
+
+    .hero::after {
+      content: "CURRENT SPOT" !important;
+      order: 2 !important;
+      margin-top: -1px !important;
+      font-size: clamp(0.45rem, 2.35vw, 0.58rem) !important;
+      line-height: 1 !important;
+      color: #33e7f2 !important;
+      font-weight: 950 !important;
+      letter-spacing: 0.08em !important;
+    }
+
+    .hero-title {
+      order: 3 !important;
+      max-width: 148px !important;
+      max-height: 1.12em !important;
+      margin-top: 4px !important;
+      font-size: clamp(1.02rem, 5.0vw, 1.34rem) !important;
+      line-height: 1.02 !important;
+      white-space: nowrap !important;
+      display: block !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .hero-text {
+      display: none !important;
+    }
+
+    .hero-meta {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+    }
+
+    .hero-meta-stack {
+      order: 4 !important;
+      display: grid !important;
+      gap: 1px !important;
+      max-width: 148px !important;
+      margin-top: 5px !important;
+      color: rgba(232,238,255,0.84) !important;
+      font-size: clamp(0.40rem, 2.05vw, 0.52rem) !important;
+      line-height: 1.10 !important;
+      font-weight: 780 !important;
+      text-align: center !important;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.92) !important;
+    }
+
+    .hero-meta-stack > div {
+      max-width: 148px !important;
+      min-height: 0.92em !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .spot-panels {
+      z-index: 45 !important;
+      left: 5.3% !important;
+      right: 5.3% !important;
+      top: 68.0% !important;
+      bottom: 3.6% !important;
+      background: transparent !important;
+      pointer-events: auto !important;
+    }
+
+    .spot-panel {
+      grid-template-rows: 34px minmax(0, 1fr) !important;
+      padding: 10px 12px 12px !important;
+      background: transparent !important;
+      pointer-events: auto !important;
+    }
+
+    .spot-panel + .spot-panel {
+      border-left: 0 !important;
+    }
+
+    .panel-title,
+    .panel-head > div:first-child .panel-note {
+      display: none !important;
+    }
+
+    .panel-head {
+      grid-template-columns: minmax(0, 1fr) auto !important;
+      margin: 0 !important;
+      pointer-events: auto !important;
+    }
+
+    .panel-head-right {
+      justify-self: end !important;
+      align-items: center !important;
+      gap: 6px !important;
+      pointer-events: auto !important;
+    }
+
+    .panel-head-right .panel-note {
+      max-width: 44px !important;
+      font-size: 0.54rem !important;
+      color: #52f7ff !important;
+      font-weight: 950 !important;
+      pointer-events: none !important;
+    }
+
+    .panel-toggle {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      border-radius: 12px !important;
+      pointer-events: auto !important;
+      z-index: 70 !important;
+    }
+
+    .panel-toggle::before {
+      width: 9px !important;
+      height: 9px !important;
+      border-width: 0 3px 3px 0 !important;
+    }
+
+    .spot-item {
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) 58px !important;
+      grid-template-rows: 1fr !important;
+      gap: 9px !important;
+      padding: 10px !important;
+      border-radius: 16px !important;
+      background: rgba(2, 9, 16, 0.31) !important;
+      overflow: hidden !important;
+      pointer-events: auto !important;
+    }
+
+    .spot-row-main {
+      grid-column: 1 !important;
+      grid-row: 1 !important;
+      display: grid !important;
+      grid-template-columns: minmax(0, 1fr) !important;
+      align-content: center !important;
+      gap: 5px !important;
+      min-width: 0 !important;
+      overflow: hidden !important;
+      pointer-events: auto !important;
+    }
+
+    .spot-row-main > div:first-child {
+      min-width: 0 !important;
+      overflow: hidden !important;
+    }
+
+    .spot-badge {
+      justify-self: start !important;
+      margin-top: 4px !important;
+      min-width: 42px !important;
+      max-width: 52px !important;
+      padding: 6px 7px !important;
+      font-size: 0.56rem !important;
+      grid-row: auto !important;
+    }
+
+    .spot-name {
+      max-width: 100% !important;
+      font-size: clamp(0.74rem, 3.75vw, 0.94rem) !important;
+      line-height: 1.12 !important;
+      max-height: 2.25em !important;
+      pointer-events: auto !important;
+    }
+
+    .spot-meta-small {
+      max-width: 100% !important;
+      margin-top: 5px !important;
+      font-size: 0.46rem !important;
+      line-height: 1.16 !important;
+    }
+
+    .spot-actions,
+    .spot-actions.three-actions,
+    .spot-actions.four-actions {
+      grid-column: 2 !important;
+      grid-row: 1 !important;
+      display: grid !important;
+      grid-template-columns: 1fr !important;
+      align-content: stretch !important;
+      gap: 7px !important;
+      min-width: 0 !important;
+      height: 100% !important;
+      pointer-events: auto !important;
+    }
+
+    .tiny-btn {
+      width: 100% !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      height: auto !important;
+      padding: 5px 3px !important;
+      border-radius: 11px !important;
+      font-size: 0.48rem !important;
+      line-height: 1 !important;
+      pointer-events: auto !important;
+      z-index: 75 !important;
+    }
+
+    .tiny-btn.delete-small {
+      color: #ffd7db !important;
+      border-color: rgba(255, 107, 114, 0.50) !important;
+      background: rgba(255, 107, 114, 0.20) !important;
+    }
+
+    @media (max-width: 390px) {
+      .title-wordmark {
+        transform: translateY(-15px) !important;
+      }
+
+      .hero {
+        top: 27.8% !important;
+        width: 42.5% !important;
+        height: 21.6% !important;
+        padding: 6px 9px 9px !important;
+      }
+
+      .hero-icon-wrap,
+      .hero-icon {
+        width: 60px !important;
+        height: 60px !important;
+      }
+
+      .brand-logo {
+        width: 55px !important;
+        height: 55px !important;
+        max-width: 55px !important;
+        max-height: 55px !important;
+      }
+
+      .hero::after {
+        font-size: 0.40rem !important;
+      }
+
+      .hero-title {
+        max-width: 130px !important;
+        font-size: 0.94rem !important;
+      }
+
+      .hero-meta-stack {
+        max-width: 130px !important;
+        font-size: 0.36rem !important;
+      }
+
+      .hero-meta-stack > div {
+        max-width: 130px !important;
+      }
+
+      .spot-panel {
+        grid-template-rows: 31px minmax(0, 1fr) !important;
+        padding: 9px 9px 11px !important;
+      }
+
+      .panel-toggle {
+        width: 25px !important;
+        height: 25px !important;
+        min-width: 25px !important;
+      }
+
+      .spot-item {
+        grid-template-columns: minmax(0, 1fr) 50px !important;
+        gap: 7px !important;
+        padding: 8px !important;
+      }
+
+      .spot-name {
+        font-size: 0.62rem !important;
+      }
+
+      .spot-meta-small {
+        font-size: 0.38rem !important;
+      }
+
+      .spot-badge {
+        min-width: 36px !important;
+        max-width: 44px !important;
+        font-size: 0.46rem !important;
+        padding: 5px 6px !important;
+      }
+
+      .spot-actions,
+      .spot-actions.three-actions,
+      .spot-actions.four-actions {
+        gap: 5px !important;
+      }
+
+      .tiny-btn {
+        font-size: 0.39rem !important;
+        border-radius: 10px !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -3935,6 +4307,76 @@
 
         setInterval(syncHeroMetaStack, 800);
       });
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const zoneActions = [
+        { id: "showBtn", x1: 0.055, y1: 0.155, x2: 0.420, y2: 0.365 },
+        { id: "navigateBtn", x1: 0.580, y1: 0.155, x2: 0.945, y2: 0.365 },
+        { id: "saveNamedBtn", x1: 0.055, y1: 0.435, x2: 0.420, y2: 0.655 },
+        { id: "shareCurrentBtn", x1: 0.580, y1: 0.435, x2: 0.945, y2: 0.655 },
+        { id: "clearBtn", x1: 0.410, y1: 0.565, x2: 0.590, y2: 0.680 }
+      ];
+
+      const triggerButtonById = (id) => {
+        const button = document.getElementById(id);
+        if (!button || button.disabled) return false;
+        button.dispatchEvent(new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        }));
+        return true;
+      };
+
+      const handleBoardPointer = (event) => {
+        if (!event.isTrusted) return;
+
+        const modal = document.getElementById("spotListModal");
+        if (modal && !modal.hidden) return;
+
+        const directButton = event.target.closest?.("button");
+        if (directButton && !directButton.classList.contains("cockpit-btn") && !directButton.classList.contains("cockpit-delete")) {
+          return;
+        }
+
+        const board = document.querySelector(".template-board");
+        if (!board) return;
+
+        const rect = board.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width;
+        const y = (event.clientY - rect.top) / rect.height;
+
+        const zone = zoneActions.find((item) =>
+          x >= item.x1 && x <= item.x2 && y >= item.y1 && y <= item.y2
+        );
+
+        if (!zone) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+
+        triggerButtonById(zone.id);
+      };
+
+      window.addEventListener("click", handleBoardPointer, true);
+      window.addEventListener("touchend", (event) => {
+        const touch = event.changedTouches && event.changedTouches[0];
+        if (!touch) return;
+        const synthetic = {
+          isTrusted: true,
+          target: event.target,
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+          preventDefault: () => event.preventDefault(),
+          stopPropagation: () => event.stopPropagation(),
+          stopImmediatePropagation: () => event.stopImmediatePropagation()
+        };
+        handleBoardPointer(synthetic);
+      }, { capture: true, passive: false });
     })();
   </script>
 
