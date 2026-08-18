@@ -910,6 +910,14 @@
       }
     }
 
+
+    /* ParkNous v41: header image, bigger center content, upgraded lists */
+    .top{display:grid;position:absolute;left:0;right:0;top:0;z-index:45;height:12.2%;min-height:76px;place-items:center;pointer-events:none;padding:0 38px}.title{display:grid;place-items:center;margin:0;width:100%;height:100%}.title-wordmark{display:block;width:min(86%,330px);max-height:72%;object-fit:contain;filter:drop-shadow(0 0 12px rgba(255,209,102,.24)) drop-shadow(0 0 22px rgba(255,174,53,.13))}
+    .hero{top:30.3%;width:44.5%;height:22%;padding:8px 10px 12px;background:rgba(0,0,0,.03);overflow:hidden}.hero-icon-wrap{width:48px;height:48px;margin-bottom:3px}.hero-icon{width:48px;height:48px;background:rgba(51,231,242,.10);border:1px solid rgba(51,231,242,.20);box-shadow:0 0 14px rgba(51,231,242,.14)}.brand-logo{width:43px;height:43px}.hero-title{max-width:154px;max-height:2.25em;font-size:clamp(.95rem,4.85vw,1.26rem);line-height:1.06;letter-spacing:-.02em}.hero-text{max-width:154px;max-height:2.14em;font-size:.66rem;line-height:1.08;margin-top:1px}.hero-meta{position:absolute;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}.hero-meta-arc{position:absolute;left:50%;bottom:15px;z-index:3;width:150px;height:44px;transform:translateX(-50%);overflow:visible;pointer-events:none}.hero-meta-arc text{fill:rgba(232,238,255,.80);font-size:8.4px;font-weight:800;letter-spacing:.1px;text-shadow:0 2px 8px rgba(0,0,0,.9)}
+    .spot-panels{left:5.3%;right:5.3%;top:68%;bottom:3.6%;background:transparent;border-radius:22px}.spot-panel{grid-template-rows:74px minmax(0,1fr);padding:14px 14px 13px;background:transparent}.spot-panel+.spot-panel{border-left:0!important}.panel-head{grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start}.panel-title{font-size:clamp(.80rem,4vw,1rem);color:#28d2c7;letter-spacing:.035em;text-shadow:0 0 10px rgba(40,210,199,.22),0 2px 8px rgba(0,0,0,.92);display:flex;align-items:center;gap:6px}#savedPanel .panel-title::before{content:"🔖";font-size:1.14em;line-height:1;filter:drop-shadow(0 0 8px rgba(40,210,199,.34))}#recentPanel .panel-title::before{content:"🕘";font-size:1.12em;line-height:1;filter:drop-shadow(0 0 8px rgba(40,210,199,.34))}.panel-note{margin-top:3px;font-size:.55rem;color:rgba(232,238,255,.74)}.panel-head-right{gap:6px}.panel-head-right .panel-note{max-width:48px;font-size:.62rem;color:#52f7ff}.panel-toggle{width:42px;height:42px;min-width:42px;border-radius:18px;background:rgba(3,14,22,.25);border-color:rgba(51,231,242,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 14px rgba(51,231,242,.12)}.panel-toggle::before{width:15px;height:15px;border-width:0 5px 5px 0}.spot-item{padding:12px;gap:8px;border-radius:16px;background:rgba(2,9,16,.34);border-color:rgba(51,231,242,.16)}.spot-name{font-size:clamp(.72rem,3.65vw,.92rem);line-height:1.12;max-height:2.25em}.spot-meta-small{margin-top:5px;font-size:.48rem;line-height:1.15}.spot-badge{min-width:44px;max-width:52px;padding:6px 7px;font-size:.58rem;color:#68fbff;border-color:rgba(51,231,242,.42);background:rgba(51,231,242,.11)}.spot-actions{gap:7px}.spot-actions.four-actions{grid-template-columns:repeat(2,minmax(0,1fr))}.tiny-btn{min-height:32px;border-radius:11px;font-size:.52rem;background:linear-gradient(180deg,rgba(64,74,94,.86),rgba(25,32,46,.86));border-color:rgba(255,255,255,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.06)}.tiny-btn.delete-small{color:#ffd7db;border-color:rgba(255,107,114,.48);background:rgba(255,107,114,.18)}
+    .spot-list-modal-title{color:#28d2c7}.spot-list-modal-preview{min-height:54px}.spot-list-modal-name{font-size:.82rem}.spot-list-modal-meta{font-size:.66rem}.spot-list-modal-btn{min-height:54px;font-size:.62rem}
+    @media(max-width:390px){.top{min-height:68px;padding:0 30px}.title-wordmark{width:min(88%,304px)}.hero{top:30.8%;width:42.5%;height:21%}.hero-icon-wrap,.hero-icon{width:40px;height:40px}.brand-logo{width:36px;height:36px}.hero-title{max-width:132px;font-size:.92rem}.hero-text{max-width:132px;font-size:.56rem}.hero-meta-arc{width:132px;bottom:12px}.hero-meta-arc text{font-size:7.2px}.spot-panel{grid-template-rows:64px minmax(0,1fr);padding:11px 10px 11px}.panel-title{font-size:.72rem}.panel-note{font-size:.48rem}.panel-head-right .panel-note{max-width:40px;font-size:.52rem}.panel-toggle{width:36px;height:36px;min-width:36px}.spot-item{padding:9px}.spot-name{font-size:.66rem}.spot-meta-small{font-size:.40rem}.spot-badge{min-width:38px;max-width:44px;font-size:.50rem;padding:5px 6px}.tiny-btn{min-height:27px;font-size:.44rem}}
+
   </style>
 </head>
 
@@ -943,7 +951,7 @@
 
   <div class="app">
     <div class="top">
-      <h1 class="title"><img src="./parknous_onlytext.svg" class="title-wordmark" alt="ParkNous"></h1>
+      <h1 class="title"><img src="./PARKNOUS_TXT.png" class="title-wordmark" alt="ParkNous"></h1>
     </div>
 
     <div class="content">
@@ -971,6 +979,10 @@
           <div id="heroTitle" class="hero-title">Starting...</div>
           <div id="heroText" class="hero-text">Preparing secure storage.</div>
           <div id="heroMeta" class="hero-meta"></div>
+          <svg id="heroMetaArc" class="hero-meta-arc" viewBox="0 0 180 70" aria-hidden="true">
+            <defs><path id="heroMetaArcPath" d="M 16 44 Q 90 65 164 44"></path></defs>
+            <text><textPath id="heroMetaArcText" href="#heroMetaArcPath" startOffset="50%" text-anchor="middle"></textPath></text>
+          </svg>
           <div id="saveAnywayRow" class="action-row">
             <button class="mini-btn cancel" id="cancelSaveBtn">Cancel</button>
             <button class="mini-btn" id="saveAnywayBtn">Save Anyway</button>
@@ -1534,9 +1546,9 @@
       primaryButton.dataset.index = String(index);
 
       if (list === "named") {
-        primaryButton.textContent = "Nav";
-        primaryButton.title = "Navigate";
-        primaryButton.dataset.modalAction = "navigate";
+        primaryButton.textContent = "Show";
+        primaryButton.title = "Show";
+        primaryButton.dataset.modalAction = "show";
       } else {
         primaryButton.textContent = "Show";
         primaryButton.title = "Show";
@@ -1971,8 +1983,8 @@
       primary.type = "button";
 
       if (options.list === "named") {
-        primary.textContent = "Nav";
-        primary.dataset.action = "navigate";
+        primary.textContent = "Show";
+        primary.dataset.action = "show";
       } else {
         primary.textContent = "Show";
         primary.dataset.action = "show";
@@ -3179,5 +3191,24 @@
     init();
   
   </script>
+  <script>
+    (() => {
+      const syncHeroMetaArc = () => {
+        const source = document.getElementById("heroMeta");
+        const target = document.getElementById("heroMetaArcText");
+        if (!source || !target) return;
+        let txt = (source.textContent || "").replace(/\s+/g, " ").trim();
+        if (txt.length > 56) txt = txt.slice(0, 53) + "…";
+        target.textContent = txt;
+      };
+      window.addEventListener("DOMContentLoaded", () => {
+        const source = document.getElementById("heroMeta");
+        syncHeroMetaArc();
+        if (source) new MutationObserver(syncHeroMetaArc).observe(source, { childList: true, characterData: true, subtree: true });
+        setInterval(syncHeroMetaArc, 1000);
+      });
+    })();
+  </script>
+
 </body>
 </html>
