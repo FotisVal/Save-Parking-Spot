@@ -1296,6 +1296,257 @@
       }
     }
 
+
+    /* ParkNous v43: clickable hotspots, higher title, clean 3-line central meta */
+    .top {
+      top: -5.8% !important;
+      height: 11.0% !important;
+      min-height: 58px !important;
+      padding: 0 40px !important;
+      z-index: 20 !important;
+      pointer-events: none !important;
+    }
+
+    .title-wordmark {
+      width: min(88%, 340px) !important;
+      max-height: 84% !important;
+      object-fit: contain !important;
+    }
+
+    .template-bg-img,
+    .image-fallback {
+      pointer-events: none !important;
+    }
+
+    /* Critical fix: clickable hotspots above everything decorative/text */
+    .live-actions {
+      z-index: 90 !important;
+      pointer-events: none !important;
+    }
+
+    .cockpit-btn,
+    .cockpit-delete,
+    .live-actions > button {
+      pointer-events: auto !important;
+      touch-action: manipulation !important;
+      position: absolute !important;
+      cursor: pointer !important;
+    }
+
+    .hero {
+      z-index: 35 !important;
+      pointer-events: none !important;
+      top: 28.0% !important;
+      width: 44.0% !important;
+      height: 22.5% !important;
+      padding: 7px 10px 11px !important;
+      justify-content: flex-start !important;
+      gap: 1px !important;
+    }
+
+    .spot-panels,
+    .spot-panel,
+    .spot-list,
+    .spot-item,
+    .tiny-btn,
+    .panel-toggle {
+      pointer-events: auto !important;
+    }
+
+    .hero-icon-wrap {
+      width: 78px !important;
+      height: 78px !important;
+      margin: 0 0 0 !important;
+    }
+
+    .hero-icon {
+      width: 78px !important;
+      height: 78px !important;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
+
+    .brand-logo {
+      width: 70px !important;
+      height: 70px !important;
+      max-width: 70px !important;
+      max-height: 70px !important;
+      object-fit: contain !important;
+      filter: drop-shadow(0 0 10px rgba(51, 231, 242, 0.16)) !important;
+    }
+
+    .hero::after {
+      content: "CURRENT SPOT" !important;
+      order: 2 !important;
+      display: block !important;
+      margin-top: -2px !important;
+      color: #33e7f2 !important;
+      font-size: clamp(0.46rem, 2.45vw, 0.62rem) !important;
+      line-height: 1 !important;
+      font-weight: 950 !important;
+      letter-spacing: 0.08em !important;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.85) !important;
+    }
+
+    .hero-title {
+      order: 3 !important;
+      max-width: 150px !important;
+      max-height: 1.15em !important;
+      margin-top: 3px !important;
+      font-size: clamp(1.06rem, 5.25vw, 1.42rem) !important;
+      line-height: 1.04 !important;
+      font-weight: 1000 !important;
+      letter-spacing: 0.02em !important;
+      text-transform: uppercase !important;
+      white-space: nowrap !important;
+      display: block !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+    }
+
+    .hero-text {
+      display: none !important;
+    }
+
+    .hero-meta {
+      position: absolute !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    .hero-meta-stack {
+      order: 4;
+      display: grid;
+      gap: 1px;
+      max-width: 150px;
+      margin-top: 3px;
+      color: rgba(232,238,255,0.80);
+      font-size: clamp(0.42rem, 2.15vw, 0.55rem);
+      line-height: 1.08;
+      font-weight: 750;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+      pointer-events: none;
+    }
+
+    .hero-meta-stack > div {
+      max-width: 150px;
+      min-height: 0.90em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hero-meta-arc {
+      display: none !important;
+    }
+
+    /* Keep invisible hotspots exact and above center. */
+    .cockpit-show {
+      left: 6.5% !important;
+      top: 17.0% !important;
+      width: 34.0% !important;
+      height: 17.0% !important;
+    }
+
+    .cockpit-navigate {
+      right: 6.5% !important;
+      top: 17.0% !important;
+      width: 34.0% !important;
+      height: 17.0% !important;
+    }
+
+    .cockpit-save {
+      left: 6.4% !important;
+      top: 46.2% !important;
+      width: 34.0% !important;
+      height: 16.8% !important;
+    }
+
+    .cockpit-share {
+      right: 6.4% !important;
+      top: 46.2% !important;
+      width: 34.0% !important;
+      height: 16.8% !important;
+    }
+
+    .cockpit-delete {
+      left: 50% !important;
+      top: 58.4% !important;
+      width: 17% !important;
+      height: 8.8% !important;
+      min-height: 0 !important;
+      transform: translateX(-50%) !important;
+      border-radius: 999px !important;
+    }
+
+    .cockpit-delete:active {
+      transform: translateX(-50%) scale(0.95) !important;
+    }
+
+    .panel-toggle {
+      width: 26px !important;
+      height: 26px !important;
+      min-width: 26px !important;
+      border-radius: 11px !important;
+    }
+
+    .panel-toggle::before {
+      width: 9px !important;
+      height: 9px !important;
+      border-width: 0 3px 3px 0 !important;
+    }
+
+    @media (max-width: 390px) {
+      .top {
+        top: -5.4% !important;
+        min-height: 54px !important;
+        padding: 0 30px !important;
+      }
+
+      .hero {
+        top: 28.6% !important;
+        width: 42.0% !important;
+        height: 21.5% !important;
+        padding: 6px 9px 9px !important;
+      }
+
+      .hero-icon-wrap,
+      .hero-icon {
+        width: 64px !important;
+        height: 64px !important;
+      }
+
+      .brand-logo {
+        width: 58px !important;
+        height: 58px !important;
+        max-width: 58px !important;
+        max-height: 58px !important;
+      }
+
+      .hero::after {
+        font-size: 0.43rem !important;
+      }
+
+      .hero-title {
+        max-width: 132px !important;
+        font-size: 0.98rem !important;
+      }
+
+      .hero-meta-stack {
+        max-width: 132px !important;
+        font-size: 0.39rem !important;
+      }
+
+      .hero-meta-stack > div {
+        max-width: 132px !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -1357,6 +1608,11 @@
           <div id="heroTitle" class="hero-title">Starting...</div>
           <div id="heroText" class="hero-text">Preparing secure storage.</div>
           <div id="heroMeta" class="hero-meta"></div>
+          <div id="heroMetaStack" class="hero-meta-stack" aria-hidden="true">
+            <div id="heroMetaDate"></div>
+            <div id="heroMetaTime"></div>
+            <div id="heroMetaAccuracy"></div>
+          </div>
           <div id="saveAnywayRow" class="action-row">
             <button class="mini-btn cancel" id="cancelSaveBtn">Cancel</button>
             <button class="mini-btn" id="saveAnywayBtn">Save Anyway</button>
@@ -3618,6 +3874,66 @@
         }
 
         setInterval(compactHeroStatus, 900);
+      });
+    })();
+  </script>
+
+  <script>
+    (() => {
+      const syncHeroMetaStack = () => {
+        const source = document.getElementById("heroMeta");
+        const dateEl = document.getElementById("heroMetaDate");
+        const timeEl = document.getElementById("heroMetaTime");
+        const accEl = document.getElementById("heroMetaAccuracy");
+
+        if (!source || !dateEl || !timeEl || !accEl) return;
+
+        const raw = (source.textContent || "")
+          .replace(/\s+/g, " ")
+          .replace(/^Saved:\s*/i, "")
+          .trim();
+
+        let date = "";
+        let time = "";
+        let accuracy = "";
+
+        const accuracyMatch = raw.match(/Accuracy:\s*([^•]+)/i);
+        if (accuracyMatch) {
+          accuracy = `Accuracy: ${accuracyMatch[1].trim()}`;
+        }
+
+        const clean = raw
+          .replace(/•\s*Accuracy:\s*[^•]+/i, "")
+          .replace(/Accuracy:\s*[^•]+/i, "")
+          .trim();
+
+        const dateTimeMatch = clean.match(/(\d{1,2}\/\d{1,2}\/\d{4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?)/);
+
+        if (dateTimeMatch) {
+          date = dateTimeMatch[1];
+          time = dateTimeMatch[2];
+        } else {
+          date = clean.replace(/^Saved:\s*/i, "").slice(0, 24);
+        }
+
+        dateEl.textContent = date;
+        timeEl.textContent = time;
+        accEl.textContent = accuracy;
+      };
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const source = document.getElementById("heroMeta");
+        syncHeroMetaStack();
+
+        if (source) {
+          new MutationObserver(syncHeroMetaStack).observe(source, {
+            childList: true,
+            characterData: true,
+            subtree: true
+          });
+        }
+
+        setInterval(syncHeroMetaStack, 800);
       });
     })();
   </script>
