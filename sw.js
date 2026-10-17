@@ -1,17 +1,17 @@
-const CACHE_NAME = "parknous-annular-controller-v4-20261017";
+const CACHE_NAME = "parknous-v5-20261017";
 
-const APP_SHELL = [
-  "./",
-  "./index.html",
+const STATIC_ASSETS = [
   "./manifest.json",
   "./favicon.png",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.jpg"
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_ASSETS);
+    })
   );
 
   self.skipWaiting();
@@ -19,15 +19,15 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
+    caches.keys().then((keys) => {
+      return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
             return caches.delete(key);
           }
         })
-      )
-    )
+      );
+    })
   );
 
   self.clients.claim();
@@ -39,55 +39,53 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Firebase, Google Maps και άλλα third-party requests
-  // δεν περνούν από το ParkNous cache.
+  // Μην πειράζουμε Firebase, Google Maps κλπ.
   if (url.origin !== self.location.origin) return;
 
-  // Για το index:
-  // εμφανίζουμε άμεσα την cached έκδοση και παράλληλα
-  // κατεβάζουμε τη νεότερη για την επόμενη φόρτωση.
+  // HTML / page navigation:
+  // ΠΡΩΤΑ network. Cache μόνο σαν fallback.
   if (request.mode === "navigate") {
     event.respondWith(
-      caches.open(CACHE_NAME).then(async (cache) => {
-        const cached = await cache.match("./index.html");
+      fetch(request)
+        .then((response) => {
+          if (response && response.ok) {
+            const clone = response.clone();
 
-        const networkPromise = fetch(request)
-          .then((response) => {
-            if (response && response.ok) {
-              cache.put("./index.html", response.clone());
-            }
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put("./index.html", clone);
+            });
+          }
 
-            return response;
-          })
-          .catch(() => null);
+          return response;
+        })
+        .catch(async () => {
+          const cache = await caches.open(CACHE_NAME);
 
-        return cached || (await networkPromise) || Response.error();
-      })
+          return (
+            (await cache.match("./index.html")) ||
+            Response.error()
+          );
+        })
     );
 
     return;
   }
 
-  // Για static αρχεία του ParkNous:
-  // cache first.
+  // Τα υπόλοιπα static assets μπορούν να είναι cache-first.
   event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
 
-      return fetch(request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200) {
-          return networkResponse;
+      return fetch(request).then((response) => {
+        if (response && response.ok) {
+          const clone = response.clone();
+
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(request, clone);
+          });
         }
 
-        const responseClone = networkResponse.clone();
-
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(request, responseClone);
-        });
-
-        return networkResponse;
+        return response;
       });
     })
   );
