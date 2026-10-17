@@ -1,4 +1,4 @@
-const CACHE_NAME = "parknous-css-ui-v1-20260928";
+const CACHE_NAME = "parknous-annular-controller-v4-20261017";
 
 const APP_SHELL = [
   "./",
@@ -6,7 +6,7 @@ const APP_SHELL = [
   "./manifest.json",
   "./favicon.png",
   "./icon-192.png",
-  "./icon-512.jpg"
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", (event) => {
@@ -39,12 +39,13 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
 
-  // Do not intercept Firebase, Google Maps, or any other third-party traffic.
+  // Firebase, Google Maps και άλλα third-party requests
+  // δεν περνούν από το ParkNous cache.
   if (url.origin !== self.location.origin) return;
 
-  // For page navigation:
-  // show cached index immediately when possible,
-  // while updating it from the network in the background.
+  // Για το index:
+  // εμφανίζουμε άμεσα την cached έκδοση και παράλληλα
+  // κατεβάζουμε τη νεότερη για την επόμενη φόρτωση.
   if (request.mode === "navigate") {
     event.respondWith(
       caches.open(CACHE_NAME).then(async (cache) => {
@@ -67,8 +68,8 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // Same-origin static files:
-  // use cache first.
+  // Για static αρχεία του ParkNous:
+  // cache first.
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
