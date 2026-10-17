@@ -72,7 +72,7 @@
       height: 100%;
       max-height: 100dvh;
       display: grid;
-      grid-template-rows: auto minmax(0, 1fr) minmax(150px, 30vh);
+      grid-template-rows: auto minmax(0, 1fr) minmax(138px, 27vh);
       gap: 7px;
       position: relative;
     }
@@ -94,11 +94,12 @@
       color: var(--cyan);
     }
 
+
     .control-stage {
       position: relative;
       width: min(100%, 430px);
       height: 100%;
-      min-height: 360px;
+      min-height: 380px;
       margin: 0 auto;
       isolation: isolate;
     }
@@ -106,30 +107,31 @@
     .petal,
     .delete-btn,
     .center-spot {
-      border: 1px solid var(--line);
+      border: 1px solid rgba(255,255,255,.14);
       background:
-        linear-gradient(145deg, rgba(255,255,255,.035), rgba(0,0,0,.06)),
-        var(--panel);
+        radial-gradient(circle at 50% 14%, rgba(255,255,255,.045), transparent 38%),
+        linear-gradient(180deg, rgba(255,255,255,.025), rgba(0,0,0,.07)),
+        #1c1f25;
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.045),
-        inset 0 -1px 0 rgba(0,0,0,.38),
-        var(--shadow);
+        inset 0 1px 0 rgba(255,255,255,.05),
+        inset 0 -1px 0 rgba(0,0,0,.42),
+        0 10px 24px rgba(0,0,0,.33);
     }
 
     .petal {
       position: absolute;
       z-index: 1;
-      width: 43%;
-      height: 31%;
-      padding: 12px;
-      color: var(--text);
+      width: 40.5%;
+      height: 24.5%;
+      padding: 10px;
       cursor: pointer;
-      transition: transform .12s ease, filter .12s ease, opacity .15s ease;
+      appearance: none;
+      overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
-      appearance: none;
-      overflow: hidden;
+      transition: filter .12s ease, opacity .15s ease, transform .12s ease;
+      color: var(--text);
     }
 
     .petal::before,
@@ -139,15 +141,45 @@
       position: absolute;
       inset: 0;
       pointer-events: none;
-      background:
-        radial-gradient(circle at 38% 20%, rgba(255,255,255,.04), transparent 35%),
-        linear-gradient(180deg, rgba(255,255,255,.025), transparent 45%);
+      background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 42%);
     }
 
-    .petal:active,
-    .delete-btn:active {
-      filter: brightness(1.12);
+    /* Four compact sectors arranged around the centre dial. */
+    .petal.show {
+      left: 3%;
+      top: 6%;
+      border-radius: 56% 23% 50% 24% / 46% 34% 52% 34%;
+      transform: rotate(-9deg);
     }
+
+    .petal.navigate {
+      right: 3%;
+      top: 6%;
+      border-radius: 23% 56% 24% 50% / 34% 46% 34% 52%;
+      transform: rotate(9deg);
+    }
+
+    .petal.save {
+      left: 3%;
+      bottom: 13%;
+      border-radius: 25% 50% 23% 56% / 36% 52% 34% 46%;
+      transform: rotate(9deg);
+    }
+
+    .petal.share {
+      right: 3%;
+      bottom: 13%;
+      border-radius: 50% 25% 56% 23% / 52% 36% 46% 34%;
+      transform: rotate(-9deg);
+    }
+
+    .petal.show:active { transform: rotate(-9deg) scale(.985); }
+    .petal.navigate:active { transform: rotate(9deg) scale(.985); }
+    .petal.save:active { transform: rotate(9deg) scale(.985); }
+    .petal.share:active { transform: rotate(-9deg) scale(.985); }
+
+    .petal:active,
+    .delete-btn:active { filter: brightness(1.1); }
 
     .petal:disabled,
     .delete-btn:disabled {
@@ -156,130 +188,96 @@
       filter: none;
     }
 
-    .petal.show {
-      left: 2%;
-      top: 3%;
-      border-radius: 56% 20% 46% 22% / 42% 28% 50% 34%;
-      transform: rotate(-14deg);
-    }
-
-    .petal.navigate {
-      right: 2%;
-      top: 3%;
-      border-radius: 20% 56% 22% 46% / 28% 42% 34% 50%;
-      transform: rotate(14deg);
-    }
-
-    .petal.save {
-      left: 2%;
-      bottom: 8%;
-      border-radius: 24% 48% 20% 56% / 38% 48% 28% 46%;
-      transform: rotate(13deg);
-    }
-
-    .petal.share {
-      right: 2%;
-      bottom: 8%;
-      border-radius: 48% 24% 56% 20% / 48% 38% 46% 28%;
-      transform: rotate(-13deg);
-    }
-
-    .petal.show:active { transform: rotate(-14deg) scale(.985); }
-    .petal.navigate:active { transform: rotate(14deg) scale(.985); }
-    .petal.save:active { transform: rotate(13deg) scale(.985); }
-    .petal.share:active { transform: rotate(-13deg) scale(.985); }
-
     .petal-content {
       position: relative;
       z-index: 2;
       display: grid;
       justify-items: center;
       gap: 5px;
-      transform: rotate(0);
     }
 
-    .show .petal-content { transform: rotate(14deg); }
-    .navigate .petal-content { transform: rotate(-14deg); }
-    .save .petal-content { transform: rotate(-13deg); }
-    .share .petal-content { transform: rotate(13deg); }
+    .show .petal-content { transform: rotate(9deg); }
+    .navigate .petal-content { transform: rotate(-9deg); }
+    .save .petal-content { transform: rotate(-9deg); }
+    .share .petal-content { transform: rotate(9deg); }
 
     .petal svg,
     .delete-btn svg {
-      width: clamp(31px, 9vw, 44px);
-      height: clamp(31px, 9vw, 44px);
+      width: clamp(31px, 8.5vw, 42px);
+      height: clamp(31px, 8.5vw, 42px);
       fill: none;
       stroke: currentColor;
-      stroke-width: 2.2;
+      stroke-width: 2.15;
       stroke-linecap: round;
       stroke-linejoin: round;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,.22));
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.24));
     }
 
     .petal-label {
-      font-weight: 600;
-      font-size: clamp(.78rem, 3.5vw, 1.02rem);
+      font-weight: 700;
+      font-size: clamp(.79rem, 3.35vw, .98rem);
       letter-spacing: .2px;
       white-space: nowrap;
     }
 
     .show,
-    .navigate {
-      color: #f5f6f8;
-    }
+    .navigate { color: #f4f5f7; }
 
     .save,
-    .share {
-      color: var(--cyan);
-    }
+    .share { color: var(--cyan); }
 
     .save .petal-label,
-    .share .petal-label {
-      color: #f5f6f8;
-    }
+    .share .petal-label { color: #f4f5f7; }
 
     .center-spot {
       position: absolute;
       z-index: 5;
       left: 50%;
-      top: 45%;
+      top: 43%;
       transform: translate(-50%, -50%);
-      width: 47%;
+      width: 45%;
       aspect-ratio: 1;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 16px;
+      padding: 19px;
       text-align: center;
       overflow: hidden;
       box-shadow:
-        0 0 0 9px rgba(30,33,39,.95),
-        0 0 0 10px rgba(255,255,255,.10),
-        0 16px 34px rgba(0,0,0,.42),
+        0 0 0 9px rgba(24,27,32,.98),
+        0 0 0 10px rgba(255,255,255,.11),
+        0 14px 31px rgba(0,0,0,.42),
         inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .center-spot::before {
+      inset: 11px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.12);
+      background: none;
     }
 
     .center-spot.searching {
       box-shadow:
-        0 0 0 9px rgba(30,33,39,.95),
-        0 0 0 10px rgba(53,201,216,.24),
-        0 16px 34px rgba(0,0,0,.42),
+        0 0 0 9px rgba(24,27,32,.98),
+        0 0 0 10px rgba(53,201,216,.28),
+        0 14px 31px rgba(0,0,0,.42),
         inset 0 1px 0 rgba(255,255,255,.04);
     }
 
     .center-spot.searching::after {
       content: "";
       position: absolute;
-      width: 115%;
-      height: 115%;
+      inset: 5px;
       border-radius: 50%;
-      border: 2px solid rgba(53,201,216,.35);
+      border: 2px solid rgba(53,201,216,.4);
       animation: pulse 1.5s ease-out infinite;
     }
 
     @keyframes pulse {
-      0% { transform: scale(.78); opacity: .7; }
-      100% { transform: scale(1.18); opacity: 0; }
+      0% { transform: scale(.84); opacity: .7; }
+      100% { transform: scale(1.08); opacity: 0; }
     }
 
     .spot-copy {
@@ -290,41 +288,41 @@
 
     .spot-kicker {
       color: var(--cyan);
-      font-size: clamp(.64rem, 2.8vw, .78rem);
+      font-size: clamp(.68rem, 2.7vw, .8rem);
       font-weight: 800;
-      letter-spacing: .8px;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .spot-state {
-      font-size: clamp(.9rem, 4vw, 1.13rem);
-      line-height: 1.1;
+      font-size: clamp(.96rem, 4vw, 1.18rem);
+      line-height: 1.08;
       font-weight: 850;
-      margin-bottom: 6px;
+      margin-bottom: 7px;
     }
 
     .spot-time {
-      font-size: clamp(.7rem, 3vw, .85rem);
-      color: #e5e7eb;
+      font-size: clamp(.72rem, 2.9vw, .86rem);
+      color: #eef0f4;
       line-height: 1.3;
     }
 
     .spot-accuracy {
       margin-top: 4px;
-      font-size: clamp(.66rem, 2.8vw, .8rem);
+      font-size: clamp(.68rem, 2.7vw, .8rem);
       color: var(--muted);
     }
 
     .delete-btn {
       position: absolute;
       z-index: 6;
-      width: 18%;
+      width: 17.5%;
       min-width: 68px;
-      max-width: 82px;
+      max-width: 80px;
       aspect-ratio: 1;
       left: 50%;
-      bottom: -1%;
+      bottom: 2%;
       transform: translateX(-50%);
       border-radius: 50%;
       color: var(--red);
@@ -335,9 +333,7 @@
       place-items: center;
     }
 
-    .delete-btn:active {
-      transform: translateX(-50%) scale(.98);
-    }
+    .delete-btn:active { transform: translateX(-50%) scale(.98); }
 
     .delete-inner {
       position: relative;
@@ -347,13 +343,10 @@
       gap: 1px;
     }
 
-    .delete-btn svg {
-      width: 28px;
-      height: 28px;
-    }
+    .delete-btn svg { width: 27px; height: 27px; }
 
     .delete-label {
-      font-size: .68rem;
+      font-size: .66rem;
       font-weight: 700;
       letter-spacing: .2px;
     }
@@ -831,6 +824,7 @@
 
     const LOCAL_KEY = "saveParkingSpotLocalBackupV6";
     const RECENTS_KEY = "parknousRecentSpotsV1";
+    const SAVED_KEY = "parknousSavedSpotsV1";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
     const MAX_RECENT_SPOTS = 5;
     const MAX_ACCEPTABLE_ACCURACY_METERS = 30;
@@ -871,6 +865,7 @@
     let selectedSource = "current";
     let bestFailedSpot = null;
     let recentSpots = [];
+    let savedSpots = [];
     let busy = false;
     let toastTimer = null;
 
@@ -916,7 +911,7 @@
 
     function setBusy(value) {
       busy = value;
-      saveBtn.disabled = value;
+      saveBtn.disabled = value || !selectedSpot;
       showBtn.disabled = value || !selectedSpot;
       navigateBtn.disabled = value || !selectedSpot;
       shareBtn.disabled = value || !selectedSpot;
@@ -946,6 +941,8 @@
         setCenterState("waiting", "CURRENT SPOT", "NO SPOT SAVED");
       } else if (source === "recent") {
         setCenterState("saved", "RECENT SPOT", "SELECTED", spot);
+      } else if (source === "saved") {
+        setCenterState("saved", "SAVED SPOT", spot.name || "SELECTED", spot);
       } else {
         setCenterState("saved", "CURRENT SPOT", "SAVED", spot);
       }
@@ -971,6 +968,67 @@
         console.error("Local current spot read failed:", error);
         return null;
       }
+    }
+
+    function normalizeSavedSpots(items) {
+      const clean = Array.isArray(items)
+        ? items.filter(x =>
+            x &&
+            typeof x.name === "string" &&
+            x.name.trim() &&
+            Number.isFinite(Number(x.lat)) &&
+            Number.isFinite(Number(x.lng))
+          )
+        : [];
+
+      return clean.map(x => ({ ...x, name: x.name.trim() }));
+    }
+
+    function readSavedSpots() {
+      try {
+        const raw = localStorage.getItem(SAVED_KEY);
+        return normalizeSavedSpots(raw ? JSON.parse(raw) : []);
+      } catch (error) {
+        console.error("Saved spots read failed:", error);
+        return [];
+      }
+    }
+
+    function writeSavedSpots(items) {
+      savedSpots = normalizeSavedSpots(items);
+      try {
+        localStorage.setItem(SAVED_KEY, JSON.stringify(savedSpots));
+      } catch (error) {
+        console.error("Saved spots storage failed:", error);
+      }
+      renderLists();
+    }
+
+    function saveSelectedSpot() {
+      if (!selectedSpot) {
+        toast("Select a spot first");
+        return;
+      }
+
+      const defaultName = selectedSpot.name || "";
+      const entered = window.prompt("Name this parking spot:", defaultName);
+      if (entered === null) return;
+
+      const name = entered.trim();
+      if (!name) {
+        toast("Please enter a name");
+        return;
+      }
+
+      const saved = {
+        ...selectedSpot,
+        name,
+        savedListId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+      };
+
+      writeSavedSpots([saved, ...savedSpots]);
+      updateSelectedSpot(saved, "saved");
+      toast(`Saved as ${name}`);
     }
 
     function normalizeRecents(items) {
@@ -1038,13 +1096,14 @@
         selectedSpot &&
         Number(selectedSpot.savedAtMillis) === Number(spot.savedAtMillis) &&
         Number(selectedSpot.lat) === Number(spot.lat) &&
-        Number(selectedSpot.lng) === Number(spot.lng);
+        Number(selectedSpot.lng) === Number(spot.lng) &&
+        (source !== "saved" || selectedSpot.savedListId === spot.savedListId);
 
       if (selected) button.classList.add("active");
 
       const title = document.createElement("div");
       title.className = "spot-card-title";
-      title.textContent = source === "current" ? "Current parking spot" : spotLabel(spot);
+      title.textContent = source === "saved" ? spot.name : spotLabel(spot);
 
       const meta = document.createElement("div");
       meta.className = "spot-card-meta";
@@ -1052,7 +1111,7 @@
         `${formatTime(spot.savedAtMillis)} • ${typeof spot.accuracy === "number" ? `±${Math.round(spot.accuracy)} m` : "accuracy unknown"}`;
 
       button.append(title, meta);
-      button.addEventListener("click", () => updateSelectedSpot(spot, source === "current" ? "current" : "recent"));
+      button.addEventListener("click", () => updateSelectedSpot(spot, source));
       return button;
     }
 
@@ -1060,12 +1119,12 @@
       savedList.replaceChildren();
       recentList.replaceChildren();
 
-      if (lastKnownSpot) {
-        savedList.append(renderSpotCard(lastKnownSpot, "current"));
+      if (savedSpots.length) {
+        savedSpots.forEach((spot, index) => savedList.append(renderSpotCard(spot, "saved", index)));
       } else {
         const empty = document.createElement("div");
         empty.className = "list-empty";
-        empty.textContent = "No saved spot";
+        empty.textContent = "Select a spot and tap SAVE";
         savedList.append(empty);
       }
 
@@ -1237,7 +1296,7 @@
         if (error && error.code === 1) message = "PERMISSION DENIED";
         else if (error && error.code === 3) message = "GPS TIMEOUT";
 
-        setCenterState("waiting", "CURRENT SPOT", message, null, "Tap SAVE to try again");
+        setCenterState("waiting", "CURRENT SPOT", message, null, "Reopen the NFC save link to try again");
         toast("Could not save location");
         return false;
       } finally {
@@ -1291,7 +1350,9 @@
       deleteMessage.textContent =
         selectedSource === "recent"
           ? "Delete this recent spot?"
-          : "Clear the current saved spot?";
+          : selectedSource === "saved"
+            ? `Delete ${selectedSpot.name || "this saved spot"}?`
+            : "Clear the current parking spot?";
     }
 
     async function deleteSelected() {
@@ -1314,6 +1375,16 @@
         if (lastKnownSpot) updateSelectedSpot(lastKnownSpot, "current");
         else updateSelectedSpot(null);
         toast("Recent spot deleted");
+        return;
+      }
+
+      if (selectedSource === "saved") {
+        const id = selectedSpot.savedListId;
+        const name = selectedSpot.name || "Saved spot";
+        writeSavedSpots(savedSpots.filter(spot => spot.savedListId !== id));
+        if (lastKnownSpot) updateSelectedSpot(lastKnownSpot, "current");
+        else updateSelectedSpot(null);
+        toast(`${name} deleted`);
         return;
       }
 
@@ -1342,7 +1413,7 @@
 
     showBtn.addEventListener("click", showSelectedLocation);
     navigateBtn.addEventListener("click", navigateToSelectedLocation);
-    saveBtn.addEventListener("click", () => runLocationSave());
+    saveBtn.addEventListener("click", saveSelectedSpot);
     shareBtn.addEventListener("click", shareSelectedLocation);
     deleteBtn.addEventListener("click", askDeleteSelected);
 
@@ -1372,6 +1443,7 @@
     async function init() {
       // Local UI is available immediately; no network needed.
       recentSpots = readRecentSpots(); // always trimmed to 5
+      savedSpots = readSavedSpots();
       const localSpot = readLocalBackup();
       lastKnownSpot = localSpot;
 
