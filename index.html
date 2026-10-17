@@ -2,27 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+  />
   <title>ParkNous</title>
-  <link rel="icon" type="image/png" href="favicon.png" />
-  <link rel="apple-touch-icon" href="favicon.png" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="preload" as="image" href="./template_UI_parknous.png?v=40" />
-  <link rel="preload" as="image" href="./favicon.png" />
-  <meta name="theme-color" content="#02070d" />
-  <style>
 
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
+
+  <meta name="theme-color" content="#17191e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ParkNous" />
+
+  <style>
     :root {
-      --bg: #02070d;
-      --text: #ffffff;
-      --muted: rgba(232, 238, 255, 0.72);
-      --cyan: #33e7f2;
-      --gold: #ffd166;
-      --teal: #28d2ad;
-      --red: #ff6b72;
-      --glass: rgba(3, 10, 17, 0.55);
-      --line: rgba(51, 231, 242, 0.24);
-      --radius: 28px;
+      --bg: #17191e;
+      --bg-deep: #101216;
+      --panel: #1d2026;
+      --panel-2: #23262d;
+      --line: rgba(255,255,255,.16);
+      --line-soft: rgba(255,255,255,.08);
+      --text: #f4f5f7;
+      --muted: #a9aeb8;
+      --cyan: #35c9d8;
+      --red: #ff5147;
+      --orange: #f2a33c;
+      --shadow: 0 14px 28px rgba(0,0,0,.32);
     }
 
     * {
@@ -35,2530 +43,765 @@
       width: 100%;
       height: 100%;
       margin: 0;
-      padding: 0;
       overflow: hidden;
-      background: #090d15;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
       color: var(--text);
-      font-family: Inter, Arial, sans-serif;
+      background:
+        radial-gradient(circle at 50% 18%, rgba(255,255,255,.035), transparent 32%),
+        radial-gradient(circle at 18% 70%, rgba(255,255,255,.018), transparent 28%),
+        linear-gradient(180deg, #1a1c21 0%, #17191e 48%, #121418 100%);
     }
 
     body {
+      min-height: 100dvh;
       display: flex;
+      align-items: stretch;
       justify-content: center;
-      align-items: center;
-      padding: 5px;
+      padding:
+        max(6px, env(safe-area-inset-top))
+        8px
+        max(6px, env(safe-area-inset-bottom));
     }
 
     button {
-      appearance: none;
-      border: 0;
       font: inherit;
-      color: inherit;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.50;
-      cursor: not-allowed;
     }
 
     .app {
+      width: min(100%, 470px);
+      height: 100%;
+      max-height: 100dvh;
+      display: grid;
+      grid-template-rows: auto minmax(0, 1fr) minmax(150px, 30vh);
+      gap: 7px;
+      position: relative;
+    }
+
+    .brand {
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.4rem, 6vw, 2rem);
+      font-weight: 900;
+      letter-spacing: -.6px;
+      color: #f7f7f7;
+      text-shadow: 0 2px 18px rgba(0,0,0,.35);
+      user-select: none;
+    }
+
+    .brand span {
+      color: var(--cyan);
+    }
+
+    .control-stage {
       position: relative;
       width: min(100%, 430px);
-      height: calc(100svh - 10px);
-      max-height: 860px;
-      min-height: 640px;
-      overflow: hidden;
-      border-radius: 32px;
-      background: #02070d;
-      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.38);
-      border: 1px solid rgba(51, 231, 242, 0.12);
-    }
-
-    .top {
-      display: none;
-    }
-
-    .content {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-    }
-
-    .template-board {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-      border-radius: inherit;
-      background: #02070d;
+      height: 100%;
+      min-height: 360px;
+      margin: 0 auto;
       isolation: isolate;
     }
 
-    .template-bg-img {
-      position: absolute;
-      inset: 0;
-      z-index: 1;
-      width: 100%;
-      height: 100%;
-      object-fit: fill;
-      display: block;
-      opacity: 1;
-      pointer-events: none;
-      user-select: none;
-      -webkit-user-drag: none;
-      background: #02070d;
-    }
-
-    .image-fallback {
-      display: grid;
-      position: absolute;
-      inset: 0;
-      z-index: 0;
-      place-items: center;
-      padding: 24px;
-      text-align: center;
-      color: #ff9ca2;
-      font-weight: 900;
+    .petal,
+    .delete-btn,
+    .center-spot {
+      border: 1px solid var(--line);
       background:
-        radial-gradient(circle at 50% 30%, rgba(51, 231, 242, 0.10), transparent 30%),
-        #02070d;
+        linear-gradient(145deg, rgba(255,255,255,.035), rgba(0,0,0,.06)),
+        var(--panel);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.045),
+        inset 0 -1px 0 rgba(0,0,0,.38),
+        var(--shadow);
     }
 
-    html.template-image-failed .image-fallback {
-      z-index: 5;
-    }
-
-    html.template-image-loaded .image-fallback {
-      display: none;
-    }
-
-    .pill-row {
-      display: none;
-    }
-
-    /* clickable current controls */
-    .live-actions {
+    .petal {
       position: absolute;
-      inset: 0;
-      z-index: 40;
-      pointer-events: none;
-    }
-
-    .cockpit-btn,
-    .cockpit-delete {
-      position: absolute;
-      pointer-events: auto;
-      margin: 0;
-      padding: 0;
-      color: transparent;
-      background: rgba(51, 231, 242, 0.001);
-      border: 1px solid transparent;
-      box-shadow: none;
-      overflow: hidden;
-      touch-action: manipulation;
-    }
-
-    .cockpit-btn:active,
-    .cockpit-delete:active {
-      background: rgba(51, 231, 242, 0.17);
-      border-color: rgba(51, 231, 242, 0.35);
-    }
-
-    .cockpit-btn .btn-icon,
-    .cockpit-btn .btn-copy,
-    .cockpit-delete .btn-icon,
-    .cockpit-delete .btn-copy {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    html.template-mode .cockpit-btn,
-    html.template-mode .cockpit-delete {
-      background: rgba(51, 231, 242, 0.14);
-      border-color: rgba(255, 209, 102, 0.70);
-    }
-
-    html.template-mode .cockpit-btn .btn-icon,
-    html.template-mode .cockpit-btn .btn-copy,
-    html.template-mode .cockpit-delete .btn-icon,
-    html.template-mode .cockpit-delete .btn-copy {
-      opacity: 0.75;
-      color: #fff;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.85);
-    }
-
-    .btn-title {
-      font-size: 0.68rem;
-      font-weight: 1000;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .btn-subtitle {
-      font-size: 0.48rem;
-      color: rgba(232,238,255,0.75);
-      font-weight: 800;
-    }
-
-    .cockpit-show {
-      left: 6.5%;
-      top: 17.0%;
-      width: 34.0%;
-      height: 17.0%;
-      border-radius: 48px 30px 34px 58px;
-    }
-
-    .cockpit-navigate {
-      right: 6.5%;
-      top: 17.0%;
-      width: 34.0%;
-      height: 17.0%;
-      border-radius: 30px 48px 58px 34px;
-    }
-
-    .cockpit-save {
-      left: 6.4%;
-      top: 46.2%;
-      width: 34.0%;
-      height: 16.8%;
-      border-radius: 58px 34px 30px 48px;
-    }
-
-    .cockpit-share {
-      right: 6.4%;
-      top: 46.2%;
-      width: 34.0%;
-      height: 16.8%;
-      border-radius: 34px 58px 48px 30px;
-    }
-
-    .cockpit-delete {
-      left: 50%;
-      top: 58.4%;
-      width: 17%;
-      height: 8.8%;
-      min-height: 0;
-      transform: translateX(-50%);
-      border-radius: 999px;
-    }
-
-    .cockpit-delete:active {
-      transform: translateX(-50%) scale(0.95);
-    }
-
-    /* live current spot text overlay */
-    .hero {
-      position: absolute;
-      z-index: 25;
-      left: 50%;
-      top: 31.4%;
-      width: 42%;
-      height: 19.8%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 2px;
-      padding: 7px 10px;
-      text-align: center;
-      border: 0;
-      border-radius: 999px;
-      background: rgba(0, 0, 0, 0.08);
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      display: none;
-    }
-
-    .hero-icon-wrap {
-      position: relative;
-      width: 28px;
-      height: 28px;
-      margin: 0 0 2px;
-      flex: 0 0 auto;
-      opacity: 0.88;
-    }
-
-    .hero-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: 999px;
+      z-index: 1;
+      width: 43%;
+      height: 31%;
+      padding: 12px;
+      color: var(--text);
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease, opacity .15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(51, 231, 242, 0.08);
-    }
-
-    .brand-logo {
-      width: 25px;
-      height: 25px;
-      object-fit: contain;
-      display: block;
-    }
-
-    .radar-ring,
-    .radar-ring-2 {
-      display: none;
-    }
-
-    .hero-title {
-      max-width: 136px;
-      max-height: 2.25em;
-      margin: 0;
-      font-size: clamp(0.78rem, 4vw, 1.05rem);
-      line-height: 1.10;
-      font-weight: 1000;
-      color: white;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.9);
+      appearance: none;
       overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
     }
 
-    .hero-text {
-      max-width: 136px;
-      max-height: 2.18em;
-      min-height: 0;
-      padding: 0;
-      font-size: 0.53rem;
-      line-height: 1.09;
-      color: rgba(218,250,255,0.84);
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-    }
-
-    .hero-meta {
-      max-width: 136px;
-      max-height: 1.14em;
-      min-height: 0;
-      margin: 1px 0 0;
-      font-size: 0.44rem;
-      line-height: 1.08;
-      color: rgba(232,238,255,0.68);
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .action-row {
-      display: none;
-    }
-
-    .action-row.show {
-      position: absolute;
-      left: 10px;
-      right: 10px;
-      bottom: 4px;
-      z-index: 80;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      pointer-events: auto;
-    }
-
-    .mini-btn {
-      min-height: 34px;
-      border-radius: 12px;
-      color: white;
-      font-size: 0.72rem;
-      font-weight: 900;
-      background: linear-gradient(180deg, #4ea6ff, #297ae7);
-    }
-
-    .mini-btn.cancel {
-      background: linear-gradient(180deg, #6f737c, #4f545d);
-    }
-
-    /* bottom real/dynamic panels */
-    .spot-panels {
-      position: absolute;
-      z-index: 30;
-      left: 5.7%;
-      right: 5.7%;
-      top: 68.0%;
-      bottom: 4.3%;
-      display: grid;
-      grid-template-columns: minmax(0,1fr) minmax(0,1fr);
-      gap: 0;
-      overflow: hidden;
-      border-radius: 22px;
-      background: rgba(3, 10, 17, 0.18);
-    }
-
-    .spot-panel {
-      min-width: 0;
-      min-height: 0;
-      height: 100%;
-      display: grid;
-      grid-template-rows: 43px minmax(0,1fr);
-      padding: 7px 6px 8px;
-      overflow: hidden;
-      background: transparent;
-    }
-
-    .spot-panel + .spot-panel {
-      border-left: 1px solid rgba(255,255,255,0.23);
-    }
-
-    .panel-head {
-      display: grid;
-      grid-template-columns: minmax(0,1fr) auto;
-      align-items: start;
-      gap: 4px;
-      margin: 0;
-      min-width: 0;
-    }
-
-    .panel-title {
-      max-width: 100%;
-      font-size: clamp(0.52rem, 2.8vw, 0.66rem);
-      line-height: 1.03;
-      font-weight: 1000;
-      text-transform: uppercase;
-      color: #eaffff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .panel-note {
-      max-width: 100%;
-      font-size: 0.39rem;
-      line-height: 1.06;
-      color: rgba(232,238,255,0.72);
-      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .panel-head-right {
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      min-width: 0;
-    }
-
-    .panel-head-right .panel-note {
-      max-width: 34px;
-      color: #62f7ff;
-      font-weight: 950;
-      text-align: right;
-    }
-
-    .panel-toggle {
-      width: 30px;
-      height: 30px;
-      min-width: 30px;
-      border-radius: 13px;
-      background: rgba(3, 14, 22, 0.35);
-      border: 1px solid rgba(51,231,242,0.25);
-      position: relative;
-      box-shadow: 0 0 12px rgba(51,231,242,0.09);
-    }
-
-    .panel-toggle::before {
+    .petal::before,
+    .delete-btn::before,
+    .center-spot::before {
       content: "";
       position: absolute;
-      width: 11px;
-      height: 11px;
-      border: solid rgba(255,255,255,0.95);
-      border-width: 0 4px 4px 0;
-      left: 50%;
-      top: 43%;
-      transform: translate(-50%, -50%) rotate(45deg);
-    }
-
-    .carousel-shell {
-      min-height: 0;
-      height: 100%;
-      overflow: hidden;
-      border-radius: 13px;
-    }
-
-    .spot-list {
-      height: 100%;
-      display: flex;
-      gap: 0;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      scrollbar-width: none;
-      touch-action: pan-x;
-    }
-
-    .spot-list::-webkit-scrollbar {
-      display: none;
-    }
-
-    .spot-item {
-      flex: 0 0 100%;
-      min-width: 100%;
-      height: 100%;
-      display: grid;
-      grid-template-rows: minmax(0,1fr) auto;
-      gap: 4px;
-      padding: 6px;
-      overflow: hidden;
-      border-radius: 13px;
-      background: rgba(2,9,16,0.56);
-      border: 1px solid rgba(51,231,242,0.13);
-      backdrop-filter: blur(2px);
-      scroll-snap-align: start;
-    }
-
-    .spot-row-main {
-      min-width: 0;
-      min-height: 0;
-      display: grid;
-      grid-template-columns: minmax(0,1fr) auto;
-      gap: 4px;
-      align-items: start;
-      overflow: hidden;
-    }
-
-    .spot-row-main > div:first-child {
-      min-width: 0;
-      overflow: hidden;
-    }
-
-    .spot-name {
-      max-width: 100%;
-      max-height: 2.18em;
-      font-size: clamp(0.52rem, 2.75vw, 0.66rem);
-      line-height: 1.09;
-      font-weight: 1000;
-      color: white;
-      text-shadow: 0 2px 7px rgba(0,0,0,0.9);
-      white-space: normal;
-      overflow: hidden;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      word-break: normal;
-      overflow-wrap: anywhere;
-    }
-
-    .spot-meta-small {
-      margin-top: 3px;
-      max-width: 100%;
-      color: rgba(232,238,255,0.68);
-      font-size: 0.36rem;
-      line-height: 1.08;
-      text-shadow: 0 2px 7px rgba(0,0,0,0.9);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .spot-badge {
-      min-width: 30px;
-      max-width: 34px;
-      padding: 4px 4px;
-      border-radius: 999px;
-      color: #75f9ff;
-      font-size: 0.39rem;
-      line-height: 1;
-      font-weight: 1000;
-      text-align: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      border: 1px solid rgba(51,231,242,0.34);
-      background: rgba(51,231,242,0.10);
-    }
-
-    .spot-actions {
-      display: grid;
-      gap: 3px;
-      min-width: 0;
-    }
-
-    .spot-actions.three-actions {
-      grid-template-columns: repeat(3, minmax(0,1fr));
-    }
-
-    .spot-actions.four-actions {
-      grid-template-columns: repeat(2, minmax(0,1fr));
-    }
-
-    .tiny-btn {
-      min-width: 0;
-      min-height: 21px;
-      padding: 3px 2px;
-      border-radius: 8px;
-      color: white;
-      font-size: 0.32rem;
-      line-height: 1;
-      font-weight: 950;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      background: linear-gradient(180deg, rgba(58,66,82,0.72), rgba(24,31,43,0.72));
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .tiny-btn.delete-small {
-      color: #ffd4d7;
-      border-color: rgba(255,107,114,0.40);
-      background: rgba(255,107,114,0.18);
-    }
-
-    .empty-note {
-      color: var(--muted);
-      font-size: 0.62rem;
-      padding: 8px;
-    }
-
-    /* modal list */
-    .list-backdrop {
-      position: fixed;
       inset: 0;
-      z-index: 9000;
-      background: transparent;
-    }
-
-    .list-backdrop[hidden] {
-      display: none;
-    }
-
-    .spot-dropdown {
-      display: none;
-    }
-
-    .spot-list-modal {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      background: transparent;
-      pointer-events: auto;
-    }
-
-    .spot-list-modal[hidden] {
-      display: none;
-    }
-
-    .spot-list-modal-sheet {
-      position: fixed;
-      left: 50%;
-      top: 72px;
-      width: min(calc(100vw - 28px), 410px);
-      max-height: calc(100svh - 88px);
-      transform: translateX(-50%);
-      display: grid;
-      gap: 8px;
-      padding: 10px;
-      border: 1px solid rgba(51, 231, 242, 0.28);
-      border-radius: 20px;
-      background: rgba(7, 14, 22, 0.985);
-      box-shadow: 0 22px 58px rgba(0,0,0,0.62);
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .spot-list-modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      padding: 2px 2px 6px;
-    }
-
-    .spot-list-modal-title {
-      font-size: 0.88rem;
-      font-weight: 950;
-      color: #e5fbff;
-    }
-
-    .spot-list-modal-close {
-      width: 34px;
-      height: 34px;
-      border-radius: 12px;
-      border: 1px solid rgba(51, 231, 242, 0.22);
-      background: rgba(51, 231, 242, 0.10);
-      color: #fff;
-      font-size: 1rem;
-      font-weight: 950;
-    }
-
-    .spot-list-modal-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 54px 54px;
-      gap: 7px;
-      padding: 8px;
-      border-radius: 15px;
-      border: 1px solid rgba(51, 231, 242, 0.13);
-      background: rgba(51, 231, 242, 0.055);
-    }
-
-    .spot-list-modal-row.recent-actions {
-      grid-template-columns: minmax(0, 1fr) 54px 54px 54px;
-    }
-
-    .spot-list-modal-row.selected {
-      outline: 1px solid rgba(51, 231, 242, 0.58);
-      background: rgba(51, 231, 242, 0.13);
-    }
-
-    .spot-list-modal-preview {
-      min-width: 0;
-      min-height: 48px;
-      padding: 8px 9px;
-      border: 1px solid rgba(51, 231, 242, 0.13);
-      border-radius: 13px;
-      background: rgba(255,255,255,0.045);
-      color: inherit;
-      text-align: left;
-      overflow: hidden;
-    }
-
-    .spot-list-modal-name,
-    .spot-list-modal-meta {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .spot-list-modal-name {
-      font-size: 0.74rem;
-      font-weight: 900;
-      color: #ffffff;
-    }
-
-    .spot-list-modal-meta {
-      margin-top: 2px;
-      font-size: 0.60rem;
-      color: rgba(218, 250, 255, 0.72);
-    }
-
-    .spot-list-modal-btn {
-      width: 54px;
-      min-height: 48px;
-      padding: 0 4px;
-      font-size: 0.56rem;
-      border-radius: 13px;
-      border: 1px solid rgba(51, 231, 242, 0.18);
-      background: linear-gradient(180deg, rgba(45, 101, 122, 0.95), rgba(28, 52, 70, 0.95));
-      color: #fff;
-      font-weight: 950;
-    }
-
-    .spot-list-modal-btn.save {
-      background: linear-gradient(180deg, rgba(52, 211, 170, 0.95), rgba(17, 132, 111, 0.95));
-    }
-
-    .spot-list-modal-btn.delete {
-      border-color: rgba(255, 117, 125, 0.45);
-      background: rgba(255, 117, 125, 0.18);
-      color: #ffd4d7;
-    }
-
-    .spot-list-modal-empty {
-      padding: 12px;
-      border-radius: 14px;
-      color: rgba(218, 250, 255, 0.72);
-      background: rgba(51, 231, 242, 0.06);
-    }
-
-    .confirm-banner {
-      position: fixed;
-      left: 50%;
-      bottom: 18px;
-      z-index: 12000;
-      width: min(calc(100vw - 24px), 410px);
-      transform: translateX(-50%) translateY(160%);
-      opacity: 0;
       pointer-events: none;
-      padding: 14px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 117, 125, 0.32);
-      background: rgba(12, 14, 22, 0.98);
-      box-shadow: 0 22px 58px rgba(0,0,0,0.62);
-      transition: transform .22s ease, opacity .22s ease;
+      background:
+        radial-gradient(circle at 38% 20%, rgba(255,255,255,.04), transparent 35%),
+        linear-gradient(180deg, rgba(255,255,255,.025), transparent 45%);
     }
 
-    .confirm-banner.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-      pointer-events: auto;
+    .petal:active,
+    .delete-btn:active {
+      filter: brightness(1.12);
     }
 
-    .confirm-title {
-      font-weight: 1000;
+    .petal:disabled,
+    .delete-btn:disabled {
+      opacity: .42;
+      cursor: default;
+      filter: none;
+    }
+
+    .petal.show {
+      left: 2%;
+      top: 3%;
+      border-radius: 56% 20% 46% 22% / 42% 28% 50% 34%;
+      transform: rotate(-14deg);
+    }
+
+    .petal.navigate {
+      right: 2%;
+      top: 3%;
+      border-radius: 20% 56% 22% 46% / 28% 42% 34% 50%;
+      transform: rotate(14deg);
+    }
+
+    .petal.save {
+      left: 2%;
+      bottom: 8%;
+      border-radius: 24% 48% 20% 56% / 38% 48% 28% 46%;
+      transform: rotate(13deg);
+    }
+
+    .petal.share {
+      right: 2%;
+      bottom: 8%;
+      border-radius: 48% 24% 56% 20% / 48% 38% 46% 28%;
+      transform: rotate(-13deg);
+    }
+
+    .petal.show:active { transform: rotate(-14deg) scale(.985); }
+    .petal.navigate:active { transform: rotate(14deg) scale(.985); }
+    .petal.save:active { transform: rotate(13deg) scale(.985); }
+    .petal.share:active { transform: rotate(-13deg) scale(.985); }
+
+    .petal-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      gap: 5px;
+      transform: rotate(0);
+    }
+
+    .show .petal-content { transform: rotate(14deg); }
+    .navigate .petal-content { transform: rotate(-14deg); }
+    .save .petal-content { transform: rotate(-13deg); }
+    .share .petal-content { transform: rotate(13deg); }
+
+    .petal svg,
+    .delete-btn svg {
+      width: clamp(31px, 9vw, 44px);
+      height: clamp(31px, 9vw, 44px);
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.22));
+    }
+
+    .petal-label {
+      font-weight: 600;
+      font-size: clamp(.78rem, 3.5vw, 1.02rem);
+      letter-spacing: .2px;
+      white-space: nowrap;
+    }
+
+    .show,
+    .navigate {
+      color: #f5f6f8;
+    }
+
+    .save,
+    .share {
+      color: var(--cyan);
+    }
+
+    .save .petal-label,
+    .share .petal-label {
+      color: #f5f6f8;
+    }
+
+    .center-spot {
+      position: absolute;
+      z-index: 5;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
+      width: 47%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      text-align: center;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 9px rgba(30,33,39,.95),
+        0 0 0 10px rgba(255,255,255,.10),
+        0 16px 34px rgba(0,0,0,.42),
+        inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .center-spot.searching {
+      box-shadow:
+        0 0 0 9px rgba(30,33,39,.95),
+        0 0 0 10px rgba(53,201,216,.24),
+        0 16px 34px rgba(0,0,0,.42),
+        inset 0 1px 0 rgba(255,255,255,.04);
+    }
+
+    .center-spot.searching::after {
+      content: "";
+      position: absolute;
+      width: 115%;
+      height: 115%;
+      border-radius: 50%;
+      border: 2px solid rgba(53,201,216,.35);
+      animation: pulse 1.5s ease-out infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(.78); opacity: .7; }
+      100% { transform: scale(1.18); opacity: 0; }
+    }
+
+    .spot-copy {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    .spot-kicker {
+      color: var(--cyan);
+      font-size: clamp(.64rem, 2.8vw, .78rem);
+      font-weight: 800;
+      letter-spacing: .8px;
+      text-transform: uppercase;
       margin-bottom: 4px;
     }
 
-    .confirm-text {
-      color: var(--muted);
-      font-size: 0.78rem;
-      margin-bottom: 10px;
+    .spot-state {
+      font-size: clamp(.9rem, 4vw, 1.13rem);
+      line-height: 1.1;
+      font-weight: 850;
+      margin-bottom: 6px;
     }
 
-    .confirm-actions {
+    .spot-time {
+      font-size: clamp(.7rem, 3vw, .85rem);
+      color: #e5e7eb;
+      line-height: 1.3;
+    }
+
+    .spot-accuracy {
+      margin-top: 4px;
+      font-size: clamp(.66rem, 2.8vw, .8rem);
+      color: var(--muted);
+    }
+
+    .delete-btn {
+      position: absolute;
+      z-index: 6;
+      width: 18%;
+      min-width: 68px;
+      max-width: 82px;
+      aspect-ratio: 1;
+      left: 50%;
+      bottom: -1%;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      color: var(--red);
+      appearance: none;
+      cursor: pointer;
+      padding: 8px;
+      display: grid;
+      place-items: center;
+    }
+
+    .delete-btn:active {
+      transform: translateX(-50%) scale(.98);
+    }
+
+    .delete-inner {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      justify-items: center;
+      gap: 1px;
+    }
+
+    .delete-btn svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .delete-label {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .2px;
+    }
+
+    .status-strip {
+      position: absolute;
+      z-index: 8;
+      left: 50%;
+      bottom: 0;
+      transform: translate(-50%, 110%);
+      width: min(92%, 390px);
+      padding: 9px 11px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(22,24,29,.97);
+      box-shadow: 0 12px 26px rgba(0,0,0,.42);
+      display: none;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 7px;
+      font-size: .74rem;
+    }
+
+    .status-strip.show {
+      display: grid;
+    }
+
+    .status-strip button {
+      border: 0;
+      border-radius: 9px;
+      padding: 8px 9px;
+      font-weight: 800;
+      cursor: pointer;
+      color: white;
+      background: #454950;
+    }
+
+    .status-strip button.primary {
+      background: #2f94a1;
+    }
+
+    .status-strip button.danger {
+      background: #b43f39;
+    }
+
+    .spots-panel {
+      min-height: 0;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.018), rgba(0,0,0,.025)),
+        rgba(22,24,29,.72);
+      overflow: hidden;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.025);
     }
 
-    .confirm-btn {
-      min-height: 42px;
-      border-radius: 14px;
-      background: #333b4a;
-      color: white;
-      font-weight: 900;
+    .spot-column {
+      min-width: 0;
+      min-height: 0;
+      display: grid;
+      grid-template-rows: auto 1fr;
     }
 
-    .confirm-btn.yes {
-      background: #e25656;
+    .spot-column + .spot-column {
+      border-left: 1px solid var(--line);
     }
 
-    .debug-panel {
-      display: none;
+    .list-head {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 13px 12px 9px;
+      font-weight: 750;
+      font-size: clamp(.72rem, 3.1vw, .88rem);
+      white-space: nowrap;
     }
 
-    html.template-mode::after {
-      content: "v40 clean template";
+    .list-head svg {
+      width: 23px;
+      height: 23px;
+      stroke: var(--cyan);
+      fill: none;
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: 0 0 auto;
+    }
+
+    .spot-list {
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      padding: 0 8px 8px;
+    }
+
+    .list-empty {
+      color: #747a84;
+      font-size: .7rem;
+      text-align: center;
+      padding: 16px 5px;
+    }
+
+    .spot-card {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.075);
+      border-radius: 11px;
+      background: rgba(255,255,255,.028);
+      color: #f4f5f7;
+      padding: 8px 9px;
+      margin: 0 0 6px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .spot-card.active {
+      border-color: rgba(53,201,216,.48);
+      background: rgba(53,201,216,.075);
+    }
+
+    .spot-card-title {
+      font-size: .72rem;
+      font-weight: 800;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .spot-card-meta {
+      margin-top: 3px;
+      font-size: .62rem;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+
+    .toast {
       position: fixed;
-      left: 12px;
-      top: 12px;
-      z-index: 20000;
-      padding: 5px 8px;
-      border-radius: 999px;
-      background: rgba(255,209,102,0.94);
-      color: #061015;
-      font-size: 0.58rem;
-      font-weight: 1000;
-    }
-
-    @media (max-width: 390px) {
-      .hero {
-        width: 40%;
-        height: 18.5%;
-        top: 31.8%;
-      }
-
-      .hero-icon-wrap,
-      .hero-icon {
-        width: 24px;
-        height: 24px;
-      }
-
-      .brand-logo {
-        width: 21px;
-        height: 21px;
-      }
-
-      .hero-title {
-        font-size: 0.76rem;
-      }
-
-      .hero-text {
-        font-size: 0.46rem;
-      }
-
-      .hero-meta {
-        font-size: 0.38rem;
-      }
-
-      .panel-title {
-        font-size: 0.50rem;
-      }
-
-      .panel-note {
-        font-size: 0.35rem;
-      }
-
-      .panel-toggle {
-        width: 27px;
-        height: 27px;
-        min-width: 27px;
-      }
-
-      .spot-panel {
-        grid-template-rows: 40px minmax(0,1fr);
-        padding: 6px 5px 7px;
-      }
-
-      .spot-item {
-        padding: 5px;
-      }
-
-      .spot-name {
-        font-size: 0.50rem;
-      }
-
-      .spot-meta-small {
-        font-size: 0.32rem;
-      }
-
-      .tiny-btn {
-        min-height: 19px;
-        font-size: 0.29rem;
-      }
-    }
-
-
-    /* ParkNous v45: normal CSS buttons restored, no click proxy */
-    .top {
-      display: grid !important;
-      position: absolute !important;
-      left: 0 !important;
-      right: 0 !important;
-      top: 0 !important;
-      height: 6.6% !important;
-      min-height: 46px !important;
-      z-index: 20 !important;
-      place-items: start center !important;
-      padding: 0 34px !important;
-      pointer-events: none !important;
-      overflow: visible !important;
-    }
-
-    .title {
-      display: grid !important;
-      place-items: start center !important;
-      width: 100% !important;
-      height: 100% !important;
-      margin: 0 !important;
-      overflow: visible !important;
-    }
-
-    .title-wordmark {
-      display: block !important;
-      width: min(90%, 350px) !important;
-      max-height: none !important;
-      height: auto !important;
-      object-fit: contain !important;
-      transform: translateY(-18px) !important;
-      filter:
-        drop-shadow(0 0 10px rgba(255, 209, 102, 0.24))
-        drop-shadow(0 0 20px rgba(255, 174, 53, 0.14)) !important;
-      pointer-events: none !important;
-    }
-
-    .template-bg-img,
-    .image-fallback {
-      pointer-events: none !important;
-    }
-
-    /* Restore the old/normal way: the real buttons are the clickable layer */
-    .live-actions {
-      position: absolute !important;
-      inset: 0 !important;
-      z-index: 80 !important;
-      pointer-events: none !important;
-      display: block !important;
-    }
-
-    .live-actions > button,
-    .cockpit-btn,
-    .cockpit-delete {
-      position: absolute !important;
-      pointer-events: auto !important;
-      touch-action: manipulation !important;
-      cursor: pointer !important;
-      background: rgba(51, 231, 242, 0.001) !important;
-      border: 1px solid transparent !important;
-      color: transparent !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      z-index: 81 !important;
-      -webkit-tap-highlight-color: rgba(51, 231, 242, 0.24) !important;
-    }
-
-    .live-actions > button:active,
-    .cockpit-btn:active,
-    .cockpit-delete:active {
-      background: rgba(51, 231, 242, 0.16) !important;
-      border-color: rgba(51, 231, 242, 0.32) !important;
-    }
-
-    .live-actions > button .btn-icon,
-    .live-actions > button .btn-copy,
-    .cockpit-btn .btn-icon,
-    .cockpit-btn .btn-copy,
-    .cockpit-delete .btn-icon,
-    .cockpit-delete .btn-copy {
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .cockpit-show {
-      left: 6.5% !important;
-      top: 17.0% !important;
-      width: 34.0% !important;
-      height: 17.0% !important;
-      border-radius: 48px 30px 34px 58px !important;
-    }
-
-    .cockpit-navigate {
-      right: 6.5% !important;
-      top: 17.0% !important;
-      width: 34.0% !important;
-      height: 17.0% !important;
-      border-radius: 30px 48px 58px 34px !important;
-    }
-
-    .cockpit-save {
-      left: 6.4% !important;
-      top: 46.2% !important;
-      width: 34.0% !important;
-      height: 16.8% !important;
-      border-radius: 58px 34px 30px 48px !important;
-    }
-
-    .cockpit-share {
-      right: 6.4% !important;
-      top: 46.2% !important;
-      width: 34.0% !important;
-      height: 16.8% !important;
-      border-radius: 34px 58px 48px 30px !important;
-    }
-
-    .cockpit-delete {
-      left: 50% !important;
-      top: 58.4% !important;
-      width: 17% !important;
-      height: 8.8% !important;
-      min-height: 0 !important;
-      transform: translateX(-50%) !important;
-      border-radius: 999px !important;
-    }
-
-    .cockpit-delete:active {
-      transform: translateX(-50%) scale(0.95) !important;
-    }
-
-    /* Text/logo layer must never block clicks */
-    .hero {
-      z-index: 35 !important;
-      pointer-events: none !important;
-      top: 27.3% !important;
-      width: 44.0% !important;
-      height: 22.3% !important;
-      padding: 6px 10px 10px !important;
-      justify-content: flex-start !important;
-      gap: 0 !important;
-    }
-
-    .hero-icon-wrap {
-      width: 70px !important;
-      height: 70px !important;
-      margin: 0 !important;
-    }
-
-    .hero-icon {
-      width: 70px !important;
-      height: 70px !important;
-      background: transparent !important;
-      border: 0 !important;
-      box-shadow: none !important;
-    }
-
-    .brand-logo {
-      width: 64px !important;
-      height: 64px !important;
-      max-width: 64px !important;
-      max-height: 64px !important;
-      object-fit: contain !important;
-    }
-
-    .hero::after {
-      content: "CURRENT SPOT" !important;
-      order: 2 !important;
-      margin-top: -1px !important;
-      color: #33e7f2 !important;
-      font-size: clamp(0.45rem, 2.35vw, 0.58rem) !important;
-      line-height: 1 !important;
-      font-weight: 950 !important;
-      letter-spacing: 0.08em !important;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.85) !important;
-    }
-
-    .hero-title {
-      order: 3 !important;
-      max-width: 148px !important;
-      max-height: 1.12em !important;
-      margin-top: 4px !important;
-      font-size: clamp(1.02rem, 5.0vw, 1.34rem) !important;
-      line-height: 1.02 !important;
-      white-space: nowrap !important;
-      display: block !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-
-    .hero-text {
-      display: none !important;
-    }
-
-    .hero-meta {
-      position: absolute !important;
-      width: 1px !important;
-      height: 1px !important;
-      overflow: hidden !important;
-      opacity: 0 !important;
-    }
-
-    .hero-meta-stack {
-      order: 4 !important;
-      display: grid !important;
-      gap: 1px !important;
-      max-width: 148px !important;
-      margin-top: 5px !important;
-      color: rgba(232,238,255,0.84) !important;
-      font-size: clamp(0.40rem, 2.05vw, 0.52rem) !important;
-      line-height: 1.10 !important;
-      font-weight: 780 !important;
-      text-align: center !important;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.92) !important;
-    }
-
-    .hero-meta-stack > div {
-      max-width: 148px !important;
-      min-height: 0.92em !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-
-    .hero-meta-arc {
-      display: none !important;
-    }
-
-    /* Lists: keep title area from template, put dynamic content left and buttons right column */
-    .spot-panels {
-      z-index: 45 !important;
-      left: 5.3% !important;
-      right: 5.3% !important;
-      top: 68.0% !important;
-      bottom: 3.6% !important;
-      background: transparent !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-panel {
-      grid-template-rows: 34px minmax(0, 1fr) !important;
-      padding: 10px 12px 12px !important;
-      background: transparent !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-panel + .spot-panel {
-      border-left: 0 !important;
-    }
-
-    .panel-title,
-    .panel-head > div:first-child .panel-note {
-      display: none !important;
-    }
-
-    .panel-head {
-      grid-template-columns: minmax(0, 1fr) auto !important;
-      margin: 0 !important;
-      pointer-events: auto !important;
-    }
-
-    .panel-head-right {
-      justify-self: end !important;
-      align-items: center !important;
-      gap: 6px !important;
-      pointer-events: auto !important;
-    }
-
-    .panel-head-right .panel-note {
-      max-width: 44px !important;
-      font-size: 0.54rem !important;
-      color: #52f7ff !important;
-      font-weight: 950 !important;
-      pointer-events: none !important;
-    }
-
-    .panel-toggle {
-      width: 28px !important;
-      height: 28px !important;
-      min-width: 28px !important;
-      border-radius: 12px !important;
-      pointer-events: auto !important;
-      z-index: 70 !important;
-    }
-
-    .panel-toggle::before {
-      width: 9px !important;
-      height: 9px !important;
-      border-width: 0 3px 3px 0 !important;
-    }
-
-    .spot-item {
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) 58px !important;
-      grid-template-rows: 1fr !important;
-      gap: 9px !important;
-      padding: 10px !important;
-      border-radius: 16px !important;
-      background: rgba(2, 9, 16, 0.31) !important;
-      overflow: hidden !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-row-main {
-      grid-column: 1 !important;
-      grid-row: 1 !important;
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) !important;
-      align-content: center !important;
-      gap: 5px !important;
-      min-width: 0 !important;
-      overflow: hidden !important;
-    }
-
-    .spot-row-main > div:first-child {
-      min-width: 0 !important;
-      overflow: hidden !important;
-    }
-
-    .spot-badge {
-      justify-self: start !important;
-      margin-top: 4px !important;
-      min-width: 42px !important;
-      max-width: 52px !important;
-      padding: 6px 7px !important;
-      font-size: 0.56rem !important;
-    }
-
-    .spot-name {
-      max-width: 100% !important;
-      font-size: clamp(0.74rem, 3.75vw, 0.94rem) !important;
-      line-height: 1.12 !important;
-      max-height: 2.25em !important;
-    }
-
-    .spot-meta-small {
-      max-width: 100% !important;
-      margin-top: 5px !important;
-      font-size: 0.46rem !important;
-      line-height: 1.16 !important;
-    }
-
-    .spot-actions,
-    .spot-actions.three-actions,
-    .spot-actions.four-actions {
-      grid-column: 2 !important;
-      grid-row: 1 !important;
-      display: grid !important;
-      grid-template-columns: 1fr !important;
-      align-content: stretch !important;
-      gap: 7px !important;
-      min-width: 0 !important;
-      height: 100% !important;
-      pointer-events: auto !important;
-    }
-
-    .tiny-btn {
-      width: 100% !important;
-      min-width: 0 !important;
-      min-height: 0 !important;
-      height: auto !important;
-      padding: 5px 3px !important;
-      border-radius: 11px !important;
-      font-size: 0.48rem !important;
-      line-height: 1 !important;
-      pointer-events: auto !important;
-      z-index: 75 !important;
-    }
-
-    .tiny-btn.delete-small {
-      color: #ffd7db !important;
-      border-color: rgba(255, 107, 114, 0.50) !important;
-      background: rgba(255, 107, 114, 0.20) !important;
-    }
-
-    @media (max-width: 390px) {
-      .title-wordmark {
-        transform: translateY(-15px) !important;
-      }
-
-      .hero {
-        top: 27.8% !important;
-        width: 42.5% !important;
-        height: 21.6% !important;
-        padding: 6px 9px 9px !important;
-      }
-
-      .hero-icon-wrap,
-      .hero-icon {
-        width: 60px !important;
-        height: 60px !important;
-      }
-
-      .brand-logo {
-        width: 55px !important;
-        height: 55px !important;
-        max-width: 55px !important;
-        max-height: 55px !important;
-      }
-
-      .hero::after {
-        font-size: 0.40rem !important;
-      }
-
-      .hero-title {
-        max-width: 130px !important;
-        font-size: 0.94rem !important;
-      }
-
-      .hero-meta-stack {
-        max-width: 130px !important;
-        font-size: 0.36rem !important;
-      }
-
-      .hero-meta-stack > div {
-        max-width: 130px !important;
-      }
-
-      .spot-panel {
-        grid-template-rows: 31px minmax(0, 1fr) !important;
-        padding: 9px 9px 11px !important;
-      }
-
-      .panel-toggle {
-        width: 25px !important;
-        height: 25px !important;
-        min-width: 25px !important;
-      }
-
-      .spot-item {
-        grid-template-columns: minmax(0, 1fr) 50px !important;
-        gap: 7px !important;
-        padding: 8px !important;
-      }
-
-      .spot-name {
-        font-size: 0.62rem !important;
-      }
-
-      .spot-meta-small {
-        font-size: 0.38rem !important;
-      }
-
-      .spot-badge {
-        min-width: 36px !important;
-        max-width: 44px !important;
-        font-size: 0.46rem !important;
-        padding: 5px 6px !important;
-      }
-
-      .spot-actions,
-      .spot-actions.three-actions,
-      .spot-actions.four-actions {
-        gap: 5px !important;
-      }
-
-      .tiny-btn {
-        font-size: 0.39rem !important;
-        border-radius: 10px !important;
-      }
-    }
-
-
-    /* ParkNous v46: title + separate logo + info-only center, normal CSS clicks */
-    .top {
-      display: grid !important;
-      position: absolute !important;
-      left: 0 !important;
-      right: 0 !important;
-      top: 0 !important;
-      height: 7.2% !important;
-      min-height: 48px !important;
-      z-index: 40 !important;
-      place-items: start center !important;
-      padding: 0 32px !important;
-      pointer-events: none !important;
-      overflow: visible !important;
-    }
-
-    .title {
-      display: grid !important;
-      place-items: start center !important;
-      width: 100% !important;
-      height: 100% !important;
-      margin: 0 !important;
-      overflow: visible !important;
-    }
-
-    .title-wordmark {
-      display: block !important;
-      width: min(91%, 360px) !important;
-      max-height: none !important;
-      height: auto !important;
-      object-fit: contain !important;
-      transform: translateY(-14px) !important;
-      filter:
-        drop-shadow(0 0 10px rgba(255, 209, 102, 0.22))
-        drop-shadow(0 0 22px rgba(255, 174, 53, 0.14)) !important;
-      pointer-events: none !important;
-    }
-
-    .top-center-logo {
-      position: absolute;
+      z-index: 40;
       left: 50%;
-      top: 9.6%;
-      width: 92px;
-      height: 92px;
-      transform: translateX(-50%);
-      z-index: 38;
-      object-fit: contain;
+      bottom: max(18px, env(safe-area-inset-bottom));
+      transform: translate(-50%, 20px);
+      width: min(calc(100% - 28px), 420px);
+      background: rgba(26,29,34,.97);
+      color: white;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 11px 13px;
+      font-size: .78rem;
+      text-align: center;
+      opacity: 0;
       pointer-events: none;
-      filter:
-        drop-shadow(0 0 12px rgba(51, 231, 242, 0.18))
-        drop-shadow(0 8px 14px rgba(0, 0, 0, 0.38));
+      transition: opacity .18s ease, transform .18s ease;
+      box-shadow: 0 14px 30px rgba(0,0,0,.42);
     }
 
-    .template-bg-img,
-    .image-fallback {
-      pointer-events: none !important;
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
     }
 
-    /* Normal clickable HTML/CSS button hotspots */
-    .live-actions {
-      position: absolute !important;
-      inset: 0 !important;
-      z-index: 90 !important;
-      pointer-events: none !important;
-      display: block !important;
-    }
-
-    .live-actions > button,
-    .cockpit-btn,
-    .cockpit-delete {
-      position: absolute !important;
-      pointer-events: auto !important;
-      touch-action: manipulation !important;
-      cursor: pointer !important;
-      background: rgba(51, 231, 242, 0.001) !important;
-      border: 1px solid transparent !important;
-      color: transparent !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      z-index: 91 !important;
-      -webkit-tap-highlight-color: rgba(51, 231, 242, 0.25) !important;
-    }
-
-    .live-actions > button:active,
-    .cockpit-btn:active,
-    .cockpit-delete:active {
-      background: rgba(51, 231, 242, 0.18) !important;
-      border-color: rgba(51, 231, 242, 0.36) !important;
-    }
-
-    .live-actions > button .btn-icon,
-    .live-actions > button .btn-copy,
-    .cockpit-btn .btn-icon,
-    .cockpit-btn .btn-copy,
-    .cockpit-delete .btn-icon,
-    .cockpit-delete .btn-copy {
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .cockpit-show {
-      left: 6.5% !important;
-      top: 17.0% !important;
-      width: 34.0% !important;
-      height: 17.0% !important;
-      border-radius: 48px 30px 34px 58px !important;
-    }
-
-    .cockpit-navigate {
-      right: 6.5% !important;
-      top: 17.0% !important;
-      width: 34.0% !important;
-      height: 17.0% !important;
-      border-radius: 30px 48px 58px 34px !important;
-    }
-
-    .cockpit-save {
-      left: 6.4% !important;
-      top: 46.2% !important;
-      width: 34.0% !important;
-      height: 16.8% !important;
-      border-radius: 58px 34px 30px 48px !important;
-    }
-
-    .cockpit-share {
-      right: 6.4% !important;
-      top: 46.2% !important;
-      width: 34.0% !important;
-      height: 16.8% !important;
-      border-radius: 34px 58px 48px 30px !important;
-    }
-
-    .cockpit-delete {
-      left: 50% !important;
-      top: 58.4% !important;
-      width: 17% !important;
-      height: 8.8% !important;
-      min-height: 0 !important;
-      transform: translateX(-50%) !important;
-      border-radius: 999px !important;
-    }
-
-    .cockpit-delete:active {
-      transform: translateX(-50%) scale(0.95) !important;
-    }
-
-    /* Central circle now shows only current spot info */
-    .hero {
-      z-index: 35 !important;
-      pointer-events: none !important;
-      top: 31.0% !important;
-      width: 43.0% !important;
-      height: 18.4% !important;
-      padding: 8px 12px !important;
-      justify-content: center !important;
-      align-items: center !important;
-      gap: 0 !important;
-      background: transparent !important;
-      overflow: hidden !important;
-    }
-
-    .hero-icon-wrap,
-    .hero-icon,
-    .brand-logo,
-    .hero-title,
-    .hero-text,
-    .hero::after {
-      display: none !important;
-    }
-
-    .hero-meta {
-      position: absolute !important;
-      width: 1px !important;
-      height: 1px !important;
-      overflow: hidden !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .hero-meta-stack {
-      display: grid !important;
-      gap: 5px !important;
-      width: 100% !important;
-      max-width: 160px !important;
-      margin: 0 !important;
-      color: rgba(232,238,255,0.92) !important;
-      font-size: clamp(0.68rem, 3.35vw, 0.88rem) !important;
-      line-height: 1.08 !important;
-      font-weight: 850 !important;
-      text-align: center !important;
-      text-shadow: 0 2px 9px rgba(0,0,0,0.96) !important;
-      pointer-events: none !important;
-    }
-
-    .hero-meta-stack > div {
-      max-width: 160px !important;
-      min-height: 1em !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-
-    #heroMetaDate {
-      color: #ffffff !important;
-      font-size: 1.10em !important;
-      font-weight: 1000 !important;
-    }
-
-    #heroMetaTime {
-      color: rgba(218,250,255,0.94) !important;
-    }
-
-    #heroMetaAccuracy {
-      color: #33e7f2 !important;
-      font-size: 0.94em !important;
-    }
-
-    .hero-meta-arc {
-      display: none !important;
-    }
-
-    /* Lists remain dynamic: left text, right action column */
-    .spot-panels {
-      z-index: 45 !important;
-      left: 5.3% !important;
-      right: 5.3% !important;
-      top: 68.0% !important;
-      bottom: 3.6% !important;
-      background: transparent !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-panel {
-      grid-template-rows: 34px minmax(0, 1fr) !important;
-      padding: 10px 12px 12px !important;
-      background: transparent !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-panel + .spot-panel {
-      border-left: 0 !important;
-    }
-
-    .panel-title,
-    .panel-head > div:first-child .panel-note {
-      display: none !important;
-    }
-
-    .panel-head {
-      grid-template-columns: minmax(0, 1fr) auto !important;
-      margin: 0 !important;
-      pointer-events: auto !important;
-    }
-
-    .panel-head-right {
-      justify-self: end !important;
-      align-items: center !important;
-      gap: 6px !important;
-      pointer-events: auto !important;
-    }
-
-    .panel-head-right .panel-note {
-      max-width: 44px !important;
-      font-size: 0.54rem !important;
-      color: #52f7ff !important;
-      font-weight: 950 !important;
-      pointer-events: none !important;
-    }
-
-    .panel-toggle {
-      width: 28px !important;
-      height: 28px !important;
-      min-width: 28px !important;
-      border-radius: 12px !important;
-      pointer-events: auto !important;
-      z-index: 70 !important;
-    }
-
-    .panel-toggle::before {
-      width: 9px !important;
-      height: 9px !important;
-      border-width: 0 3px 3px 0 !important;
-    }
-
-    .spot-item {
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) 58px !important;
-      grid-template-rows: 1fr !important;
-      gap: 9px !important;
-      padding: 10px !important;
-      border-radius: 16px !important;
-      background: rgba(2, 9, 16, 0.31) !important;
-      overflow: hidden !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-row-main {
-      grid-column: 1 !important;
-      grid-row: 1 !important;
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) !important;
-      align-content: center !important;
-      gap: 5px !important;
-      min-width: 0 !important;
-      overflow: hidden !important;
-    }
-
-    .spot-row-main > div:first-child {
-      min-width: 0 !important;
-      overflow: hidden !important;
-    }
-
-    .spot-badge {
-      justify-self: start !important;
-      margin-top: 4px !important;
-      min-width: 42px !important;
-      max-width: 52px !important;
-      padding: 6px 7px !important;
-      font-size: 0.56rem !important;
-    }
-
-    .spot-name {
-      max-width: 100% !important;
-      font-size: clamp(0.74rem, 3.75vw, 0.94rem) !important;
-      line-height: 1.12 !important;
-      max-height: 2.25em !important;
-    }
-
-    .spot-meta-small {
-      max-width: 100% !important;
-      margin-top: 5px !important;
-      font-size: 0.46rem !important;
-      line-height: 1.16 !important;
-    }
-
-    .spot-actions,
-    .spot-actions.three-actions,
-    .spot-actions.four-actions {
-      grid-column: 2 !important;
-      grid-row: 1 !important;
-      display: grid !important;
-      grid-template-columns: 1fr !important;
-      align-content: stretch !important;
-      gap: 7px !important;
-      min-width: 0 !important;
-      height: 100% !important;
-      pointer-events: auto !important;
-    }
-
-    .tiny-btn {
-      width: 100% !important;
-      min-width: 0 !important;
-      min-height: 0 !important;
-      height: auto !important;
-      padding: 5px 3px !important;
-      border-radius: 11px !important;
-      font-size: 0.48rem !important;
-      line-height: 1 !important;
-      pointer-events: auto !important;
-      z-index: 75 !important;
-    }
-
-    .tiny-btn.delete-small {
-      color: #ffd7db !important;
-      border-color: rgba(255, 107, 114, 0.50) !important;
-      background: rgba(255, 107, 114, 0.20) !important;
-    }
-
-    @media (max-width: 390px) {
-      .title-wordmark {
-        transform: translateY(-12px) !important;
+    @media (max-height: 690px) {
+      .app {
+        grid-template-rows: 28px minmax(0, 1fr) 145px;
       }
-
-      .top-center-logo {
-        top: 9.0% !important;
-        width: 78px !important;
-        height: 78px !important;
-      }
-
-      .hero {
-        top: 31.2% !important;
-        width: 42.0% !important;
-        height: 17.8% !important;
-      }
-
-      .hero-meta-stack {
-        max-width: 138px !important;
-        font-size: 0.58rem !important;
-        gap: 4px !important;
-      }
-
-      .hero-meta-stack > div {
-        max-width: 138px !important;
-      }
-
-      .spot-panel {
-        grid-template-rows: 31px minmax(0, 1fr) !important;
-        padding: 9px 9px 11px !important;
-      }
-
-      .panel-toggle {
-        width: 25px !important;
-        height: 25px !important;
-        min-width: 25px !important;
-      }
-
-      .spot-item {
-        grid-template-columns: minmax(0, 1fr) 50px !important;
-        gap: 7px !important;
-        padding: 8px !important;
-      }
-
-      .spot-name {
-        font-size: 0.62rem !important;
-      }
-
-      .spot-meta-small {
-        font-size: 0.38rem !important;
-      }
-
-      .spot-badge {
-        min-width: 36px !important;
-        max-width: 44px !important;
-        font-size: 0.46rem !important;
-        padding: 5px 6px !important;
-      }
-
-      .spot-actions,
-      .spot-actions.three-actions,
-      .spot-actions.four-actions {
-        gap: 5px !important;
-      }
-
-      .tiny-btn {
-        font-size: 0.39rem !important;
-        border-radius: 10px !important;
-      }
+      .brand { font-size: 1.35rem; height: 28px; }
+      .control-stage { min-height: 325px; }
+      .petal { height: 30%; }
+      .center-spot { width: 44%; }
+      .spots-panel { border-radius: 18px; }
+      .list-head { padding-top: 10px; }
     }
 
-
-    /* ParkNous v47: higher title, separate logo, current status restored, saved car navigate */
-    .top {
-      display: grid !important;
-      position: absolute !important;
-      left: 0 !important;
-      right: 0 !important;
-      top: 0 !important;
-      height: 6.0% !important;
-      min-height: 42px !important;
-      z-index: 40 !important;
-      place-items: start center !important;
-      padding: 0 30px !important;
-      pointer-events: none !important;
-      overflow: visible !important;
+    @media (max-width: 365px) {
+      body { padding-left: 5px; padding-right: 5px; }
+      .app { gap: 4px; }
+      .control-stage { min-height: 335px; }
+      .petal { width: 44%; }
+      .petal-label { font-size: .75rem; }
+      .center-spot { width: 45%; }
+      .list-head { padding-left: 8px; padding-right: 8px; gap: 6px; }
+      .list-head svg { width: 20px; height: 20px; }
     }
-
-    .title {
-      display: grid !important;
-      place-items: start center !important;
-      width: 100% !important;
-      height: 100% !important;
-      margin: 0 !important;
-      overflow: visible !important;
-    }
-
-    .title-wordmark {
-      display: block !important;
-      width: min(92%, 365px) !important;
-      max-height: none !important;
-      height: auto !important;
-      object-fit: contain !important;
-      transform: translateY(-54px) !important;
-      filter:
-        drop-shadow(0 0 10px rgba(255, 209, 102, 0.22))
-        drop-shadow(0 0 22px rgba(255, 174, 53, 0.14)) !important;
-      pointer-events: none !important;
-    }
-
-    .top-center-logo {
-      position: absolute !important;
-      left: 50% !important;
-      top: 8.4% !important;
-      width: 104px !important;
-      height: 104px !important;
-      transform: translateX(-50%) !important;
-      z-index: 38 !important;
-      object-fit: contain !important;
-      pointer-events: none !important;
-      filter:
-        drop-shadow(0 0 12px rgba(51, 231, 242, 0.18))
-        drop-shadow(0 8px 14px rgba(0, 0, 0, 0.38)) !important;
-    }
-
-    .template-bg-img,
-    .image-fallback {
-      pointer-events: none !important;
-    }
-
-    /* Normal CSS/HTML hotspots only, no click proxy */
-    .live-actions {
-      position: absolute !important;
-      inset: 0 !important;
-      z-index: 90 !important;
-      pointer-events: none !important;
-      display: block !important;
-    }
-
-    .live-actions > button,
-    .cockpit-btn,
-    .cockpit-delete {
-      position: absolute !important;
-      pointer-events: auto !important;
-      touch-action: manipulation !important;
-      cursor: pointer !important;
-      background: rgba(51, 231, 242, 0.001) !important;
-      border: 1px solid transparent !important;
-      color: transparent !important;
-      box-shadow: none !important;
-      padding: 0 !important;
-      margin: 0 !important;
-      z-index: 91 !important;
-      -webkit-tap-highlight-color: rgba(51, 231, 242, 0.25) !important;
-    }
-
-    .live-actions > button:active,
-    .cockpit-btn:active,
-    .cockpit-delete:active {
-      background: rgba(51, 231, 242, 0.18) !important;
-      border-color: rgba(51, 231, 242, 0.36) !important;
-    }
-
-    .live-actions > button .btn-icon,
-    .live-actions > button .btn-copy,
-    .cockpit-btn .btn-icon,
-    .cockpit-btn .btn-copy,
-    .cockpit-delete .btn-icon,
-    .cockpit-delete .btn-copy {
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .cockpit-show {
-      left: 6.5% !important;
-      top: 17.0% !important;
-      width: 34.0% !important;
-      height: 17.0% !important;
-      border-radius: 48px 30px 34px 58px !important;
-    }
-
-    .cockpit-navigate {
-      right: 6.5% !important;
-      top: 17.0% !important;
-      width: 34.0% !important;
-      height: 17.0% !important;
-      border-radius: 30px 48px 58px 34px !important;
-    }
-
-    .cockpit-save {
-      left: 6.4% !important;
-      top: 46.2% !important;
-      width: 34.0% !important;
-      height: 16.8% !important;
-      border-radius: 58px 34px 30px 48px !important;
-    }
-
-    .cockpit-share {
-      right: 6.4% !important;
-      top: 46.2% !important;
-      width: 34.0% !important;
-      height: 16.8% !important;
-      border-radius: 34px 58px 48px 30px !important;
-    }
-
-    .cockpit-delete {
-      left: 50% !important;
-      top: 58.4% !important;
-      width: 17% !important;
-      height: 8.8% !important;
-      min-height: 0 !important;
-      transform: translateX(-50%) !important;
-      border-radius: 999px !important;
-    }
-
-    .cockpit-delete:active {
-      transform: translateX(-50%) scale(0.95) !important;
-    }
-
-    /* Center: CURRENT SPOT / status / date / time / accuracy */
-    .hero {
-      z-index: 35 !important;
-      pointer-events: none !important;
-      top: 29.8% !important;
-      width: 43.0% !important;
-      height: 21.4% !important;
-      padding: 8px 12px !important;
-      justify-content: center !important;
-      align-items: center !important;
-      gap: 0 !important;
-      background: transparent !important;
-      overflow: hidden !important;
-    }
-
-    .hero-icon-wrap,
-    .hero-icon,
-    .brand-logo,
-    .hero-title,
-    .hero-text,
-    .hero::after {
-      display: none !important;
-    }
-
-    .hero-meta {
-      position: absolute !important;
-      width: 1px !important;
-      height: 1px !important;
-      overflow: hidden !important;
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
-
-    .hero-status-block {
-      display: grid !important;
-      gap: 4px !important;
-      margin-bottom: 9px !important;
-      text-align: center !important;
-      pointer-events: none !important;
-      text-shadow: 0 2px 9px rgba(0,0,0,0.96) !important;
-    }
-
-    #heroCurrentLabel {
-      color: #33e7f2 !important;
-      font-size: clamp(0.58rem, 2.9vw, 0.74rem) !important;
-      line-height: 1 !important;
-      font-weight: 950 !important;
-      letter-spacing: 0.08em !important;
-    }
-
-    #heroStatusWord {
-      color: #ffffff !important;
-      font-size: clamp(1.12rem, 5.55vw, 1.48rem) !important;
-      line-height: 1 !important;
-      font-weight: 1000 !important;
-      letter-spacing: 0.02em !important;
-    }
-
-    .hero-meta-stack {
-      display: grid !important;
-      gap: 4px !important;
-      width: 100% !important;
-      max-width: 160px !important;
-      margin: 0 !important;
-      color: rgba(232,238,255,0.92) !important;
-      font-size: clamp(0.54rem, 2.65vw, 0.70rem) !important;
-      line-height: 1.05 !important;
-      font-weight: 820 !important;
-      text-align: center !important;
-      text-shadow: 0 2px 9px rgba(0,0,0,0.96) !important;
-      pointer-events: none !important;
-    }
-
-    .hero-meta-stack > div {
-      max-width: 160px !important;
-      min-height: 1em !important;
-      white-space: nowrap !important;
-      overflow: hidden !important;
-      text-overflow: ellipsis !important;
-    }
-
-    #heroMetaDate {
-      color: rgba(232,238,255,0.96) !important;
-      font-size: 1.02em !important;
-      font-weight: 900 !important;
-    }
-
-    #heroMetaTime {
-      color: rgba(218,250,255,0.94) !important;
-    }
-
-    #heroMetaAccuracy {
-      color: #33e7f2 !important;
-      font-size: 0.92em !important;
-    }
-
-    .hero-meta-arc {
-      display: none !important;
-    }
-
-    /* Lists: left info, right vertical buttons */
-    .spot-panels {
-      z-index: 45 !important;
-      left: 5.3% !important;
-      right: 5.3% !important;
-      top: 68.0% !important;
-      bottom: 3.6% !important;
-      background: transparent !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-panel {
-      grid-template-rows: 34px minmax(0, 1fr) !important;
-      padding: 10px 12px 12px !important;
-      background: transparent !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-panel + .spot-panel {
-      border-left: 0 !important;
-    }
-
-    .panel-title,
-    .panel-head > div:first-child .panel-note {
-      display: none !important;
-    }
-
-    .panel-head {
-      grid-template-columns: minmax(0, 1fr) auto !important;
-      margin: 0 !important;
-      pointer-events: auto !important;
-    }
-
-    .panel-head-right {
-      justify-self: end !important;
-      align-items: center !important;
-      gap: 6px !important;
-      pointer-events: auto !important;
-    }
-
-    .panel-head-right .panel-note {
-      max-width: 44px !important;
-      font-size: 0.54rem !important;
-      color: #52f7ff !important;
-      font-weight: 950 !important;
-      pointer-events: none !important;
-    }
-
-    .panel-toggle {
-      width: 28px !important;
-      height: 28px !important;
-      min-width: 28px !important;
-      border-radius: 12px !important;
-      pointer-events: auto !important;
-      z-index: 70 !important;
-    }
-
-    .panel-toggle::before {
-      width: 9px !important;
-      height: 9px !important;
-      border-width: 0 3px 3px 0 !important;
-    }
-
-    .spot-item {
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) 58px !important;
-      grid-template-rows: 1fr !important;
-      gap: 9px !important;
-      padding: 10px !important;
-      border-radius: 16px !important;
-      background: rgba(2, 9, 16, 0.31) !important;
-      overflow: hidden !important;
-      pointer-events: auto !important;
-    }
-
-    .spot-row-main {
-      grid-column: 1 !important;
-      grid-row: 1 !important;
-      display: grid !important;
-      grid-template-columns: minmax(0, 1fr) !important;
-      align-content: center !important;
-      gap: 5px !important;
-      min-width: 0 !important;
-      overflow: hidden !important;
-    }
-
-    .spot-row-main > div:first-child {
-      min-width: 0 !important;
-      overflow: hidden !important;
-    }
-
-    .spot-badge {
-      justify-self: start !important;
-      margin-top: 4px !important;
-      min-width: 42px !important;
-      max-width: 52px !important;
-      padding: 6px 7px !important;
-      font-size: 0.56rem !important;
-    }
-
-    .spot-name {
-      max-width: 100% !important;
-      font-size: clamp(0.74rem, 3.75vw, 0.94rem) !important;
-      line-height: 1.12 !important;
-      max-height: 2.25em !important;
-    }
-
-    .spot-meta-small {
-      max-width: 100% !important;
-      margin-top: 5px !important;
-      font-size: 0.46rem !important;
-      line-height: 1.16 !important;
-    }
-
-    .spot-actions,
-    .spot-actions.three-actions,
-    .spot-actions.four-actions {
-      grid-column: 2 !important;
-      grid-row: 1 !important;
-      display: grid !important;
-      grid-template-columns: 1fr !important;
-      align-content: stretch !important;
-      gap: 7px !important;
-      min-width: 0 !important;
-      height: 100% !important;
-      pointer-events: auto !important;
-    }
-
-    .tiny-btn {
-      width: 100% !important;
-      min-width: 0 !important;
-      min-height: 0 !important;
-      height: auto !important;
-      padding: 5px 3px !important;
-      border-radius: 11px !important;
-      font-size: 0.48rem !important;
-      line-height: 1 !important;
-      pointer-events: auto !important;
-      z-index: 75 !important;
-    }
-
-    .tiny-btn.delete-small {
-      color: #ffd7db !important;
-      border-color: rgba(255, 107, 114, 0.50) !important;
-      background: rgba(255, 107, 114, 0.20) !important;
-    }
-
-    .spot-list-modal-row.saved-actions {
-      grid-template-columns: minmax(0, 1fr) 54px 54px 54px 54px !important;
-    }
-
-    @media (max-width: 390px) {
-      .title-wordmark {
-        transform: translateY(-46px) !important;
-      }
-
-      .top-center-logo {
-        top: 8.0% !important;
-        width: 88px !important;
-        height: 88px !important;
-      }
-
-      .hero {
-        top: 30.2% !important;
-        width: 42.0% !important;
-        height: 20.8% !important;
-      }
-
-      .hero-status-block {
-        gap: 3px !important;
-        margin-bottom: 7px !important;
-      }
-
-      #heroCurrentLabel {
-        font-size: 0.50rem !important;
-      }
-
-      #heroStatusWord {
-        font-size: 1.04rem !important;
-      }
-
-      .hero-meta-stack {
-        max-width: 138px !important;
-        font-size: 0.48rem !important;
-        gap: 3px !important;
-      }
-
-      .hero-meta-stack > div {
-        max-width: 138px !important;
-      }
-
-      .spot-panel {
-        grid-template-rows: 31px minmax(0, 1fr) !important;
-        padding: 9px 9px 11px !important;
-      }
-
-      .panel-toggle {
-        width: 25px !important;
-        height: 25px !important;
-        min-width: 25px !important;
-      }
-
-      .spot-item {
-        grid-template-columns: minmax(0, 1fr) 50px !important;
-        gap: 7px !important;
-        padding: 8px !important;
-      }
-
-      .spot-name {
-        font-size: 0.62rem !important;
-      }
-
-      .spot-meta-small {
-        font-size: 0.38rem !important;
-      }
-
-      .spot-badge {
-        min-width: 36px !important;
-        max-width: 44px !important;
-        font-size: 0.46rem !important;
-        padding: 5px 6px !important;
-      }
-
-      .spot-actions,
-      .spot-actions.three-actions,
-      .spot-actions.four-actions {
-        gap: 5px !important;
-      }
-
-      .tiny-btn {
-        font-size: 0.39rem !important;
-        border-radius: 10px !important;
-      }
-    }
-
-
-    /* ParkNous v48: title really top + saved Nav button visible */
-    .top {
-      top: 0 !important;
-      height: 3.4% !important;
-      min-height: 28px !important;
-      padding: 0 20px !important;
-      z-index: 44 !important;
-      overflow: visible !important;
-      pointer-events: none !important;
-    }
-
-    .title-wordmark {
-      width: min(94%, 380px) !important;
-      transform: translateY(-150px) !important;
-      pointer-events: none !important;
-    }
-
-    .top-center-logo {
-      top: 10.4% !important;
-      width: 92px !important;
-      height: 92px !important;
-      z-index: 39 !important;
-      pointer-events: none !important;
-    }
-
-    .template-bg-img,
-    .image-fallback,
-    .hero,
-    .top,
-    .top-center-logo,
-    .title-wordmark {
-      pointer-events: none !important;
-    }
-
-    .live-actions {
-      z-index: 92 !important;
-      pointer-events: none !important;
-    }
-
-    .live-actions > button,
-    .cockpit-btn,
-    .cockpit-delete {
-      pointer-events: auto !important;
-      z-index: 93 !important;
-    }
-
-    .hero {
-      top: 29.8% !important;
-      z-index: 35 !important;
-    }
-
-    /* Saved preview now has Show / Nav / Share / Delete in one right column. */
-    #savedPanel .spot-actions,
-    #savedPanel .spot-actions.three-actions,
-    #savedPanel .spot-actions.four-actions {
-      grid-template-columns: 1fr !important;
-      grid-template-rows: repeat(4, minmax(0, 1fr)) !important;
-      gap: 5px !important;
-      height: 100% !important;
-    }
-
-    #savedPanel .spot-item {
-      grid-template-columns: minmax(0, 1fr) 56px !important;
-    }
-
-    #savedPanel .tiny-btn {
-      font-size: 0.43rem !important;
-      padding: 4px 3px !important;
-    }
-
-    .spot-list-modal-row.saved-actions {
-      grid-template-columns: minmax(0, 1fr) 54px 54px 54px 54px !important;
-    }
-
-    @media (max-width: 390px) {
-      .title-wordmark {
-        transform: translateY(-130px) !important;
-      }
-
-      .top-center-logo {
-        top: 10.0% !important;
-        width: 82px !important;
-        height: 82px !important;
-      }
-
-      #savedPanel .spot-item {
-        grid-template-columns: minmax(0, 1fr) 49px !important;
-      }
-
-      #savedPanel .spot-actions,
-      #savedPanel .spot-actions.three-actions,
-      #savedPanel .spot-actions.four-actions {
-        gap: 4px !important;
-      }
-
-      #savedPanel .tiny-btn {
-        font-size: 0.36rem !important;
-        padding: 3px 2px !important;
-      }
-    }
-
   </style>
 </head>
 
 <body>
+  <main class="app">
+    <div class="brand">Park<span>Nous</span></div>
+
+    <section class="control-stage" aria-label="Parking controls">
+      <button id="showBtn" class="petal show" aria-label="Show spot on map">
+        <span class="petal-content">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span class="petal-label">SHOW</span>
+        </span>
+      </button>
+
+      <button id="navigateBtn" class="petal navigate" aria-label="Navigate to spot">
+        <span class="petal-content">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m21 3-8.2 18-2.2-7.6L3 11.2 21 3Z"></path>
+          </svg>
+          <span class="petal-label">NAVIGATE</span>
+        </span>
+      </button>
+
+      <button id="saveBtn" class="petal save" aria-label="Save current parking spot">
+        <span class="petal-content">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 3h12l2 2v16H5V3Z"></path>
+            <path d="M8 3v6h8V3M8 21v-7h8v7"></path>
+          </svg>
+          <span class="petal-label">SAVE</span>
+        </span>
+      </button>
+
+      <button id="shareBtn" class="petal share" aria-label="Share selected spot">
+        <span class="petal-content">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="18" cy="5" r="2.5"></circle>
+            <circle cx="6" cy="12" r="2.5"></circle>
+            <circle cx="18" cy="19" r="2.5"></circle>
+            <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path>
+          </svg>
+          <span class="petal-label">SHARE</span>
+        </span>
+      </button>
+
+      <div id="centerSpot" class="center-spot waiting" role="status" aria-live="polite">
+        <div class="spot-copy">
+          <div id="spotKicker" class="spot-kicker">CURRENT SPOT</div>
+          <div id="spotState" class="spot-state">STARTING</div>
+          <div id="spotTime" class="spot-time"></div>
+          <div id="spotAccuracy" class="spot-accuracy"></div>
+        </div>
+      </div>
+
+      <button id="deleteBtn" class="delete-btn" aria-label="Delete selected spot">
+        <span class="delete-inner">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"></path>
+          </svg>
+          <span class="delete-label">DELETE</span>
+        </span>
+      </button>
+
+      <div id="accuracyActions" class="status-strip">
+        <span id="accuracyMessage">Accuracy is above 30 m.</span>
+        <button id="cancelAccuracyBtn">Cancel</button>
+        <button id="saveAnywayBtn" class="primary">Save anyway</button>
+      </div>
+
+      <div id="deleteConfirm" class="status-strip">
+        <span id="deleteMessage">Delete this spot?</span>
+        <button id="cancelDeleteBtn">Cancel</button>
+        <button id="confirmDeleteBtn" class="danger">Delete</button>
+      </div>
+    </section>
+
+    <section class="spots-panel" aria-label="Saved and recent spots">
+      <div class="spot-column">
+        <div class="list-head">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 3h12v18l-6-4-6 4V3Z"></path>
+          </svg>
+          <span>SAVED SPOTS</span>
+        </div>
+        <div id="savedList" class="spot-list"></div>
+      </div>
+
+      <div class="spot-column">
+        <div class="list-head">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 7v5l3 2"></path>
+          </svg>
+          <span>RECENT SPOTS</span>
+        </div>
+        <div id="recentList" class="spot-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast"></div>
+
+  <!--
+    GPS PRIORITY:
+    This plain script starts geolocation BEFORE the Firebase module imports are downloaded.
+    The CSS UI above has no background image, so there is no competing background-image request.
+  -->
   <script>
-    (async () => {
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("reset") === "1") {
-        try {
-          if ("serviceWorker" in navigator) {
-            const registrations = await navigator.serviceWorker.getRegistrations();
-            await Promise.all(registrations.map((registration) => registration.unregister()));
-          }
-          if ("caches" in window) {
-            const keys = await caches.keys();
-            await Promise.all(keys.map((key) => caches.delete(key)));
-          }
-        } catch (error) {
-          console.warn("ParkNous reset failed", error);
-        }
-        params.delete("reset");
-        params.set("v", "40-reset");
-        window.location.replace(`${window.location.pathname}?${params.toString()}`);
+    (() => {
+      const MAX_ACCEPTABLE_ACCURACY_METERS = 30;
+      const LIVE_SEARCH_TIMEOUT_MS = 22000;
+      const CACHED_FALLBACK_MAX_AGE_MS = 10 * 60 * 1000;
+      const SESSION_SAVE_KEY = "parkingSavedThisSession";
+
+      function setEarlySearching(text, accuracy) {
+        const center = document.getElementById("centerSpot");
+        const state = document.getElementById("spotState");
+        const acc = document.getElementById("spotAccuracy");
+        if (center) center.className = "center-spot searching";
+        if (state) state.textContent = text || "SEARCHING";
+        if (acc) acc.textContent = accuracy ? `Best accuracy ±${Math.round(accuracy)} m` : "Waiting for GPS...";
       }
 
-      if (params.get("template") === "1") {
-        document.documentElement.classList.add("template-mode");
+      function getCachedFallbackLocation() {
+        return new Promise((resolve) => {
+          if (!navigator.geolocation) return resolve(null);
+          navigator.geolocation.getCurrentPosition(
+            resolve,
+            () => resolve(null),
+            {
+              enableHighAccuracy: false,
+              timeout: 4000,
+              maximumAge: CACHED_FALLBACK_MAX_AGE_MS
+            }
+          );
+        });
+      }
+
+      window.ParkNousLocate = function ParkNousLocate(onUpdate) {
+        return new Promise((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error("Geolocation is not supported on this device/browser."));
+            return;
+          }
+
+          let bestPosition = null;
+          let watchId = null;
+          let finished = false;
+
+          const update = (label) => {
+            if (typeof onUpdate === "function") {
+              onUpdate(label, bestPosition);
+            }
+          };
+
+          const finishSuccess = (payload) => {
+            if (finished) return;
+            finished = true;
+            if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+            clearTimeout(timeoutId);
+            resolve(payload);
+          };
+
+          const finishFailure = (error) => {
+            if (finished) return;
+            finished = true;
+            if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+            clearTimeout(timeoutId);
+            reject(error);
+          };
+
+          const consider = (position) => {
+            const a = position && position.coords && position.coords.accuracy;
+            if (typeof a !== "number") return;
+            if (!bestPosition || a < bestPosition.coords.accuracy) {
+              bestPosition = position;
+            }
+          };
+
+          const timeoutId = setTimeout(async () => {
+            if (finished) return;
+
+            const cached = await getCachedFallbackLocation();
+            if (cached) consider(cached);
+
+            if (bestPosition) {
+              finishSuccess({
+                position: bestPosition,
+                accepted: bestPosition.coords.accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS,
+                source: "best-after-timeout"
+              });
+            } else {
+              finishFailure(new Error("Could not get a usable location."));
+            }
+          }, LIVE_SEARCH_TIMEOUT_MS);
+
+          update("SEARCHING");
+
+          watchId = navigator.geolocation.watchPosition(
+            (position) => {
+              consider(position);
+              update("SEARCHING");
+
+              const accuracy = position.coords.accuracy;
+              if (typeof accuracy === "number" && accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS) {
+                finishSuccess({
+                  position,
+                  accepted: true,
+                  source: "live-watch"
+                });
+              }
+            },
+            async (error) => {
+              const cached = await getCachedFallbackLocation();
+              if (cached) {
+                consider(cached);
+                finishSuccess({
+                  position: bestPosition,
+                  accepted: bestPosition.coords.accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS,
+                  source: "cached-fallback"
+                });
+                return;
+              }
+
+              if (bestPosition) {
+                finishSuccess({
+                  position: bestPosition,
+                  accepted: bestPosition.coords.accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS,
+                  source: "best-live"
+                });
+                return;
+              }
+
+              finishFailure(error);
+            },
+            {
+              enableHighAccuracy: true,
+              maximumAge: 0,
+              timeout: 10000
+            }
+          );
+        });
+      };
+
+      const params = new URLSearchParams(location.search);
+      const nfcSaveMode = params.get("mode") === "save";
+      const alreadySavedThisSession = sessionStorage.getItem(SESSION_SAVE_KEY);
+
+      if (nfcSaveMode && !alreadySavedThisSession) {
+        setEarlySearching("SEARCHING");
+        window.__parkNousEarlyLocationPromise = window.ParkNousLocate((label, best) => {
+          setEarlySearching(label, best && best.coords ? best.coords.accuracy : null);
+        });
+      } else {
+        window.__parkNousEarlyLocationPromise = null;
       }
     })();
   </script>
 
-  <div class="app">
-    <div class="top">
-      <h1 class="title"><img src="./PARKNOUS_TXT.png" class="title-wordmark" alt="ParkNous"></h1>
-    </div>
-
-    <div class="content">
-      <section class="template-board" aria-label="ParkNous home">
-        <img id="topCenterLogo" class="top-center-logo" src="./favicon.png" alt="ParkNous logo" decoding="async" fetchpriority="high" />
-        <div class="image-fallback">Template image is behind this layer. If you see this, the image did not load.</div>
-        <img
-          class="template-bg-img"
-          src="./template_UI_parknous.png?v=40"
-          alt=""
-          aria-hidden="true"
-          decoding="async"
-          fetchpriority="high"
-          onload="document.documentElement.classList.add('template-image-loaded')"
-          onerror="document.documentElement.classList.add('template-image-failed')"
-        />
-
-        <div id="hero" class="hero waiting">
-          <div class="hero-icon-wrap">
-            <div class="radar-ring"></div>
-            <div class="radar-ring-2"></div>
-            <div id="heroIcon" class="hero-icon">
-              <img src="./favicon.png" class="brand-logo" alt="ParkNous logo" fetchpriority="high" decoding="async" />
-            </div>
-          </div>
-          <div id="heroTitle" class="hero-title">Starting...</div>
-          <div id="heroText" class="hero-text">Preparing secure storage.</div>
-          <div id="heroMeta" class="hero-meta"></div>
-          <div id="heroStatusBlock" class="hero-status-block" aria-hidden="true">
-            <div id="heroCurrentLabel">CURRENT SPOT</div>
-            <div id="heroStatusWord">SAVED</div>
-          </div>
-          <div id="heroMetaStack" class="hero-meta-stack" aria-hidden="true">
-            <div id="heroMetaDate"></div>
-            <div id="heroMetaTime"></div>
-            <div id="heroMetaAccuracy"></div>
-          </div>
-          <div id="saveAnywayRow" class="action-row">
-            <button class="mini-btn cancel" id="cancelSaveBtn">Cancel</button>
-            <button class="mini-btn" id="saveAnywayBtn">Save Anyway</button>
-          </div>
-        </div>
-
-        <div class="pill-row">
-          <div id="cloudPill" class="pill">Cloud: checking...</div>
-          <div id="localPill" class="pill">Local backup: checking...</div>
-          <div id="modePill" class="pill">Mode: checking...</div>
-        </div>
-
-        <div class="buttons live-actions">
-          <button class="show-btn split-show-btn cockpit-btn cockpit-show" id="showBtn">
-            <span class="btn-icon">👁</span>
-            <span class="btn-copy"><span class="btn-title">SHOW</span><span class="btn-subtitle">Map</span></span>
-          </button>
-          <button class="nav-btn live-nav-btn cockpit-btn cockpit-navigate" id="navigateBtn">
-            <span class="btn-icon">➤</span>
-            <span class="btn-copy"><span class="btn-title">NAVIGATE</span><span class="btn-subtitle">Route</span></span>
-          </button>
-          <button class="save-named-btn cockpit-btn cockpit-save" id="saveNamedBtn">
-            <span class="btn-icon">⭐</span>
-            <span class="btn-copy"><span class="btn-title">SAVE</span><span class="btn-subtitle">Current</span></span>
-          </button>
-          <button class="share-current-btn split-share-btn cockpit-btn cockpit-share" id="shareCurrentBtn">
-            <span class="btn-icon">↗</span>
-            <span class="btn-copy"><span class="btn-title">SHARE</span><span class="btn-subtitle">Link</span></span>
-          </button>
-          <button class="clear-btn cockpit-delete" id="clearBtn">
-            <span class="btn-icon">🗑</span>
-            <span class="btn-copy"><span class="btn-title">DEL</span></span>
-          </button>
-        </div>
-
-        <div class="spot-panels">
-          <section id="savedPanel" class="spot-panel compact-panel">
-            <div class="panel-head">
-              <div>
-                <div class="panel-title">Saved spots</div>
-                <div class="panel-note">Swipe left/right</div>
-              </div>
-              <div class="panel-head-right">
-                <div id="savedCount" class="panel-note">0 / 10</div>
-                <button id="savedToggleBtn" class="panel-toggle" type="button" aria-label="Show saved spots list"></button>
-              </div>
-            </div>
-            <div class="carousel-shell"><div id="savedList" class="spot-list"></div></div>
-            <div id="savedDropdown" class="spot-dropdown" hidden></div>
-          </section>
-
-          <section id="recentPanel" class="spot-panel compact-panel">
-            <div class="panel-head">
-              <div>
-                <div class="panel-title">Recent spots</div>
-                <div class="panel-note">Newest first</div>
-              </div>
-              <div class="panel-head-right">
-                <div class="panel-note">Last 10</div>
-                <button id="recentToggleBtn" class="panel-toggle" type="button" aria-label="Show recent spots list"></button>
-              </div>
-            </div>
-            <div class="carousel-shell"><div id="recentList" class="spot-list"></div></div>
-            <div id="recentDropdown" class="spot-dropdown" hidden></div>
-          </section>
-        </div>
-      </section>
-    </div>
-  </div>
-
-  <div id="listBackdrop" class="list-backdrop" hidden></div>
-  <div id="spotListModal" class="spot-list-modal" hidden>
-    <div id="spotListModalSheet" class="spot-list-modal-sheet"></div>
-  </div>
-
-  <div id="confirmBanner" class="confirm-banner" aria-hidden="true">
-    <div id="confirmTitle" class="confirm-title">Are you sure?</div>
-    <div id="confirmText" class="confirm-text"></div>
-    <div class="confirm-actions">
-      <button id="confirmNoBtn" class="confirm-btn" type="button">Cancel</button>
-      <button id="confirmYesBtn" class="confirm-btn yes" type="button">Yes</button>
-    </div>
-  </div>
-
-  <div id="debugPanel" class="debug-panel" hidden></div>
-
   <script type="module">
-
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
     import {
       getAuth,
@@ -2587,1282 +830,253 @@
     };
 
     const LOCAL_KEY = "saveParkingSpotLocalBackupV6";
+    const RECENTS_KEY = "parknousRecentSpotsV1";
     const SESSION_SAVE_KEY = "parkingSavedThisSession";
-    const HISTORY_KEY = "saveParkingSpotRecentHistoryV1";
-    const NAMED_LOCATIONS_KEY = "saveParkingSpotNamedLocationsV1";
-    const PROFILE_ID_KEY = "parknousGuestProfileIdV1";
-    const PROFILE_COOKIE_NAME = "parknous_profile_id";
-    const PROFILE_ID_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
-    const MAX_RECENT_SPOTS = 10;
-    const MAX_NAMED_LOCATIONS = 10;
+    const MAX_RECENT_SPOTS = 5;
+    const MAX_ACCEPTABLE_ACCURACY_METERS = 30;
 
-    const TARGET_ACCURACY_METERS = 30;
-    const FAST_ACCEPTABLE_ACCURACY_METERS = 60;
+    const params = new URLSearchParams(window.location.search);
+    const currentMode = params.get("mode") === "save" ? "save" : "view";
 
-    const LIVE_SEARCH_TIMEOUT_MS = 6500;
-    const FIRST_FAST_FIX_GRACE_MS = 1200;
-    const LIVE_MIN_UPDATE_INTERVAL_MS = 700;
-    const CACHED_FALLBACK_MAX_AGE_MS = 60 * 1000;
+    const centerSpot = document.getElementById("centerSpot");
+    const spotKicker = document.getElementById("spotKicker");
+    const spotState = document.getElementById("spotState");
+    const spotTime = document.getElementById("spotTime");
+    const spotAccuracy = document.getElementById("spotAccuracy");
 
-    const app = initializeApp(firebaseConfig);
+    const showBtn = document.getElementById("showBtn");
+    const navigateBtn = document.getElementById("navigateBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const shareBtn = document.getElementById("shareBtn");
+    const deleteBtn = document.getElementById("deleteBtn");
+
+    const savedList = document.getElementById("savedList");
+    const recentList = document.getElementById("recentList");
+
+    const accuracyActions = document.getElementById("accuracyActions");
+    const accuracyMessage = document.getElementById("accuracyMessage");
+    const cancelAccuracyBtn = document.getElementById("cancelAccuracyBtn");
+    const saveAnywayBtn = document.getElementById("saveAnywayBtn");
+
+    const deleteConfirm = document.getElementById("deleteConfirm");
+    const deleteMessage = document.getElementById("deleteMessage");
+    const cancelDeleteBtn = document.getElementById("cancelDeleteBtn");
+    const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+
+    const toastEl = document.getElementById("toast");
+
+    let currentUser = null;
+    let lastKnownSpot = null;
+    let selectedSpot = null;
+    let selectedSource = "current";
+    let bestFailedSpot = null;
+    let recentSpots = [];
+    let busy = false;
+    let toastTimer = null;
+
+    const firebaseApp = initializeApp(firebaseConfig);
 
     let db;
     try {
-      db = initializeFirestore(app, {
+      db = initializeFirestore(firebaseApp, {
         localCache: persistentLocalCache({
           tabManager: persistentSingleTabManager()
         })
       });
     } catch (error) {
-      console.warn("Persistent Firestore cache is unavailable. Falling back to memory.", error);
-      db = initializeFirestore(app);
+      console.warn("Persistent Firestore cache unavailable; using memory cache.", error);
+      db = initializeFirestore(firebaseApp);
     }
 
-    const auth = getAuth(app);
+    const auth = getAuth(firebaseApp);
 
-    const heroEl = document.getElementById("hero");
-    const heroIconEl = document.getElementById("heroIcon");
-    const heroTitleEl = document.getElementById("heroTitle");
-    const heroTextEl = document.getElementById("heroText");
-    const heroMetaEl = document.getElementById("heroMeta");
-
-    const cloudPillEl = document.getElementById("cloudPill");
-    const localPillEl = document.getElementById("localPill");
-    const modePillEl = document.getElementById("modePill");
-
-    const showBtn = document.getElementById("showBtn");
-    const navigateBtn = document.getElementById("navigateBtn");
-    const shareCurrentBtn = document.getElementById("shareCurrentBtn");
-    const saveNamedBtn = document.getElementById("saveNamedBtn");
-    const clearBtn = document.getElementById("clearBtn");
-    const recentListEl = document.getElementById("recentList");
-    const savedListEl = document.getElementById("savedList");
-    const savedCountEl = document.getElementById("savedCount");
-    const recentDropdownEl = document.getElementById("recentDropdown");
-    const savedDropdownEl = document.getElementById("savedDropdown");
-    const recentPanelEl = document.getElementById("recentPanel");
-    const savedPanelEl = document.getElementById("savedPanel");
-    const recentToggleBtn = document.getElementById("recentToggleBtn");
-    const savedToggleBtn = document.getElementById("savedToggleBtn");
-    const saveAnywayRow = document.getElementById("saveAnywayRow");
-    const cancelSaveBtn = document.getElementById("cancelSaveBtn");
-    const saveAnywayBtn = document.getElementById("saveAnywayBtn");
-
-    const listBackdropEl = document.getElementById("listBackdrop");
-    const spotListModalEl = document.getElementById("spotListModal");
-    const spotListModalSheetEl = document.getElementById("spotListModalSheet");
-    const confirmBannerEl = document.getElementById("confirmBanner");
-    const confirmTitleEl = document.getElementById("confirmTitle");
-    const confirmTextEl = document.getElementById("confirmText");
-    const confirmNoBtn = document.getElementById("confirmNoBtn");
-    const confirmYesBtn = document.getElementById("confirmYesBtn");
-    const debugPanelEl = document.getElementById("debugPanel");
-
-    let currentUser = null;
-    let lastKnownSpot = null;
-    let activePreviewSpot = null;
-    let bestFailedSpot = null;
-    let savedPanelIndex = 0;
-    let recentPanelIndex = 0;
-
-    const params = new URLSearchParams(window.location.search);
-    const DEBUG_MODE = params.get("debug") === "1";
-    const DEBUG_LOGS = [];
-
-    function debugLog(message, payload = null) {
-      const stamp = new Date().toLocaleTimeString("en-GB");
-      const suffix = payload ? ` ${JSON.stringify(payload)}` : "";
-      const line = `[${stamp}] ${message}${suffix}`;
-      DEBUG_LOGS.push(line);
-      if (DEBUG_LOGS.length > 80) DEBUG_LOGS.shift();
-
-      if (DEBUG_MODE && debugPanelEl) {
-        debugPanelEl.hidden = false;
-        debugPanelEl.textContent = DEBUG_LOGS.join("\n");
-        debugPanelEl.scrollTop = debugPanelEl.scrollHeight;
-      }
-
-      console.log("[ParkNous]", message, payload || "");
-    }
-
-    function isNfcSaveMode() {
-      return (
-        params.get("mode") === "save" ||
-        params.get("action") === "save" ||
-        params.get("save") === "1"
-      );
-    }
-
-    const currentMode = isNfcSaveMode() ? "save" : "view";
-
-    function isIOSDevice() {
-      return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-        (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    }
-
-    function sanitizeProfileId(value) {
-      if (typeof value !== "string") return "";
-      const trimmed = value.trim();
-      return /^[a-zA-Z0-9_-]{18,96}$/.test(trimmed) ? trimmed : "";
-    }
-
-    function getCookieValue(name) {
-      const target = `${encodeURIComponent(name)}=`;
-      const parts = document.cookie ? document.cookie.split(";") : [];
-
-      for (const part of parts) {
-        const trimmed = part.trim();
-        if (trimmed.startsWith(target)) {
-          return decodeURIComponent(trimmed.slice(target.length));
-        }
-      }
-
-      return "";
-    }
-
-    function writeProfileCookie(profileId) {
-      const secure = window.location.protocol === "https:" ? "; Secure" : "";
-      document.cookie = `${encodeURIComponent(PROFILE_COOKIE_NAME)}=${encodeURIComponent(profileId)}; Max-Age=${PROFILE_ID_MAX_AGE_SECONDS}; Path=/; SameSite=Lax${secure}`;
-    }
-
-    function writeProfileLocal(profileId) {
-      try {
-        localStorage.setItem(PROFILE_ID_KEY, profileId);
-      } catch (error) {
-        console.warn("Could not store profile id locally.", error);
-      }
-    }
-
-    function createGuestProfileId() {
-      const bytes = new Uint8Array(18);
-
-      if (window.crypto && window.crypto.getRandomValues) {
-        window.crypto.getRandomValues(bytes);
-      } else {
-        for (let index = 0; index < bytes.length; index += 1) {
-          bytes[index] = Math.floor(Math.random() * 256);
-        }
-      }
-
-      return `pk_${Array.from(bytes)
-        .map((byte) => byte.toString(36).padStart(2, "0"))
-        .join("")}`;
-    }
-
-    function resolveGuestProfileId() {
-      const fromUrl = sanitizeProfileId(params.get("profile") || params.get("p") || "");
-      const fromCookie = sanitizeProfileId(getCookieValue(PROFILE_COOKIE_NAME));
-      let fromLocal = "";
-
-      try {
-        fromLocal = sanitizeProfileId(localStorage.getItem(PROFILE_ID_KEY) || "");
-      } catch (error) {
-        fromLocal = "";
-      }
-
-      const profileId = fromUrl || fromCookie || fromLocal || createGuestProfileId();
-
-      writeProfileCookie(profileId);
-      writeProfileLocal(profileId);
-
-      return profileId;
-    }
-
-    const guestProfileId = resolveGuestProfileId();
-    debugLog("Guest profile ready", { profileId: guestProfileId, mode: currentMode });
-
-    function openMapUrl(url) {
-      window.location.href = url;
-    }
-
-    function buildShowMapUrl(lat, lng) {
-      return `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-    }
-
-    function buildNavigateMapUrl(lat, lng) {
-      return `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=walking&dir_action=navigate`;
-    }
-
-    function setBusy(isBusy) {
-      showBtn.disabled = isBusy;
-      navigateBtn.disabled = isBusy;
-      shareCurrentBtn.disabled = isBusy;
-      saveNamedBtn.disabled = isBusy;
-      clearBtn.disabled = isBusy;
-      cancelSaveBtn.disabled = isBusy;
-      saveAnywayBtn.disabled = isBusy;
-    }
-
-    function vibratePattern(type) {
-      if (!navigator.vibrate) return;
-      if (type === "search-start") navigator.vibrate([30]);
-      if (type === "success") navigator.vibrate([70, 35, 90]);
-      if (type === "error") navigator.vibrate([110, 45, 110]);
-    }
-
-    function setPill(el, text, type = "") {
-      el.textContent = text;
-      el.className = `pill ${type}`.trim();
+    function toast(message) {
+      clearTimeout(toastTimer);
+      toastEl.textContent = message;
+      toastEl.classList.add("show");
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
     }
 
     function formatDate(ms) {
       if (!ms) return "";
-      return new Date(ms).toLocaleString("en-GB");
+      const d = new Date(ms);
+      return d.toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "2-digit" });
     }
 
-    function formatAccuracy(accuracy) {
-      return accuracy ? `${Math.round(accuracy)}m` : "unknown";
+    function formatTime(ms) {
+      if (!ms) return "";
+      const d = new Date(ms);
+      return d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
     }
 
-    function makeSpotId(spot) {
-      const time = spot.savedAtMillis || Date.now();
-      const lat = typeof spot.lat === "number" ? spot.lat.toFixed(6) : "lat";
-      const lng = typeof spot.lng === "number" ? spot.lng.toFixed(6) : "lng";
-      return `${time}-${lat}-${lng}`;
+    function spotLabel(spot) {
+      if (!spot || !spot.savedAtMillis) return "Parking spot";
+      return `${formatDate(spot.savedAtMillis)} ${formatTime(spot.savedAtMillis)}`;
     }
 
-    function normalizeSpot(spot) {
-      return {
-        id: spot.id || makeSpotId(spot),
-        name: spot.name || "",
-        lat: spot.lat,
-        lng: spot.lng,
-        accuracy: spot.accuracy || null,
-        source: spot.source || "gps",
-        savedAtMillis: spot.savedAtMillis || Date.now(),
-        namedAtMillis: spot.namedAtMillis || null
-      };
+    function setBusy(value) {
+      busy = value;
+      saveBtn.disabled = value;
+      showBtn.disabled = value || !selectedSpot;
+      navigateBtn.disabled = value || !selectedSpot;
+      shareBtn.disabled = value || !selectedSpot;
+      deleteBtn.disabled = value || !selectedSpot;
     }
 
-    function readStoredArray(key) {
+    function setCenterState(type, kicker, state, spot = null, extra = "") {
+      centerSpot.className = `center-spot ${type}`;
+      spotKicker.textContent = kicker || "CURRENT SPOT";
+      spotState.textContent = state || "";
+
+      if (spot) {
+        spotTime.textContent = `${formatDate(spot.savedAtMillis)}  ${formatTime(spot.savedAtMillis)}`;
+        const accuracy = typeof spot.accuracy === "number" ? `Accuracy ±${Math.round(spot.accuracy)} m` : "";
+        spotAccuracy.textContent = extra || accuracy;
+      } else {
+        spotTime.textContent = "";
+        spotAccuracy.textContent = extra || "";
+      }
+    }
+
+    function updateSelectedSpot(spot, source = "current") {
+      selectedSpot = spot || null;
+      selectedSource = source;
+
+      if (!spot) {
+        setCenterState("waiting", "CURRENT SPOT", "NO SPOT SAVED");
+      } else if (source === "recent") {
+        setCenterState("saved", "RECENT SPOT", "SELECTED", spot);
+      } else {
+        setCenterState("saved", "CURRENT SPOT", "SAVED", spot);
+      }
+
+      setBusy(busy);
+      renderLists();
+    }
+
+    function saveLocalBackup(spot) {
       try {
-        const raw = localStorage.getItem(key);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
+        if (spot) localStorage.setItem(LOCAL_KEY, JSON.stringify(spot));
+        else localStorage.removeItem(LOCAL_KEY);
       } catch (error) {
-        console.error(error);
+        console.error("Local current spot storage failed:", error);
+      }
+    }
+
+    function readLocalBackup() {
+      try {
+        const raw = localStorage.getItem(LOCAL_KEY);
+        return raw ? JSON.parse(raw) : null;
+      } catch (error) {
+        console.error("Local current spot read failed:", error);
+        return null;
+      }
+    }
+
+    function normalizeRecents(items) {
+      const clean = Array.isArray(items)
+        ? items.filter(x =>
+            x &&
+            Number.isFinite(Number(x.lat)) &&
+            Number.isFinite(Number(x.lng)) &&
+            Number.isFinite(Number(x.savedAtMillis))
+          )
+        : [];
+
+      clean.sort((a, b) => Number(b.savedAtMillis) - Number(a.savedAtMillis));
+      return clean.slice(0, MAX_RECENT_SPOTS);
+    }
+
+    function readRecentSpots() {
+      try {
+        const raw = localStorage.getItem(RECENTS_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        const trimmed = normalizeRecents(parsed);
+
+        // Important: old installations that somehow contain more than 5 are trimmed immediately.
+        localStorage.setItem(RECENTS_KEY, JSON.stringify(trimmed));
+        return trimmed;
+      } catch (error) {
+        console.error("Recent spots read failed:", error);
         return [];
       }
     }
 
-    function writeStoredArray(key, value) {
+    function writeRecentSpots(items) {
+      recentSpots = normalizeRecents(items);
       try {
-        localStorage.setItem(key, JSON.stringify(value));
+        localStorage.setItem(RECENTS_KEY, JSON.stringify(recentSpots));
       } catch (error) {
-        console.error(error);
+        console.error("Recent spots storage failed:", error);
       }
+      renderLists();
     }
-
-    function readRecentSpots() {
-      return readStoredArray(HISTORY_KEY).map(normalizeSpot).slice(0, MAX_RECENT_SPOTS);
-    }
-
-    function writeRecentSpots(spots) {
-      writeStoredArray(HISTORY_KEY, spots.map(normalizeSpot).slice(0, MAX_RECENT_SPOTS));
-    }
-
-    function readNamedLocations() {
-      return readStoredArray(NAMED_LOCATIONS_KEY).map(normalizeSpot).slice(0, MAX_NAMED_LOCATIONS);
-    }
-
-    function writeNamedLocations(spots) {
-      writeStoredArray(NAMED_LOCATIONS_KEY, spots.map(normalizeSpot).slice(0, MAX_NAMED_LOCATIONS));
-    }
-
-    function spotSortValue(spot) {
-      return Number(spot?.namedAtMillis || spot?.savedAtMillis || 0);
-    }
-
-    function namedSpotKey(spot) {
-      const name = (spot?.name || "").trim().toLowerCase();
-      if (name) return `name:${name}`;
-      if (spot?.id) return `id:${spot.id}`;
-
-      const lat = typeof spot?.lat === "number" ? spot.lat.toFixed(6) : "lat";
-      const lng = typeof spot?.lng === "number" ? spot.lng.toFixed(6) : "lng";
-      return `geo:${lat}:${lng}`;
-    }
-
-    function recentSpotKey(spot) {
-      if (spot?.id) return `id:${spot.id}`;
-
-      const lat = typeof spot?.lat === "number" ? spot.lat.toFixed(6) : "lat";
-      const lng = typeof spot?.lng === "number" ? spot.lng.toFixed(6) : "lng";
-      const timeBucket = Math.round(Number(spot?.savedAtMillis || 0) / 1000);
-      return `geo:${lat}:${lng}:${timeBucket}`;
-    }
-
-    function mergeSpotArrays(localItems, cloudItems, { type = "recent", limit = 10 } = {}) {
-      const keyFn = type === "named" ? namedSpotKey : recentSpotKey;
-      const merged = new Map();
-
-      [...(cloudItems || []), ...(localItems || [])]
-        .map(normalizeSpot)
-        .filter((spot) => typeof spot.lat === "number" && typeof spot.lng === "number")
-        .forEach((spot) => {
-          const key = keyFn(spot);
-          const existing = merged.get(key);
-
-          if (!existing || spotSortValue(spot) >= spotSortValue(existing)) {
-            merged.set(key, { ...existing, ...spot });
-          }
-        });
-
-      return Array.from(merged.values())
-        .sort((a, b) => spotSortValue(b) - spotSortValue(a))
-        .slice(0, limit);
-    }
-
-    function mergeRecentSpots(localItems, cloudItems) {
-      return mergeSpotArrays(localItems, cloudItems, {
-        type: "recent",
-        limit: MAX_RECENT_SPOTS
-      });
-    }
-
-    function mergeNamedLocations(localItems, cloudItems) {
-      return mergeSpotArrays(localItems, cloudItems, {
-        type: "named",
-        limit: MAX_NAMED_LOCATIONS
-      });
-    }
-
 
     function addRecentSpot(spot) {
-      const normalized = normalizeSpot(spot);
-      const recent = readRecentSpots()
-        .filter((item) => item.id !== normalized.id)
-        .filter((item) => !(Math.abs((item.savedAtMillis || 0) - normalized.savedAtMillis) < 1000));
+      const next = [
+        { ...spot, recentId: `${spot.savedAtMillis}-${spot.lat}-${spot.lng}` },
+        ...recentSpots
+      ];
 
-      const next = [normalized, ...recent].slice(0, MAX_RECENT_SPOTS);
-      writeRecentSpots(next);
-      renderSpotLists();
-      return next;
-    }
-
-    function showConfirmBanner({
-      title = "Are you sure?",
-      text = "",
-      confirmLabel = "Yes",
-      cancelLabel = "Cancel",
-      safe = false
-    } = {}) {
-      return new Promise((resolve) => {
-        confirmTitleEl.textContent = title;
-        confirmTextEl.textContent = text;
-        confirmYesBtn.textContent = confirmLabel;
-        confirmNoBtn.textContent = cancelLabel;
-        confirmBannerEl.classList.toggle("safe", safe);
-        confirmBannerEl.classList.add("show");
-        confirmBannerEl.setAttribute("aria-hidden", "false");
-
-        const cleanup = (result) => {
-          confirmBannerEl.classList.remove("show");
-          confirmBannerEl.setAttribute("aria-hidden", "true");
-          confirmYesBtn.removeEventListener("click", onYes);
-          confirmNoBtn.removeEventListener("click", onNo);
-          resolve(result);
-        };
-
-        const onYes = () => cleanup(true);
-        const onNo = () => cleanup(false);
-
-        confirmYesBtn.addEventListener("click", onYes, { once: true });
-        confirmNoBtn.addEventListener("click", onNo, { once: true });
+      // Remove exact duplicate records while preserving newest first.
+      const seen = new Set();
+      const unique = next.filter(item => {
+        const key = item.recentId || `${item.savedAtMillis}-${item.lat}-${item.lng}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
       });
+
+      writeRecentSpots(unique.slice(0, MAX_RECENT_SPOTS));
     }
 
+    function renderSpotCard(spot, source, index = 0) {
+      const button = document.createElement("button");
+      button.className = "spot-card";
 
-    let ignoreUnderlyingClickUntil = 0;
+      const selected =
+        selectedSpot &&
+        Number(selectedSpot.savedAtMillis) === Number(spot.savedAtMillis) &&
+        Number(selectedSpot.lat) === Number(spot.lat) &&
+        Number(selectedSpot.lng) === Number(spot.lng);
 
-    function anyDropdownOpen() {
-      return Boolean(spotListModalEl && !spotListModalEl.hidden);
-    }
-
-    function updateListBackdrop() {
-      if (listBackdropEl) {
-        listBackdropEl.hidden = true;
-      }
-    }
-
-    function closeAllDropdowns() {
-      savedPanelEl.classList.remove("open");
-      recentPanelEl.classList.remove("open");
-
-      if (savedDropdownEl) savedDropdownEl.hidden = true;
-      if (recentDropdownEl) recentDropdownEl.hidden = true;
-      if (listBackdropEl) listBackdropEl.hidden = true;
-
-      if (spotListModalSheetEl) {
-        spotListModalSheetEl.textContent = "";
-        spotListModalSheetEl.dataset.list = "";
-      }
-
-      if (spotListModalEl) {
-        spotListModalEl.hidden = true;
-      }
-    }
-
-    function createSpotListModalRow(spot, { list, index, name, selected = false } = {}) {
-      const row = document.createElement("div");
-      row.className = `spot-list-modal-row ${selected ? "selected" : ""} ${list === "recent" ? "recent-actions" : ""}`.trim();
-
-      const previewButton = document.createElement("button");
-      previewButton.type = "button";
-      previewButton.className = "spot-list-modal-preview";
-      previewButton.dataset.modalAction = "preview";
-      previewButton.dataset.list = list;
-      previewButton.dataset.index = String(index);
+      if (selected) button.classList.add("active");
 
       const title = document.createElement("div");
-      title.className = "spot-list-modal-name";
-      title.textContent = name || spot.name || `Spot • ${formatDate(spot.savedAtMillis)}`;
+      title.className = "spot-card-title";
+      title.textContent = source === "current" ? "Current parking spot" : spotLabel(spot);
 
       const meta = document.createElement("div");
-      meta.className = "spot-list-modal-meta";
-      meta.textContent = `${formatDate(spot.savedAtMillis)} • ${formatAccuracy(spot.accuracy)}`;
+      meta.className = "spot-card-meta";
+      meta.textContent =
+        `${formatTime(spot.savedAtMillis)} • ${typeof spot.accuracy === "number" ? `±${Math.round(spot.accuracy)} m` : "accuracy unknown"}`;
 
-      previewButton.appendChild(title);
-      previewButton.appendChild(meta);
-      row.appendChild(previewButton);
-
-      const primaryButton = document.createElement("button");
-      primaryButton.type = "button";
-      primaryButton.className = "spot-list-modal-btn";
-      primaryButton.dataset.list = list;
-      primaryButton.dataset.index = String(index);
-
-      if (list === "named") {
-        primaryButton.textContent = "Show";
-        primaryButton.title = "Show";
-        primaryButton.dataset.modalAction = "show";
-      } else {
-        primaryButton.textContent = "Show";
-        primaryButton.title = "Show";
-        primaryButton.dataset.modalAction = "show";
-      }
-
-      row.appendChild(primaryButton);
-
-      if (list === "named") {
-        const modalNavButton = document.createElement("button");
-        modalNavButton.type = "button";
-        modalNavButton.className = "spot-list-modal-btn";
-        modalNavButton.textContent = "Nav";
-        modalNavButton.title = "Navigate by car";
-        modalNavButton.dataset.modalAction = "car-navigate";
-        modalNavButton.dataset.list = list;
-        modalNavButton.dataset.index = String(index);
-        row.appendChild(modalNavButton);
-        row.classList.add("saved-actions");
-      }
-
-      if (list === "recent") {
-        const saveButton = document.createElement("button");
-        saveButton.type = "button";
-        saveButton.className = "spot-list-modal-btn save";
-        saveButton.textContent = "Save";
-        saveButton.title = "Save spot";
-        saveButton.dataset.modalAction = "save-name";
-        saveButton.dataset.list = list;
-        saveButton.dataset.index = String(index);
-        row.appendChild(saveButton);
-      }
-
-      const deleteButton = document.createElement("button");
-      deleteButton.type = "button";
-      deleteButton.className = "spot-list-modal-btn delete";
-      deleteButton.textContent = "Del";
-      deleteButton.title = list === "named" ? "Delete saved spot" : "Delete recent spot";
-      deleteButton.dataset.modalAction = "delete";
-      deleteButton.dataset.list = list;
-      deleteButton.dataset.index = String(index);
-      row.appendChild(deleteButton);
-
-      return row;
+      button.append(title, meta);
+      button.addEventListener("click", () => updateSelectedSpot(spot, source === "current" ? "current" : "recent"));
+      return button;
     }
 
-    function renderSpotListModal(listName) {
-      if (!spotListModalSheetEl) return;
+    function renderLists() {
+      savedList.replaceChildren();
+      recentList.replaceChildren();
 
-      const spots = listName === "named" ? readNamedLocations() : readRecentSpots();
-      const activeIndex = listName === "named" ? savedPanelIndex : recentPanelIndex;
-
-      spotListModalSheetEl.textContent = "";
-      spotListModalSheetEl.dataset.list = listName;
-
-      const header = document.createElement("div");
-      header.className = "spot-list-modal-head";
-
-      const title = document.createElement("div");
-      title.className = "spot-list-modal-title";
-      title.textContent = listName === "named" ? "Saved spots" : "Recent spots";
-
-      const closeButton = document.createElement("button");
-      closeButton.type = "button";
-      closeButton.className = "spot-list-modal-close";
-      closeButton.textContent = "×";
-      closeButton.dataset.modalAction = "close";
-
-      header.appendChild(title);
-      header.appendChild(closeButton);
-      spotListModalSheetEl.appendChild(header);
-
-      if (!spots.length) {
+      if (lastKnownSpot) {
+        savedList.append(renderSpotCard(lastKnownSpot, "current"));
+      } else {
         const empty = document.createElement("div");
-        empty.className = "spot-list-modal-empty";
-        empty.textContent = listName === "named" ? "No saved spots yet." : "No recent spots yet.";
-        spotListModalSheetEl.appendChild(empty);
-        return;
+        empty.className = "list-empty";
+        empty.textContent = "No saved spot";
+        savedList.append(empty);
       }
 
-      spots.forEach((spot, index) => {
-        const name = listName === "named"
-          ? (spot.name || `Saved spot ${index + 1}`)
-          : `Recent ${index + 1} • ${formatDate(spot.savedAtMillis)}`;
-
-        spotListModalSheetEl.appendChild(createSpotListModalRow(spot, {
-          list: listName,
-          index,
-          name,
-          selected: index === activeIndex
-        }));
-      });
-    }
-
-    function openSpotListModal(listName) {
-      if (!spotListModalEl || !spotListModalSheetEl) return;
-
-      if (listName === "named") {
-        savedPanelEl.classList.add("open");
-        recentPanelEl.classList.remove("open");
+      if (recentSpots.length) {
+        recentSpots.forEach((spot, index) => recentList.append(renderSpotCard(spot, "recent", index)));
       } else {
-        recentPanelEl.classList.add("open");
-        savedPanelEl.classList.remove("open");
-      }
-
-      if (savedDropdownEl) savedDropdownEl.hidden = true;
-      if (recentDropdownEl) recentDropdownEl.hidden = true;
-      if (listBackdropEl) listBackdropEl.hidden = true;
-
-      renderSpotListModal(listName);
-      spotListModalEl.hidden = false;
-    }
-
-    function toggleSpotListModal(listName) {
-      const alreadyOpen = spotListModalEl &&
-        !spotListModalEl.hidden &&
-        spotListModalSheetEl?.dataset.list === listName;
-
-      if (alreadyOpen) {
-        closeAllDropdowns();
-        return;
-      }
-
-      openSpotListModal(listName);
-    }
-
-    function setPanelOpen(panelEl, dropdownEl, isOpen, updateBackdrop = true) {
-      const listName = panelEl === savedPanelEl ? "named" : "recent";
-
-      if (isOpen) {
-        openSpotListModal(listName);
-      } else {
-        closeAllDropdowns();
-      }
-    }
-
-    function togglePanelDropdown(panelEl, dropdownEl) {
-      const listName = panelEl === savedPanelEl ? "named" : "recent";
-      toggleSpotListModal(listName);
-    }
-
-    async function handleSpotListModalClick(event) {
-      if (!spotListModalEl || spotListModalEl.hidden) return;
-
-      if (event.target === spotListModalEl) {
-        event.preventDefault();
-        event.stopPropagation();
-        ignoreUnderlyingClickUntil = Date.now() + 800;
-        closeAllDropdowns();
-        return;
-      }
-
-      const button = event.target.closest("button[data-modal-action]");
-      if (!button) return;
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      const action = button.dataset.modalAction;
-
-      if (action === "close") {
-        closeAllDropdowns();
-        return;
-      }
-
-      const listName = button.dataset.list;
-      const index = button.dataset.index;
-
-      if (!listName || index === undefined) return;
-
-      if (action === "preview") {
-        selectPanelIndex(listName, index);
-        return;
-      }
-
-      const spot = getSpotFromList(listName, index);
-      if (!spot) return;
-
-      if (action === "show") {
-        openSpotOnMap(spot, false);
-        return;
-      }
-if (action === "navigate") {
-        openSpotOnMap(spot, true);
-        return;
-      }
-
-      if (action === "save-name") {
-        await saveSpotWithName(spot);
-        closeAllDropdowns();
-        return;
-      }
-
-      if (action === "delete") {
-        await deleteSpotFromList(listName, index);
-        closeAllDropdowns();
-      }
-    }
-
-    function bindPanelHeaderToggle(panelEl, dropdownEl) {
-      const head = panelEl.querySelector(".panel-head");
-      if (!head) return;
-
-      head.addEventListener("click", (event) => {
-        if (event.target.closest("button") || event.target.closest("a")) return;
-        togglePanelDropdown(panelEl, dropdownEl);
-      });
-    }
-
-    function changePanelIndex(listName, delta) {
-      const list = listName === "named" ? readNamedLocations() : readRecentSpots();
-      if (!list.length) return;
-
-      if (listName === "named") {
-        savedPanelIndex = (savedPanelIndex + delta + list.length) % list.length;
-      } else {
-        recentPanelIndex = (recentPanelIndex + delta + list.length) % list.length;
-      }
-
-      renderSpotLists();
-
-      const trackEl = listName === "named" ? savedListEl : recentListEl;
-      const className = delta > 0 ? "swipe-feedback-left" : "swipe-feedback-right";
-      trackEl.classList.remove("swipe-feedback-left", "swipe-feedback-right");
-      void trackEl.offsetWidth;
-      trackEl.classList.add(className);
-      window.setTimeout(() => {
-        trackEl.classList.remove("swipe-feedback-left", "swipe-feedback-right");
-      }, 480);
-    }
-
-    function selectPanelIndex(listName, index, { closeDropdown = true } = {}) {
-      const safeIndex = Math.max(0, Number(index) || 0);
-
-      if (listName === "named") {
-        const named = readNamedLocations();
-        if (!named.length || !named[safeIndex]) return;
-
-        const selected = normalizeSpot(named[safeIndex]);
-        const reordered = [
-          selected,
-          ...named.filter((_, itemIndex) => itemIndex !== safeIndex)
-        ].slice(0, MAX_NAMED_LOCATIONS);
-
-        writeNamedLocations(reordered);
-        savedPanelIndex = 0;
-
-        syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
-          cloudFailureTitle: "Saved locally"
-        });
-
-        debugLog("Saved list item moved to first preview position", {
-          previousIndex: safeIndex
-        });
-      } else {
-        const recent = readRecentSpots();
-        if (!recent.length || !recent[safeIndex]) return;
-
-        // Important: do NOT reorder recent spots.
-        // This keeps labels like "Recent 6" and the badge "6 / 10".
-        recentPanelIndex = Math.min(safeIndex, recent.length - 1);
-
-        debugLog("Recent list item selected without reordering", {
-          index: recentPanelIndex
-        });
-      }
-
-      renderSpotLists();
-
-      if (closeDropdown) {
-        closeAllDropdowns();
-      }
-    }
-
-    function enableCarouselSwipe(trackEl, listName) {
-      if (!trackEl) return;
-
-      let startX = 0;
-      let startY = 0;
-      let startedOnButton = false;
-      let pointerActive = false;
-
-      function recordStart(clientX, clientY, target) {
-        startX = clientX;
-        startY = clientY;
-        startedOnButton = Boolean(target?.closest?.("button"));
-      }
-
-      function maybeSwipe(clientX, clientY) {
-        if (startedOnButton || anyDropdownOpen()) return;
-
-        const dx = clientX - startX;
-        const dy = clientY - startY;
-
-        if (Math.abs(dx) > 28 && Math.abs(dx) > Math.abs(dy) + 8) {
-          changePanelIndex(listName, dx < 0 ? 1 : -1);
-        }
-      }
-
-      if (window.PointerEvent) {
-        trackEl.addEventListener("pointerdown", (event) => {
-          if (!event.isPrimary) return;
-          pointerActive = true;
-          recordStart(event.clientX, event.clientY, event.target);
-        }, { passive: true });
-
-        trackEl.addEventListener("pointerup", (event) => {
-          if (!event.isPrimary || !pointerActive) return;
-          pointerActive = false;
-          maybeSwipe(event.clientX, event.clientY);
-        }, { passive: true });
-
-        trackEl.addEventListener("pointercancel", () => {
-          pointerActive = false;
-        }, { passive: true });
-      }
-
-      trackEl.addEventListener("touchstart", (event) => {
-        const touch = event.changedTouches[0];
-        if (!touch) return;
-        recordStart(touch.clientX, touch.clientY, event.target);
-      }, { passive: true });
-
-      trackEl.addEventListener("touchend", (event) => {
-        const touch = event.changedTouches[0];
-        if (!touch) return;
-        maybeSwipe(touch.clientX, touch.clientY);
-      }, { passive: true });
-    }
-
-    function createDropdownSpotRow(spot, options = {}) {
-      const row = document.createElement("div");
-      row.className = `dropdown-spot-row ${options.selected ? "selected" : ""} ${options.list === "recent" ? "recent-row-actions" : ""}`.trim();
-      row.dataset.list = options.list;
-      row.dataset.index = String(options.index);
-      row.setAttribute("role", "button");
-      row.tabIndex = 0;
-
-      function chooseThisRow(event) {
-        if (event.target.closest("button[data-action]")) return;
-        event.preventDefault();
-        event.stopPropagation();
-        selectPanelIndex(options.list, options.index);
-      }
-
-      row.addEventListener("click", chooseThisRow);
-      row.addEventListener("pointerup", chooseThisRow);
-      row.addEventListener("keydown", (event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          chooseThisRow(event);
-        }
-      });
-
-      const main = document.createElement("div");
-      main.className = "dropdown-main";
-
-      const name = document.createElement("div");
-      name.className = "dropdown-name";
-      name.textContent = options.name || spot.name || `Spot • ${formatDate(spot.savedAtMillis)}`;
-
-      const meta = document.createElement("div");
-      meta.className = "dropdown-meta";
-      meta.textContent = `${formatDate(spot.savedAtMillis)} • ${formatAccuracy(spot.accuracy)}`;
-
-      main.appendChild(name);
-      main.appendChild(meta);
-
-      const primary = document.createElement("button");
-      primary.className = "dropdown-icon-btn";
-      primary.type = "button";
-
-      if (options.list === "named") {
-        primary.textContent = "↱";
-        primary.title = "Navigate";
-        primary.dataset.action = "navigate";
-      } else {
-        primary.textContent = "↗";
-        primary.title = "Show on map";
-        primary.dataset.action = "show";
-      }
-
-      primary.dataset.list = options.list;
-      primary.dataset.index = String(options.index);
-
-      row.appendChild(main);
-      row.appendChild(primary);
-
-      if (options.list !== "named") {
-        const save = document.createElement("button");
-        save.className = "dropdown-icon-btn";
-        save.type = "button";
-        save.textContent = "★";
-        save.title = "Save spot";
-        save.dataset.action = "save-name";
-        save.dataset.list = options.list;
-        save.dataset.index = String(options.index);
-        row.appendChild(save);
-      }
-
-      const del = document.createElement("button");
-      del.className = "dropdown-icon-btn bad";
-      del.type = "button";
-      del.textContent = "×";
-      del.title = options.list === "named" ? "Delete saved spot" : "Delete recent spot";
-      del.dataset.action = "delete";
-      del.dataset.list = options.list;
-      del.dataset.index = String(options.index);
-
-      row.appendChild(del);
-      return row;
-    }
-
-    function createSpotItem(spot, options = {}) {
-      const item = document.createElement("div");
-      item.className = `spot-item ${options.list === "recent" ? "recent-preview-card" : "saved-preview-card"}`.trim();
-
-      const main = document.createElement("div");
-      main.className = "spot-row-main";
-
-      const info = document.createElement("div");
-      const name = document.createElement("div");
-      name.className = "spot-name";
-      name.textContent = options.name || spot.name || `Spot • ${formatDate(spot.savedAtMillis)}`;
-
-      const meta = document.createElement("div");
-      meta.className = "spot-meta-small";
-      meta.textContent = `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${formatAccuracy(spot.accuracy)}`;
-
-      info.appendChild(name);
-      info.appendChild(meta);
-
-      const badge = document.createElement("div");
-      badge.className = "spot-badge";
-      badge.textContent = options.badge || "GPS";
-
-      main.appendChild(info);
-      main.appendChild(badge);
-
-      const actions = document.createElement("div");
-      actions.className = `spot-actions ${options.list === "recent" ? "four-actions" : "three-actions"}`;
-
-      const primary = document.createElement("button");
-      primary.className = "tiny-btn";
-      primary.type = "button";
-
-      if (options.list === "named") {
-        primary.textContent = "Show";
-        primary.dataset.action = "show";
-      } else {
-        primary.textContent = "Show";
-        primary.dataset.action = "show";
-      }
-
-      primary.dataset.list = options.list;
-      primary.dataset.index = String(options.index);
-      actions.appendChild(primary);
-
-      if (options.list === "named") {
-        const carNavigate = document.createElement("button");
-        carNavigate.className = "tiny-btn";
-        carNavigate.type = "button";
-        carNavigate.textContent = "Nav";
-        carNavigate.title = "Navigate by car";
-        carNavigate.dataset.action = "car-navigate";
-        carNavigate.dataset.list = options.list;
-        carNavigate.dataset.index = String(options.index);
-        actions.appendChild(carNavigate);
-      }
-
-      if (options.list !== "named") {
-        const save = document.createElement("button");
-        save.className = "tiny-btn";
-        save.type = "button";
-        save.textContent = "Save";
-        save.dataset.action = "save-name";
-        save.dataset.list = options.list;
-        save.dataset.index = String(options.index);
-        actions.appendChild(save);
-      }
-
-      const share = document.createElement("button");
-      share.className = "tiny-btn";
-      share.type = "button";
-      share.textContent = "Share";
-      share.dataset.action = "share";
-      share.dataset.list = options.list;
-      share.dataset.index = String(options.index);
-      actions.appendChild(share);
-
-      const del = document.createElement("button");
-      del.className = "tiny-btn delete-small";
-      del.type = "button";
-      del.textContent = "Delete";
-      del.dataset.action = "delete";
-      del.dataset.list = options.list;
-      del.dataset.index = String(options.index);
-      actions.appendChild(del);
-
-      item.appendChild(main);
-      item.appendChild(actions);
-      return item;
-    }
-
-    function renderSpotLists() {
-      const recent = readRecentSpots();
-      const named = readNamedLocations();
-
-      savedPanelIndex = named.length ? Math.max(0, Math.min(savedPanelIndex, named.length - 1)) : 0;
-      recentPanelIndex = recent.length ? Math.max(0, Math.min(recentPanelIndex, recent.length - 1)) : 0;
-
-      savedCountEl.textContent = `${named.length} / ${MAX_NAMED_LOCATIONS}`;
-      savedListEl.textContent = "";
-      recentListEl.textContent = "";
-      savedDropdownEl.textContent = "";
-      recentDropdownEl.textContent = "";
-
-      if (!named.length) {
         const empty = document.createElement("div");
-        empty.className = "spot-item";
-        empty.innerHTML = `<div class="empty-note">No saved spots yet. Save a good spot when you want to keep it.</div>`;
-        savedListEl.appendChild(empty);
-
-        const dropEmpty = document.createElement("div");
-        dropEmpty.className = "empty-note";
-        dropEmpty.textContent = "No saved spots yet.";
-        savedDropdownEl.appendChild(dropEmpty);
-      } else {
-        const spot = named[savedPanelIndex];
-        const name = spot.name || `Saved spot ${savedPanelIndex + 1}`;
-        savedListEl.appendChild(createSpotItem(spot, {
-          list: "named",
-          index: savedPanelIndex,
-          name,
-          badge: `${savedPanelIndex + 1}/${named.length}`
-        }));
-
-        named.forEach((rowSpot, index) => {
-          const rowName = rowSpot.name || `Saved spot ${index + 1}`;
-          savedDropdownEl.appendChild(createDropdownSpotRow(rowSpot, {
-            list: "named",
-            index,
-            name: rowName,
-            selected: index === savedPanelIndex
-          }));
-        });
+        empty.className = "list-empty";
+        empty.textContent = "No recent spots";
+        recentList.append(empty);
       }
-
-      if (!recent.length) {
-        const empty = document.createElement("div");
-        empty.className = "spot-item";
-        empty.innerHTML = `<div class="empty-note">Recent parking saves will appear here automatically.</div>`;
-        recentListEl.appendChild(empty);
-
-        const dropEmpty = document.createElement("div");
-        dropEmpty.className = "empty-note";
-        dropEmpty.textContent = "No recent spots yet.";
-        recentDropdownEl.appendChild(dropEmpty);
-      } else {
-        const spot = recent[recentPanelIndex];
-        const name = `Recent ${recentPanelIndex + 1} • ${formatDate(spot.savedAtMillis)}`;
-        recentListEl.appendChild(createSpotItem(spot, {
-          list: "recent",
-          index: recentPanelIndex,
-          name,
-          badge: `${recentPanelIndex + 1}/${recent.length}`
-        }));
-
-        recent.forEach((rowSpot, index) => {
-          const rowName = `Recent ${index + 1} • ${formatDate(rowSpot.savedAtMillis)}`;
-          recentDropdownEl.appendChild(createDropdownSpotRow(rowSpot, {
-            list: "recent",
-            index,
-            name: rowName,
-            selected: index === recentPanelIndex
-          }));
-        });
-      }
-    }
-
-    function getSpotFromList(listName, index) {
-      const list = listName === "named" ? readNamedLocations() : readRecentSpots();
-      return list[Number(index)] || null;
-    }
-
-    function openSpotOnMap(spot, navigation = false) {
-      if (!spot) return;
-      const url = navigation
-        ? buildNavigateMapUrl(spot.lat, spot.lng)
-        : buildShowMapUrl(spot.lat, spot.lng);
-      openMapUrl(url);
-    }
-
-    function buildSpotShareUrl(spot) {
-      return buildShowMapUrl(spot.lat, spot.lng);
-    }
-
-    function buildSpotShareText(spot) {
-      const label = spot.name ? `${spot.name}` : "my parking spot";
-      return `ParkNous spot: ${label}`;
-    }
-
-    async function copyTextToClipboard(textToCopy) {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(textToCopy);
-        return true;
-      }
-
-      const textarea = document.createElement("textarea");
-      textarea.value = textToCopy;
-      textarea.setAttribute("readonly", "");
-      textarea.style.position = "fixed";
-      textarea.style.left = "-9999px";
-      textarea.style.top = "-9999px";
-      document.body.appendChild(textarea);
-      textarea.select();
-
-      try {
-        document.execCommand("copy");
-        return true;
-      } finally {
-        document.body.removeChild(textarea);
-      }
-    }
-
-    async function shareSpot(spot) {
-      if (!spot) return;
-
-      const url = buildSpotShareUrl(spot);
-      const text = buildSpotShareText(spot);
-      const title = "ParkNous";
-
-      try {
-        if (navigator.share) {
-          await navigator.share({ title, text, url });
-          return;
-        }
-
-        await copyTextToClipboard(`${text}\n${url}`);
-        setHeroState("saved", "Share link copied", text, "Paste it anywhere you want.");
-      } catch (error) {
-        if (error?.name === "AbortError") return;
-
-        console.warn("Share failed.", error);
-
-        try {
-          await copyTextToClipboard(`${text}\n${url}`);
-          setHeroState("saved", "Share link copied", text, "Paste it anywhere you want.");
-        } catch (copyError) {
-          window.prompt("Copy this ParkNous link:", `${text}\n${url}`);
-        }
-      }
-    }
-
-    async function deleteSpotFromList(listName, index) {
-      const numericIndex = Number(index);
-      const list = listName === "named" ? readNamedLocations() : readRecentSpots();
-      const spot = list[numericIndex];
-
-      if (!spot) return;
-
-      const isSavedSpot = listName === "named";
-      const ok = await showConfirmBanner({
-        title: isSavedSpot ? "Delete saved spot?" : "Delete recent spot?",
-        text: isSavedSpot
-          ? `This will remove "${spot.name || "this saved spot"}" from your saved spots.`
-          : "This will remove this spot from recent spots.",
-        confirmLabel: "Delete",
-        cancelLabel: "Keep it"
-      });
-
-      if (!ok) return;
-
-      if (isSavedSpot) {
-        const named = readNamedLocations().filter((_, itemIndex) => itemIndex !== numericIndex);
-        if (savedPanelIndex >= named.length) savedPanelIndex = Math.max(0, named.length - 1);
-        writeNamedLocations(named);
-      } else {
-        const recent = readRecentSpots().filter((_, itemIndex) => itemIndex !== numericIndex);
-        if (recentPanelIndex >= recent.length) recentPanelIndex = Math.max(0, recent.length - 1);
-        writeRecentSpots(recent);
-      }
-
-      renderSpotLists();
-      syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
-        cloudFailureTitle: "Saved locally"
-      });
-    }
-
-    async function saveSpotWithName(spot) {
-      if (!spot) {
-        setHeroState("error", "No location to save", "Save a parking spot first.");
-        return false;
-      }
-
-      const defaultName = `Parking ${new Date(spot.savedAtMillis || Date.now()).toLocaleDateString("en-GB")}`;
-      const rawName = window.prompt("Name this spot:", spot.name || defaultName);
-      if (rawName === null) return false;
-
-      const name = rawName.trim();
-      if (!name) {
-        setHeroState("error", "Name is empty", "Please give the saved spot a name.");
-        return false;
-      }
-
-      let named = readNamedLocations();
-      const sameName = named.find((item) => (item.name || "").toLowerCase() === name.toLowerCase());
-      const sameId = spot.id ? named.find((item) => item.id === spot.id) : null;
-
-      if (sameName && (!sameId || sameName.id !== sameId.id)) {
-        const replaceExisting = await showConfirmBanner({
-          title: "Spot name already exists",
-          text: `There is already a saved spot called "${name}". Press OK to replace it, or Cancel to keep the old one.`,
-          confirmLabel: "OK, replace",
-          cancelLabel: "Cancel",
-          safe: true
-        });
-
-        if (!replaceExisting) return false;
-      }
-
-      const normalized = normalizeSpot({
-        ...spot,
-        id: spot.id || makeSpotId(spot),
-        name,
-        namedAtMillis: Date.now()
-      });
-
-      named = named.filter((item) =>
-        item.id !== normalized.id &&
-        (item.name || "").toLowerCase() !== name.toLowerCase()
-      );
-
-      if (named.length >= MAX_NAMED_LOCATIONS) {
-        const replaceOldest = await showConfirmBanner({
-          title: "Saved spots are full",
-          text: "You already have 10 saved spots. Replace the oldest one with this new saved spot?",
-          confirmLabel: "Replace oldest",
-          cancelLabel: "Cancel",
-          safe: true
-        });
-
-        if (!replaceOldest) return false;
-        named = named.slice(0, MAX_NAMED_LOCATIONS - 1);
-      }
-
-      const next = [normalized, ...named].slice(0, MAX_NAMED_LOCATIONS);
-      writeNamedLocations(next);
-      savedPanelIndex = 0;
-      renderSpotLists();
-
-      setHeroState(
-        "saved",
-        "Location saved with name",
-        name,
-        `Accuracy: ${formatAccuracy(normalized.accuracy)}`
-      );
-
-      syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), {
-        cloudFailureTitle: "Saved locally"
-      });
-
-      return true;
-    }
-
-    async function handleSpotListClick(event) {
-      const button = event.target.closest("button[data-action]");
-
-      if (!button) {
-        const row = event.target.closest(".dropdown-spot-row[data-list]");
-        if (row) {
-          event.preventDefault();
-          event.stopPropagation();
-          selectPanelIndex(row.dataset.list, row.dataset.index);
-        }
-        return;
-      }
-
-      event.preventDefault();
-      event.stopPropagation();
-
-      const spot = getSpotFromList(button.dataset.list, button.dataset.index);
-      if (!spot) return;
-
-      if (button.dataset.action === "show") {
-        openSpotOnMap(spot, false);
-        return;
-      }
-
-      if (button.dataset.action === "car-navigate") {
-        const lat = Number(spot.lat);
-        const lng = Number(spot.lng);
-
-        if (Number.isFinite(lat) && Number.isFinite(lng)) {
-          window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=driving&dir_action=navigate`, "_blank", "noopener");
-        }
-
-        return;
-      }
-
-      if (button.dataset.action === "navigate") {
-        openSpotOnMap(spot, true);
-        return;
-      }
-
-      if (button.dataset.action === "share") {
-        await shareSpot(spot);
-        return;
-      }
-
-      if (button.dataset.action === "save-name") {
-        await saveSpotWithName(spot);
-        return;
-      }
-
-      if (button.dataset.action === "delete") {
-        await deleteSpotFromList(button.dataset.list, button.dataset.index);
-      }
-    }
-
-
-    function getParkingDocRef() {
-      return doc(db, "parknousProfiles", guestProfileId, "parking", "current");
-    }
-
-    function getLegacyParkingDocRef(uid) {
-      return doc(db, "users", uid, "parking", "current");
     }
 
     function clearSaveModeFromUrl() {
@@ -3870,74 +1084,8 @@ if (action === "navigate") {
       window.history.replaceState({}, document.title, cleanUrl);
     }
 
-    function hideSaveAnyway() {
-      saveAnywayRow.classList.remove("show");
-      bestFailedSpot = null;
-    }
-
-    function showSaveAnyway() {
-      saveAnywayRow.classList.add("show");
-    }
-
-    function setHeroState(type, title, text = "", meta = "") {
-      heroEl.className = `hero ${type}`;
-      heroTitleEl.textContent = title;
-      heroTextEl.textContent = text;
-      heroMetaEl.textContent = meta;
-
-      // Do not change heroIconEl.textContent here.
-      // The logo is permanent inside #heroIcon, and changing textContent would delete it.
-    }
-
-    function saveLocalBackup(data) {
-      try {
-        localStorage.setItem(LOCAL_KEY, JSON.stringify(data));
-        setPill(localPillEl, "Local backup: ready", "ok");
-      } catch (error) {
-        console.error(error);
-        setPill(localPillEl, "Local backup: unavailable", "warn");
-      }
-    }
-
-    function readLocalBackup() {
-      try {
-        const raw = localStorage.getItem(LOCAL_KEY);
-        if (!raw) {
-          setPill(localPillEl, "Local backup: empty");
-          return null;
-        }
-        const parsed = JSON.parse(raw);
-        setPill(localPillEl, "Local backup: ready", "ok");
-        return parsed;
-      } catch (error) {
-        console.error(error);
-        setPill(localPillEl, "Local backup: error", "warn");
-        return null;
-      }
-    }
-
-    function clearLocalBackup() {
-      try {
-        localStorage.removeItem(LOCAL_KEY);
-      } catch (error) {
-        console.error(error);
-      }
-      setPill(localPillEl, "Local backup: empty");
-    }
-
-    function updateHeroFromSpot(spot) {
-      if (!spot) {
-        setHeroState("waiting", "No saved location", "");
-        return;
-      }
-
-      hideSaveAnyway();
-      setHeroState(
-        "saved",
-        "Parking spot saved successfully",
-        "",
-        `Saved: ${formatDate(spot.savedAtMillis)} • Accuracy: ${spot.accuracy ? Math.round(spot.accuracy) + "m" : "unknown"}`
-      );
+    function getParkingDocRef(uid) {
+      return doc(db, "users", uid, "parking", "current");
     }
 
     async function ensureAnonymousLogin() {
@@ -3963,848 +1111,331 @@ if (action === "navigate") {
       });
     }
 
-    const loginReadyPromise = ensureAnonymousLogin()
-      .then((user) => {
-        currentUser = user;
-        setPill(cloudPillEl, "Cloud: connected", "ok");
-        return user;
-      })
-      .catch((error) => {
-        console.error("Cloud login failed. App will continue locally.", error);
-        setPill(cloudPillEl, "Cloud: auth failed", "warn");
-        return null;
-      });
-
-    async function syncAllParkingDataToCloud(currentSpot = lastKnownSpot || readLocalBackup(), {
-      clearCurrent = false,
-      silent = false,
-      cloudFailureTitle = "Saved locally"
-    } = {}) {
-      try {
-        let user = currentUser;
-
-        if (!user && loginReadyPromise) {
-          user = await loginReadyPromise;
-        }
-
-        if (!user) {
-          if (!silent) setPill(cloudPillEl, "Cloud: offline", "warn");
-          return false;
-        }
-
-        const recentSpots = readRecentSpots();
-        const namedLocations = readNamedLocations();
-
-        const payload = {
-          profileId: guestProfileId,
-          ownerUid: user.uid,
-          recentSpots,
-          namedLocations,
-          updatedAtMillis: Date.now(),
-          savedAt: serverTimestamp()
-        };
-
-        if (clearCurrent) {
-          payload.currentCleared = true;
-          payload.lat = null;
-          payload.lng = null;
-          payload.accuracy = null;
-          payload.source = "cleared";
-          payload.savedAtMillis = null;
-          payload.id = null;
-        } else if (
-          currentSpot &&
-          typeof currentSpot.lat === "number" &&
-          typeof currentSpot.lng === "number"
-        ) {
-          const normalizedSpot = normalizeSpot(currentSpot);
-          Object.assign(payload, normalizedSpot, { currentCleared: false });
-        }
-
-        try {
-          await setDoc(getParkingDocRef(), payload, { merge: true });
-          if (!silent) setPill(cloudPillEl, "Cloud: synced", "ok");
-          debugLog("Cloud profile synced", {
-            profileId: guestProfileId,
-            recent: recentSpots.length,
-            saved: namedLocations.length
-          });
-          return true;
-        } catch (profileError) {
-          console.warn("Profile cloud sync failed. Trying legacy user path.", profileError);
-          debugLog("Profile cloud sync failed", {
-            code: profileError?.code,
-            message: profileError?.message
-          });
-
-          await setDoc(getLegacyParkingDocRef(user.uid), payload, { merge: true });
-          if (!silent) setPill(cloudPillEl, "Cloud: synced fallback", "ok");
-          return true;
-        }
-      } catch (cloudError) {
-        console.error("Cloud sync failed:", cloudError);
-        if (!silent) {
-          setPill(cloudPillEl, "Cloud: pending/failed", "warn");
-
-          if (currentSpot && !clearCurrent) {
-            const normalizedSpot = normalizeSpot(currentSpot);
-            setHeroState(
-              "saved",
-              cloudFailureTitle,
-              "",
-              `Saved: ${formatDate(normalizedSpot.savedAtMillis)} • Accuracy: ${Math.round(normalizedSpot.accuracy || 0)}m`
-            );
-          }
-        }
-
-        return false;
-      }
-    }
-
     async function loadCloudSpot() {
       if (!currentUser) return null;
 
       try {
-        let data = null;
-        let loadedFrom = "profile";
+        const snap = await getDoc(getParkingDocRef(currentUser.uid));
+        if (!snap.exists()) return null;
 
-        try {
-          const profileSnap = await getDoc(getParkingDocRef());
-          if (profileSnap.exists()) {
-            data = profileSnap.data();
-          }
-        } catch (profileError) {
-          console.warn("Profile cloud load failed. Trying legacy user path.", profileError);
-          debugLog("Profile cloud load failed", {
-            code: profileError?.code,
-            message: profileError?.message
-          });
-        }
+        const data = snap.data();
+        return {
+          lat: Number(data.lat),
+          lng: Number(data.lng),
+          accuracy: data.accuracy ?? null,
+          savedAtMillis: Number(data.savedAtMillis) || null
+        };
+      } catch (error) {
+        console.error("Cloud read failed:", error);
+        return null;
+      }
+    }
 
-        if (!data) {
-          const legacySnap = await getDoc(getLegacyParkingDocRef(currentUser.uid));
+    async function syncCloudSpot(spot) {
+      if (!currentUser || !spot) return false;
 
-          if (legacySnap.exists()) {
-            data = legacySnap.data();
-            loadedFrom = "legacy";
-          }
-        }
-
-        if (!data) {
-          setPill(cloudPillEl, "Cloud: new profile", "ok");
-          await syncAllParkingDataToCloud(lastKnownSpot || readLocalBackup(), { silent: true });
-          return null;
-        }
-
-        const localRecent = readRecentSpots();
-        const localNamed = readNamedLocations();
-        const mergedRecent = mergeRecentSpots(localRecent, Array.isArray(data.recentSpots) ? data.recentSpots : []);
-        const mergedNamed = mergeNamedLocations(localNamed, Array.isArray(data.namedLocations) ? data.namedLocations : []);
-
-        writeRecentSpots(mergedRecent);
-        writeNamedLocations(mergedNamed);
-        renderSpotLists();
-
-        debugLog("Cloud data merged", {
-          from: loadedFrom,
-          recent: mergedRecent.length,
-          saved: mergedNamed.length
+      try {
+        await setDoc(getParkingDocRef(currentUser.uid), {
+          ...spot,
+          savedAt: serverTimestamp()
         });
+        return true;
+      } catch (error) {
+        console.error("Cloud sync failed:", error);
+        return false;
+      }
+    }
 
-        let spot = null;
+    function buildShowMapUrl(spot) {
+      return `https://www.google.com/maps/search/?api=1&query=${spot.lat},${spot.lng}`;
+    }
 
-        if (typeof data.lat === "number" && typeof data.lng === "number") {
-          spot = normalizeSpot({
-            id: data.id || null,
-            lat: data.lat,
-            lng: data.lng,
-            accuracy: data.accuracy || null,
-            source: data.source || "cloud",
-            savedAtMillis: data.savedAtMillis || null
-          });
+    function buildNavigateMapUrl(spot) {
+      return `https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}&travelmode=walking&dir_action=navigate`;
+    }
+
+    function updateSearchingUi(label, bestPosition) {
+      const bestAccuracy =
+        bestPosition && bestPosition.coords && typeof bestPosition.coords.accuracy === "number"
+          ? `Best accuracy ±${Math.round(bestPosition.coords.accuracy)} m`
+          : "Waiting for GPS...";
+
+      setCenterState("searching", "CURRENT SPOT", label || "SEARCHING", null, bestAccuracy);
+    }
+
+    function makeSpotFromResult(result) {
+      const p = result.position;
+      return {
+        lat: p.coords.latitude,
+        lng: p.coords.longitude,
+        accuracy: p.coords.accuracy,
+        savedAtMillis: Date.now()
+      };
+    }
+
+    function hideAccuracyActions() {
+      accuracyActions.classList.remove("show");
+      bestFailedSpot = null;
+    }
+
+    function showAccuracyActions(spot) {
+      bestFailedSpot = spot;
+      accuracyMessage.textContent =
+        `Best accuracy ±${Math.round(spot.accuracy || 0)} m. Save anyway?`;
+      accuracyActions.classList.add("show");
+      deleteConfirm.classList.remove("show");
+    }
+
+    async function persistAcceptedSpot(spot, authPromise = null) {
+      saveLocalBackup(spot);
+      addRecentSpot(spot);
+      lastKnownSpot = spot;
+      updateSelectedSpot(spot, "current");
+      toast("Parking spot saved");
+
+      // Cloud is deliberately secondary. The local save and UI happen first.
+      try {
+        if (!currentUser && authPromise) await authPromise;
+        if (currentUser) {
+          const synced = await syncCloudSpot(spot);
+          if (!synced) toast("Saved locally — cloud sync pending");
         }
-
-        // Push the merged local+cloud lists back, so saved spots do not disappear
-        // when Safari and the Home Screen app have different local storage.
-        await syncAllParkingDataToCloud(spot || lastKnownSpot || readLocalBackup(), { silent: true });
-
-        setPill(cloudPillEl, "Cloud: ready", "ok");
-        return spot;
       } catch (error) {
         console.error(error);
-        setPill(cloudPillEl, "Cloud: unavailable", "warn");
-        return null;
+        toast("Saved locally — cloud unavailable");
       }
     }
 
-    function getCurrentLocationOnce(options = {}) {
-      return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-          reject(new Error("Geolocation is not supported on this device/browser."));
-          return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-          (position) => resolve(position),
-          (error) => reject(error),
-          {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0,
-            ...options
-          }
-        );
-      });
-    }
-
-    async function getCachedFallbackLocation() {
-      try {
-        const position = await getCurrentLocationOnce({
-          enableHighAccuracy: false,
-          timeout: 4000,
-          maximumAge: CACHED_FALLBACK_MAX_AGE_MS
-        });
-        return position;
-      } catch (error) {
-        return null;
-      }
-    }
-
-    async function getHybridBestLocation() {
-      vibratePattern("search-start");
-      debugLog("GPS search started", { ios: isIOSDevice(), href: window.location.href });
-
-      return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-          reject(new Error("Geolocation is not supported on this device/browser."));
-          return;
-        }
-
-        let bestPosition = null;
-        let watchId = null;
-        let finished = false;
-        let lastUiUpdateAt = 0;
-        let timeoutId = null;
-
-        const startedAt = Date.now();
-        const iosMode = isIOSDevice();
-        const liveTimeoutMs = iosMode ? 18000 : LIVE_SEARCH_TIMEOUT_MS;
-        const hardFallbackTimeoutMs = iosMode ? 26000 : 10500;
-        const cachedTimeoutMs = iosMode ? 1400 : 900;
-        const fastGraceMs = iosMode ? 1800 : FIRST_FAST_FIX_GRACE_MS;
-        const fastAccuracyLimit = iosMode ? 120 : FAST_ACCEPTABLE_ACCURACY_METERS;
-
-        function clearGpsWatch() {
-          if (watchId !== null) {
-            navigator.geolocation.clearWatch(watchId);
-            watchId = null;
-          }
-
-          if (timeoutId !== null) {
-            clearTimeout(timeoutId);
-            timeoutId = null;
-          }
-        }
-
-        function finishSuccess(payload) {
-          if (finished) return;
-          finished = true;
-          clearGpsWatch();
-          resolve(payload);
-        }
-
-        function finishFailure(error) {
-          if (finished) return;
-          finished = true;
-          clearGpsWatch();
-          reject(error);
-        }
-
-        function maybeUpdateBest(position) {
-          const accuracy = position?.coords?.accuracy;
-          if (typeof accuracy !== "number") return;
-
-          if (!bestPosition || accuracy < bestPosition.coords.accuracy) {
-            bestPosition = position;
-          }
-        }
-
-        function updateSearchingUi(stageLabel = "Finding location") {
-          if (finished) return;
-          const now = Date.now();
-          if (now - lastUiUpdateAt < LIVE_MIN_UPDATE_INTERVAL_MS) return;
-
-          lastUiUpdateAt = now;
-
-          setHeroState(
-            "searching",
-            "Saving your parking spot",
-            stageLabel,
-            bestPosition
-              ? `Accuracy: ${Math.round(bestPosition.coords.accuracy)}m`
-              : "Getting first GPS fix..."
-          );
-        }
-
-        function acceptIfGoodEnough(position, source) {
-          if (finished) return true;
-          const accuracy = position.coords.accuracy;
-          const elapsed = Date.now() - startedAt;
-
-          if (accuracy <= TARGET_ACCURACY_METERS) {
-            finishSuccess({
-              position,
-              accepted: true,
-              source
-            });
-            return true;
-          }
-
-          if (
-            elapsed >= fastGraceMs &&
-            accuracy <= fastAccuracyLimit
-          ) {
-            finishSuccess({
-              position,
-              accepted: true,
-              source: `${source}-fast`
-            });
-            return true;
-          }
-
-          return false;
-        }
-
-        // 1) Try a fast cached position immediately.
-        // This does not block the live GPS watch below.
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            if (finished) return;
-            debugLog("Cached GPS result", { accuracy: position?.coords?.accuracy });
-            maybeUpdateBest(position);
-            acceptIfGoodEnough(position, "cached");
-          },
-          (error) => {
-            debugLog("Cached GPS error", { code: error?.code, message: error?.message });
-            // Ignore cached errors. Live GPS is running below.
-          },
-          {
-            enableHighAccuracy: false,
-            timeout: cachedTimeoutMs,
-            maximumAge: CACHED_FALLBACK_MAX_AGE_MS
-          }
-        );
-
-        updateSearchingUi("Starting GPS immediately...");
-
-        if (iosMode) {
-          // iOS/Safari sometimes resolves watchPosition slowly when opened from NFC.
-          // This parallel one-shot often wakes up the location service faster.
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              if (finished) return;
-              debugLog("iOS one-shot GPS result", { accuracy: position?.coords?.accuracy });
-              maybeUpdateBest(position);
-              acceptIfGoodEnough(position, "ios-one-shot");
-            },
-            (error) => {
-              debugLog("iOS one-shot GPS error", { code: error?.code, message: error?.message });
-            },
-            {
-              enableHighAccuracy: true,
-              maximumAge: 0,
-              timeout: liveTimeoutMs
-            }
-          );
-        }
-
-        // 2) Start live GPS immediately. No Firebase, old location, or UI load before this.
-        watchId = navigator.geolocation.watchPosition(
-          (position) => {
-            if (finished) return;
-            debugLog("Live GPS result", { accuracy: position?.coords?.accuracy });
-            maybeUpdateBest(position);
-            updateSearchingUi("Improving GPS...");
-
-            acceptIfGoodEnough(position, "live");
-          },
-          (error) => {
-            if (finished) return;
-            debugLog("Live GPS error", { code: error?.code, message: error?.message });
-            if (bestPosition) {
-              finishSuccess({
-                position: bestPosition,
-                accepted: bestPosition.coords.accuracy <= fastAccuracyLimit,
-                source: "best-available-after-error",
-                error
-              });
-              return;
-            }
-
-            finishFailure(error || new Error("Could not get a usable location."));
-          },
-          {
-            enableHighAccuracy: true,
-            maximumAge: 15000,
-            timeout: liveTimeoutMs
-          }
-        );
-
-        timeoutId = setTimeout(() => {
-          if (bestPosition) {
-            finishSuccess({
-              position: bestPosition,
-              accepted: bestPosition.coords.accuracy <= fastAccuracyLimit,
-              source: "timeout-best"
-            });
-            return;
-          }
-
-          finishFailure(new Error("Could not get a usable location."));
-        }, hardFallbackTimeoutMs);
-      });
-    }
-
-    async function persistSpot(spot, cloudFailureTitle = "Saved locally") {
-      // First save locally, immediately.
-      const normalizedSpot = normalizeSpot(spot);
-      saveLocalBackup(normalizedSpot);
-      addRecentSpot(normalizedSpot);
-      setActivePreviewSpot(normalizedSpot);
-      updateHeroFromSpot(normalizedSpot);
-      vibratePattern("success");
-
-      // Cloud sync runs in the background.
-      // It must never block the NFC save flow.
-      syncAllParkingDataToCloud(normalizedSpot, { cloudFailureTitle });
-
-      return true;
-    }
-
-    async function saveParkingLocation() {
-      hideSaveAnyway();
+    async function runLocationSave(locationPromise = null, authPromise = null) {
+      hideAccuracyActions();
+      deleteConfirm.classList.remove("show");
       setBusy(true);
+      updateSearchingUi("SEARCHING", null);
 
       try {
-        // VERY IMPORTANT:
-        // GPS starts here immediately. Do not put cloud login, old location load,
-        // or any other await before this line.
-        const locationPromise = getHybridBestLocation();
-
-        setPill(modePillEl, "Mode: saving", "warn");
-        setHeroState(
-          "searching",
-          "Saving your parking spot",
-          "GPS started immediately...",
-          "Do not close this page."
-        );
-
-        const result = await locationPromise;
-        const position = result.position;
-        const measuredAccuracy = position.coords.accuracy;
-
-        const spot = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-          accuracy: measuredAccuracy,
-          source: result.source || "gps",
-          savedAtMillis: Date.now()
-        };
-        spot.id = makeSpotId(spot);
+        const result = await (locationPromise || window.ParkNousLocate(updateSearchingUi));
+        const spot = makeSpotFromResult(result);
 
         if (!result.accepted) {
-          bestFailedSpot = spot;
-          setPill(localPillEl, `Best found: ${Math.round(measuredAccuracy || 0)}m`, "warn");
-          setHeroState(
-            "error",
-            "Accuracy not good enough",
-            `Best result: ${Math.round(measuredAccuracy || 0)}m`,
-            result.source && result.source.includes("cached")
-              ? `Using cached location fallback • Required: ${FAST_ACCEPTABLE_ACCURACY_METERS}m or better`
-              : `Required: ${FAST_ACCEPTABLE_ACCURACY_METERS}m or better`
+          showAccuracyActions(spot);
+          setCenterState(
+            "waiting",
+            "CURRENT SPOT",
+            "ACCURACY TOO LOW",
+            spot,
+            `Best accuracy ±${Math.round(spot.accuracy || 0)} m`
           );
-          showSaveAnyway();
-          vibratePattern("error");
           return false;
         }
 
-        return await persistSpot(spot);
+        await persistAcceptedSpot(spot, authPromise);
+        return true;
       } catch (error) {
-        console.error(error);
-        debugLog("Save location failed", { code: error?.code, message: error?.message });
+        console.error("Location failed:", error);
 
-        if (error.code === 1) {
-          debugLog("Permission denied by browser/location settings", { ios: isIOSDevice(), userAgent: navigator.userAgent });
-          setHeroState(
-            "error",
-            "Location permission denied",
-            isIOSDevice()
-              ? "iPhone blocked location access. Allow Location for this browser/site once, then use the Home Screen shortcut."
-              : "Please allow location access for this site.",
-            isIOSDevice()
-              ? "Settings → Privacy & Security → Location Services → Safari/Chrome → While Using App"
-              : ""
-          );
-        } else if (error.code === 2) {
-          setHeroState("error", "Location unavailable", "Try going near a window or enabling precise location.");
-        } else if (error.code === 3) {
-          setHeroState("error", "Location request timed out", "Try again or open the installed shortcut/PWA.");
-        } else {
-          setHeroState("error", "Could not get location", error?.message || "");
-        }
+        let message = "LOCATION UNAVAILABLE";
+        if (error && error.code === 1) message = "PERMISSION DENIED";
+        else if (error && error.code === 3) message = "GPS TIMEOUT";
 
-        vibratePattern("error");
+        setCenterState("waiting", "CURRENT SPOT", message, null, "Tap SAVE to try again");
+        toast("Could not save location");
         return false;
       } finally {
         setBusy(false);
       }
     }
 
-    function setActivePreviewSpot(spot) {
-      if (!spot || typeof spot.lat !== "number" || typeof spot.lng !== "number") {
-        activePreviewSpot = null;
-        return null;
-      }
-
-      activePreviewSpot = normalizeSpot(spot);
-      lastKnownSpot = activePreviewSpot;
-      return activePreviewSpot;
+    function showSelectedLocation() {
+      if (!selectedSpot) return;
+      window.location.href = buildShowMapUrl(selectedSpot);
     }
 
-    function getActivePreviewSpot() {
-      if (activePreviewSpot && typeof activePreviewSpot.lat === "number" && typeof activePreviewSpot.lng === "number") {
-        return normalizeSpot(activePreviewSpot);
-      }
-
-      if (lastKnownSpot && typeof lastKnownSpot.lat === "number" && typeof lastKnownSpot.lng === "number") {
-        return normalizeSpot(lastKnownSpot);
-      }
-
-      const localSpot = readLocalBackup();
-      if (localSpot) return normalizeSpot(localSpot);
-
-      const recent = readRecentSpots();
-      if (recent.length) return normalizeSpot(recent[0]);
-
-      const named = readNamedLocations();
-      if (named.length) return normalizeSpot(named[0]);
-
-      return null;
+    function navigateToSelectedLocation() {
+      if (!selectedSpot) return;
+      window.location.href = buildNavigateMapUrl(selectedSpot);
     }
 
-    function getBestAvailableSpot() {
-      const activeSpot = getActivePreviewSpot();
-      if (activeSpot) return { spot: activeSpot };
+    async function shareSelectedLocation() {
+      if (!selectedSpot) return;
 
-      return { spot: null };
-    }
-
-    async function showSavedLocation() {
-      hideSaveAnyway();
-      setBusy(true);
+      const url = buildShowMapUrl(selectedSpot);
+      const shareData = {
+        title: "ParkNous parking spot",
+        text: "My saved parking spot",
+        url
+      };
 
       try {
-        const chosen = getActivePreviewSpot();
-
-        if (!chosen) {
-          setHeroState("error", "No saved location found", "");
-          return;
-        }
-
-        const activeSpot = setActivePreviewSpot(chosen);
-        updateHeroFromSpot(activeSpot);
-        openSpotOnMap(activeSpot, false);
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    async function navigateToSavedLocation() {
-      hideSaveAnyway();
-      setBusy(true);
-
-      try {
-        const chosen = getActivePreviewSpot();
-
-        if (!chosen) {
-          setHeroState("error", "No saved location found", "");
-          return;
-        }
-
-        const activeSpot = setActivePreviewSpot(chosen);
-        updateHeroFromSpot(activeSpot);
-        openSpotOnMap(activeSpot, true);
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    async function clearSavedLocation() {
-      hideSaveAnyway();
-
-      const confirmed = await showConfirmBanner({
-        title: "Clear current parking spot?",
-        text: "This will remove only the current saved parking spot. Your recent history and saved spots will stay available.",
-        confirmLabel: "Yes, clear it",
-        cancelLabel: "Cancel"
-      });
-
-      if (!confirmed) return;
-
-      setBusy(true);
-      setHeroState("waiting", "Clearing current spot", "");
-
-      try {
-        clearLocalBackup();
-        sessionStorage.removeItem(SESSION_SAVE_KEY);
-        lastKnownSpot = null;
-        activePreviewSpot = null;
-
-        await syncAllParkingDataToCloud(null, {
-          clearCurrent: true,
-          cloudFailureTitle: "Cleared locally"
-        });
-
-        setHeroState("waiting", "Current spot cleared", "Recent and saved spots are still saved.");
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    async function saveBestFoundAnyway() {
-      if (!bestFailedSpot) return;
-
-      hideSaveAnyway();
-      setBusy(true);
-
-      try {
-        await persistSpot(bestFailedSpot, "Saved locally");
-        sessionStorage.setItem(SESSION_SAVE_KEY, "true");
-        clearSaveModeFromUrl();
-        setPill(modePillEl, "Mode: view only");
-      } finally {
-        setBusy(false);
-      }
-    }
-
-    function cancelSaveAnyway() {
-      hideSaveAnyway();
-      setHeroState("waiting", "Save cancelled", "");
-      clearSaveModeFromUrl();
-      setPill(modePillEl, "Mode: view only");
-    }
-
-    async function saveCurrentSpotWithName() {
-      const chosen = getActivePreviewSpot();
-      await saveSpotWithName(chosen);
-    }
-
-    async function shareCurrentSpot() {
-      const chosen = getActivePreviewSpot();
-
-      if (!chosen) {
-        setHeroState("error", "No spot to share", "Save or select a spot first.");
-        return;
-      }
-
-      await shareSpot(chosen);
-    }
-
-    showBtn.addEventListener("click", showSavedLocation);
-    navigateBtn.addEventListener("click", navigateToSavedLocation);
-    if (shareCurrentBtn) shareCurrentBtn.addEventListener("click", shareCurrentSpot);
-    saveNamedBtn.addEventListener("click", saveCurrentSpotWithName);
-    clearBtn.addEventListener("click", clearSavedLocation);
-    cancelSaveBtn.addEventListener("click", cancelSaveAnyway);
-    saveAnywayBtn.addEventListener("click", saveBestFoundAnyway);
-    recentListEl.addEventListener("click", handleSpotListClick);
-    savedListEl.addEventListener("click", handleSpotListClick);
-    recentDropdownEl.addEventListener("click", handleSpotListClick);
-    savedDropdownEl.addEventListener("click", handleSpotListClick);
-    listBackdropEl.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      closeAllDropdowns();
-    });
-
-    if (spotListModalEl) {
-      spotListModalEl.addEventListener("click", handleSpotListModalClick);
-    }
-
-    document.addEventListener("click", (event) => {
-      if (Date.now() < ignoreUnderlyingClickUntil) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    }, true);
-    recentToggleBtn.addEventListener("click", () => toggleSpotListModal("recent"));
-    savedToggleBtn.addEventListener("click", () => toggleSpotListModal("named"));
-    bindPanelHeaderToggle(recentPanelEl, recentDropdownEl);
-    bindPanelHeaderToggle(savedPanelEl, savedDropdownEl);
-    enableCarouselSwipe(recentListEl, "recent");
-    enableCarouselSwipe(savedListEl, "named");
-
-    async function init() {
-      renderSpotLists();
-      setBusy(true);
-
-      if (currentMode === "save") {
-        setPill(modePillEl, "Mode: NFC save", "ok");
-        setPill(localPillEl, "Local backup: skipped during save", "warn");
-
-        setHeroState(
-          "searching",
-          "Saving your parking spot",
-          "Starting GPS immediately...",
-          "Previous location will not be loaded during NFC save."
-        );
-
-        // NFC flow:
-        // Start GPS/save first. Do not load old location. Do not wait for Firebase.
-        const savedSuccessfully = await saveParkingLocation();
-
-        if (savedSuccessfully) {
-          sessionStorage.setItem(SESSION_SAVE_KEY, "true");
-          clearSaveModeFromUrl();
-          setPill(modePillEl, "Mode: view only");
-        }
-
-        return;
-      }
-
-      setPill(modePillEl, "Mode: view only");
-
-      const localSpot = readLocalBackup();
-      if (localSpot) {
-        setActivePreviewSpot(localSpot);
-        updateHeroFromSpot(localSpot);
-      } else {
-        setHeroState("waiting", "No saved location", "");
-      }
-
-      try {
-        const user = await loginReadyPromise;
-
-        if (user) {
-          const cloudSpot = await loadCloudSpot();
-
-          if (cloudSpot) {
-            setActivePreviewSpot(cloudSpot);
-            saveLocalBackup(cloudSpot);
-            updateHeroFromSpot(cloudSpot);
-          }
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(url);
+          toast("Map link copied");
+        } else {
+          window.location.href = url;
         }
       } catch (error) {
-        console.error(error);
+        if (error && error.name !== "AbortError") {
+          console.error(error);
+          toast("Could not share spot");
+        }
+      }
+    }
+
+    function askDeleteSelected() {
+      if (!selectedSpot) return;
+
+      deleteConfirm.classList.add("show");
+      accuracyActions.classList.remove("show");
+
+      deleteMessage.textContent =
+        selectedSource === "recent"
+          ? "Delete this recent spot?"
+          : "Clear the current saved spot?";
+    }
+
+    async function deleteSelected() {
+      if (!selectedSpot) return;
+
+      deleteConfirm.classList.remove("show");
+
+      if (selectedSource === "recent") {
+        const target = selectedSpot;
+        writeRecentSpots(
+          recentSpots.filter(spot =>
+            !(
+              Number(spot.savedAtMillis) === Number(target.savedAtMillis) &&
+              Number(spot.lat) === Number(target.lat) &&
+              Number(spot.lng) === Number(target.lng)
+            )
+          )
+        );
+
+        if (lastKnownSpot) updateSelectedSpot(lastKnownSpot, "current");
+        else updateSelectedSpot(null);
+        toast("Recent spot deleted");
+        return;
+      }
+
+      setBusy(true);
+      try {
+        saveLocalBackup(null);
+        lastKnownSpot = null;
+        selectedSpot = null;
+        sessionStorage.removeItem(SESSION_SAVE_KEY);
+
+        if (currentUser) {
+          try {
+            await deleteDoc(getParkingDocRef(currentUser.uid));
+          } catch (error) {
+            console.error("Cloud delete failed:", error);
+            toast("Cleared locally — cloud delete failed");
+          }
+        }
+
+        updateSelectedSpot(null);
+        toast("Current spot cleared");
       } finally {
         setBusy(false);
       }
     }
 
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", async () => {
-        try {
-          await navigator.serviceWorker.register("./sw.js");
-        } catch (error) {
-          console.error("Service worker registration failed:", error);
+    showBtn.addEventListener("click", showSelectedLocation);
+    navigateBtn.addEventListener("click", navigateToSelectedLocation);
+    saveBtn.addEventListener("click", () => runLocationSave());
+    shareBtn.addEventListener("click", shareSelectedLocation);
+    deleteBtn.addEventListener("click", askDeleteSelected);
+
+    cancelAccuracyBtn.addEventListener("click", () => {
+      hideAccuracyActions();
+      if (lastKnownSpot) updateSelectedSpot(lastKnownSpot, "current");
+      else updateSelectedSpot(null);
+    });
+
+    saveAnywayBtn.addEventListener("click", async () => {
+      if (!bestFailedSpot) return;
+      const spot = bestFailedSpot;
+      hideAccuracyActions();
+      setBusy(true);
+      try {
+        await persistAcceptedSpot(spot);
+        sessionStorage.setItem(SESSION_SAVE_KEY, "true");
+        clearSaveModeFromUrl();
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    cancelDeleteBtn.addEventListener("click", () => deleteConfirm.classList.remove("show"));
+    confirmDeleteBtn.addEventListener("click", deleteSelected);
+
+    async function init() {
+      // Local UI is available immediately; no network needed.
+      recentSpots = readRecentSpots(); // always trimmed to 5
+      const localSpot = readLocalBackup();
+      lastKnownSpot = localSpot;
+
+      if (localSpot) updateSelectedSpot(localSpot, "current");
+      else if (!window.__parkNousEarlyLocationPromise) updateSelectedSpot(null);
+      else renderLists();
+
+      // Start authentication in parallel. It does NOT gate the GPS request.
+      const authPromise = ensureAnonymousLogin()
+        .then(() => true)
+        .catch(error => {
+          console.error("Cloud auth failed:", error);
+          return false;
+        });
+
+      if (currentMode === "save") {
+        if (sessionStorage.getItem(SESSION_SAVE_KEY)) {
+          clearSaveModeFromUrl();
+          if (lastKnownSpot) updateSelectedSpot(lastKnownSpot, "current");
+          toast("Parking already saved in this session");
+        } else {
+          const saved = await runLocationSave(window.__parkNousEarlyLocationPromise, authPromise);
+
+          if (saved) {
+            sessionStorage.setItem(SESSION_SAVE_KEY, "true");
+            clearSaveModeFromUrl();
+          }
         }
-      });
+
+        return;
+      }
+
+      // In view mode, cloud sync is background/secondary.
+      const authOk = await authPromise;
+      if (!authOk) return;
+
+      const cloudSpot = await loadCloudSpot();
+      if (!cloudSpot) return;
+
+      // Keep whichever current spot is newer.
+      if (!lastKnownSpot || Number(cloudSpot.savedAtMillis || 0) > Number(lastKnownSpot.savedAtMillis || 0)) {
+        lastKnownSpot = cloudSpot;
+        saveLocalBackup(cloudSpot);
+        updateSelectedSpot(cloudSpot, "current");
+      } else if (
+        lastKnownSpot &&
+        Number(lastKnownSpot.savedAtMillis || 0) > Number(cloudSpot.savedAtMillis || 0)
+      ) {
+        // Local is newer; try to repair cloud quietly.
+        await syncCloudSpot(lastKnownSpot);
+      }
     }
 
     init();
-  
   </script>
 
   <script>
-    (() => {
-      const getStatusWord = () => {
-        const hero = document.getElementById("hero");
-        const title = document.getElementById("heroTitle");
-        const raw = (title?.textContent || "").trim().toLowerCase();
-
-        if (raw.includes("search") || raw.includes("gps") || hero?.classList.contains("searching")) return "SEARCHING";
-        if (raw.includes("saving")) return "SAVING";
-        if (raw.includes("saved") || raw.includes("location saved") || hero?.classList.contains("saved")) return "SAVED";
-        if (raw.includes("cleared") || raw.includes("clear")) return "CLEARED";
-        if (raw.includes("starting") || raw.includes("preparing") || hero?.classList.contains("waiting")) return "STARTING";
-        if (raw.includes("error") || hero?.classList.contains("error")) return "ERROR";
-        return raw ? raw.toUpperCase().slice(0, 14) : "CURRENT";
-      };
-
-      const syncHeroDisplay = () => {
-        const source = document.getElementById("heroMeta");
-        const dateEl = document.getElementById("heroMetaDate");
-        const timeEl = document.getElementById("heroMetaTime");
-        const accEl = document.getElementById("heroMetaAccuracy");
-        const statusEl = document.getElementById("heroStatusWord");
-
-        if (statusEl) statusEl.textContent = getStatusWord();
-        if (!source || !dateEl || !timeEl || !accEl) return;
-
-        const raw = (source.textContent || "")
-          .replace(/\s+/g, " ")
-          .replace(/^Saved:\s*/i, "")
-          .trim();
-
-        let date = "";
-        let time = "";
-        let accuracy = "";
-
-        const accuracyMatch = raw.match(/Accuracy:\s*([^•]+)/i);
-        if (accuracyMatch) accuracy = `Accuracy: ${accuracyMatch[1].trim()}`;
-
-        const clean = raw
-          .replace(/•\s*Accuracy:\s*[^•]+/i, "")
-          .replace(/Accuracy:\s*[^•]+/i, "")
-          .trim();
-
-        const dateTimeMatch = clean.match(/(\d{1,2}\/\d{1,2}\/\d{4}),?\s*(\d{1,2}:\d{2}(?::\d{2})?)/);
-        if (dateTimeMatch) {
-          date = dateTimeMatch[1];
-          time = dateTimeMatch[2];
-        } else if (clean) {
-          date = clean.slice(0, 26);
-        }
-
-        dateEl.textContent = date;
-        timeEl.textContent = time;
-        accEl.textContent = accuracy;
-      };
-
-      window.addEventListener("DOMContentLoaded", () => {
-        const title = document.getElementById("heroTitle");
-        const meta = document.getElementById("heroMeta");
-        const hero = document.getElementById("hero");
-
-        syncHeroDisplay();
-
-        if (title) {
-          new MutationObserver(syncHeroDisplay).observe(title, {
-            childList: true,
-            characterData: true,
-            subtree: true
-          });
-        }
-
-        if (meta) {
-          new MutationObserver(syncHeroDisplay).observe(meta, {
-            childList: true,
-            characterData: true,
-            subtree: true
-          });
-        }
-
-        if (hero) {
-          new MutationObserver(syncHeroDisplay).observe(hero, {
-            attributes: true,
-            attributeFilter: ["class"]
-          });
-        }
-
-        setInterval(syncHeroDisplay, 900);
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(error => {
+          console.error("Service worker registration failed:", error);
+        });
       });
-    })();
+    }
   </script>
-
 </body>
 </html>
