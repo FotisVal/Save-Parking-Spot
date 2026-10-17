@@ -7,6 +7,7 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
   />
   <title>ParkNous</title>
+  <!-- UI v3: SVG radial controller + restored animated searching logo -->
 
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -99,145 +100,135 @@
       position: relative;
       width: min(100%, 430px);
       height: 100%;
-      min-height: 380px;
+      min-height: 390px;
       margin: 0 auto;
       isolation: isolate;
     }
 
-    .petal,
-    .delete-btn,
-    .center-spot {
-      border: 1px solid rgba(255,255,255,.14);
-      background:
-        radial-gradient(circle at 50% 14%, rgba(255,255,255,.045), transparent 38%),
-        linear-gradient(180deg, rgba(255,255,255,.025), rgba(0,0,0,.07)),
-        #1c1f25;
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.05),
-        inset 0 -1px 0 rgba(0,0,0,.42),
-        0 10px 24px rgba(0,0,0,.33);
-    }
-
+    /*
+      The four controls are true SVG Bezier paths, not border-radius blobs.
+      This is what gives them the smooth, engineered "radial controller" shape.
+    */
     .petal {
       position: absolute;
       z-index: 1;
-      width: 40.5%;
-      height: 24.5%;
-      padding: 10px;
-      cursor: pointer;
+      width: 43%;
+      height: 29%;
+      padding: 0;
+      margin: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
       appearance: none;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: filter .12s ease, opacity .15s ease, transform .12s ease;
       color: var(--text);
+      cursor: pointer;
+      overflow: visible;
+      transition: opacity .15s ease, transform .12s ease, filter .12s ease;
     }
 
-    .petal::before,
-    .delete-btn::before,
-    .center-spot::before {
-      content: "";
+    .petal.show { left: 1.5%; top: 2.5%; }
+    .petal.navigate { right: 1.5%; top: 2.5%; }
+    .petal.save { left: 1.5%; bottom: 7.5%; }
+    .petal.share { right: 1.5%; bottom: 7.5%; }
+
+    .petal:active { transform: scale(.985); filter: brightness(1.08); }
+    .petal:disabled { opacity: .42; cursor: default; filter: none; }
+
+    .petal-bg {
       position: absolute;
       inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      filter: drop-shadow(0 11px 13px rgba(0,0,0,.33));
       pointer-events: none;
-      background: linear-gradient(180deg, rgba(255,255,255,.025), transparent 42%);
     }
 
-    /* Four compact sectors arranged around the centre dial. */
-    .petal.show {
-      left: 3%;
-      top: 6%;
-      border-radius: 56% 23% 50% 24% / 46% 34% 52% 34%;
-      transform: rotate(-9deg);
+    .petal-shape {
+      fill: url(#petalFill);
+      stroke: rgba(255,255,255,.16);
+      stroke-width: 1.4;
+      vector-effect: non-scaling-stroke;
     }
 
-    .petal.navigate {
-      right: 3%;
-      top: 6%;
-      border-radius: 23% 56% 24% 50% / 34% 46% 34% 52%;
-      transform: rotate(9deg);
+    .petal-inner-line {
+      fill: none;
+      stroke: rgba(0,0,0,.52);
+      stroke-width: 1.1;
+      vector-effect: non-scaling-stroke;
+      opacity: .9;
     }
 
-    .petal.save {
-      left: 3%;
-      bottom: 13%;
-      border-radius: 25% 50% 23% 56% / 36% 52% 34% 46%;
-      transform: rotate(9deg);
-    }
-
-    .petal.share {
-      right: 3%;
-      bottom: 13%;
-      border-radius: 50% 25% 56% 23% / 52% 36% 46% 34%;
-      transform: rotate(-9deg);
-    }
-
-    .petal.show:active { transform: rotate(-9deg) scale(.985); }
-    .petal.navigate:active { transform: rotate(9deg) scale(.985); }
-    .petal.save:active { transform: rotate(9deg) scale(.985); }
-    .petal.share:active { transform: rotate(-9deg) scale(.985); }
-
-    .petal:active,
-    .delete-btn:active { filter: brightness(1.1); }
-
-    .petal:disabled,
-    .delete-btn:disabled {
-      opacity: .42;
-      cursor: default;
-      filter: none;
+    .petal-highlight {
+      fill: none;
+      stroke: rgba(255,255,255,.055);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
     }
 
     .petal-content {
-      position: relative;
-      z-index: 2;
+      position: absolute;
+      z-index: 3;
       display: grid;
       justify-items: center;
-      gap: 5px;
+      gap: 6px;
+      pointer-events: none;
     }
 
-    .show .petal-content { transform: rotate(9deg); }
-    .navigate .petal-content { transform: rotate(-9deg); }
-    .save .petal-content { transform: rotate(-9deg); }
-    .share .petal-content { transform: rotate(9deg); }
+    .show .petal-content,
+    .navigate .petal-content {
+      top: 35%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
 
-    .petal svg,
-    .delete-btn svg {
-      width: clamp(31px, 8.5vw, 42px);
-      height: clamp(31px, 8.5vw, 42px);
+    .save .petal-content,
+    .share .petal-content {
+      top: 58%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .petal-content svg {
+      width: clamp(32px, 8.6vw, 43px);
+      height: clamp(32px, 8.6vw, 43px);
       fill: none;
       stroke: currentColor;
       stroke-width: 2.15;
       stroke-linecap: round;
       stroke-linejoin: round;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,.24));
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
     }
 
     .petal-label {
-      font-weight: 700;
-      font-size: clamp(.79rem, 3.35vw, .98rem);
-      letter-spacing: .2px;
+      font-weight: 650;
+      font-size: clamp(.82rem, 3.45vw, 1rem);
+      letter-spacing: .15px;
       white-space: nowrap;
     }
 
     .show,
-    .navigate { color: #f4f5f7; }
+    .navigate { color: #f5f6f8; }
 
     .save,
     .share { color: var(--cyan); }
 
     .save .petal-label,
-    .share .petal-label { color: #f4f5f7; }
+    .share .petal-label { color: #f5f6f8; }
 
     .center-spot {
       position: absolute;
       z-index: 5;
       left: 50%;
-      top: 43%;
+      top: 44%;
       transform: translate(-50%, -50%);
-      width: 45%;
+      width: 47%;
       aspect-ratio: 1;
       border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(circle at 48% 30%, rgba(255,255,255,.045), transparent 42%),
+        linear-gradient(180deg, #202329, #191c21 82%);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -245,45 +236,134 @@
       text-align: center;
       overflow: hidden;
       box-shadow:
-        0 0 0 9px rgba(24,27,32,.98),
-        0 0 0 10px rgba(255,255,255,.11),
-        0 14px 31px rgba(0,0,0,.42),
-        inset 0 1px 0 rgba(255,255,255,.04);
+        0 0 0 10px rgba(26,29,34,.98),
+        0 0 0 11px rgba(255,255,255,.13),
+        0 15px 32px rgba(0,0,0,.42),
+        inset 0 1px 0 rgba(255,255,255,.045);
     }
 
     .center-spot::before {
-      inset: 11px;
+      content: "";
+      position: absolute;
+      inset: 12px;
       border-radius: 50%;
-      border: 1.5px solid rgba(255,255,255,.12);
-      background: none;
+      border: 1.5px solid rgba(255,255,255,.13);
+      pointer-events: none;
     }
 
     .center-spot.searching {
       box-shadow:
-        0 0 0 9px rgba(24,27,32,.98),
-        0 0 0 10px rgba(53,201,216,.28),
-        0 14px 31px rgba(0,0,0,.42),
-        inset 0 1px 0 rgba(255,255,255,.04);
+        0 0 0 10px rgba(26,29,34,.98),
+        0 0 0 11px rgba(53,201,216,.28),
+        0 15px 32px rgba(0,0,0,.42),
+        inset 0 1px 0 rgba(255,255,255,.045);
     }
 
     .center-spot.searching::after {
       content: "";
       position: absolute;
-      inset: 5px;
+      inset: 4px;
       border-radius: 50%;
-      border: 2px solid rgba(53,201,216,.4);
-      animation: pulse 1.5s ease-out infinite;
+      border: 2px solid rgba(53,201,216,.42);
+      animation: searchRing 1.55s ease-out infinite;
+      pointer-events: none;
     }
 
-    @keyframes pulse {
-      0% { transform: scale(.84); opacity: .7; }
-      100% { transform: scale(1.08); opacity: 0; }
+    @keyframes searchRing {
+      0% { transform: scale(.82); opacity: .82; }
+      100% { transform: scale(1.11); opacity: 0; }
+    }
+
+    /* Old ParkNous-style searching logo: spins only while GPS is searching,
+       breathes, and continuously shifts colour. */
+    .search-logo-wrap {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      top: 38%;
+      width: 42%;
+      aspect-ratio: 1;
+      transform: translate(-50%, -50%);
+      display: grid;
+      place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .18s ease;
+    }
+
+    .search-logo-wrap::before,
+    .search-logo-wrap::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      border: 1.5px solid rgba(53,201,216,.28);
+      opacity: 0;
+    }
+
+    .search-logo-wrap::before { inset: -13%; }
+    .search-logo-wrap::after { inset: -28%; }
+
+    .search-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transform-origin: center;
+      filter: saturate(1.35) drop-shadow(0 0 9px rgba(53,201,216,.35));
+    }
+
+    .center-spot.searching .search-logo-wrap { opacity: 1; }
+
+    .center-spot.searching .search-logo {
+      animation:
+        parkNousLogoSpin 1.85s cubic-bezier(.46,.03,.52,.96) infinite,
+        parkNousLogoColor 3.6s linear infinite,
+        parkNousLogoBreathe 1.15s ease-in-out infinite alternate;
+    }
+
+    .center-spot.searching .search-logo-wrap::before {
+      animation: logoEcho 1.55s ease-out infinite;
+    }
+
+    .center-spot.searching .search-logo-wrap::after {
+      animation: logoEcho 1.55s ease-out .72s infinite;
+    }
+
+    @keyframes parkNousLogoSpin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes parkNousLogoColor {
+      0% { filter: hue-rotate(0deg) saturate(1.4) drop-shadow(0 0 8px rgba(53,201,216,.30)); }
+      33% { filter: hue-rotate(105deg) saturate(1.65) drop-shadow(0 0 12px rgba(255,195,65,.38)); }
+      66% { filter: hue-rotate(220deg) saturate(1.7) drop-shadow(0 0 12px rgba(146,92,255,.40)); }
+      100% { filter: hue-rotate(360deg) saturate(1.4) drop-shadow(0 0 8px rgba(53,201,216,.30)); }
+    }
+
+    @keyframes parkNousLogoBreathe {
+      from { scale: .90; }
+      to { scale: 1.06; }
+    }
+
+    @keyframes logoEcho {
+      0% { transform: scale(.55); opacity: .65; }
+      100% { transform: scale(1.35); opacity: 0; }
     }
 
     .spot-copy {
       position: relative;
-      z-index: 2;
+      z-index: 3;
       width: 100%;
+      transition: transform .2s ease;
+    }
+
+    .center-spot.searching .spot-copy {
+      transform: translateY(31%);
+    }
+
+    .center-spot.searching .spot-kicker,
+    .center-spot.searching .spot-time {
+      display: none;
     }
 
     .spot-kicker {
@@ -302,6 +382,12 @@
       margin-bottom: 7px;
     }
 
+    .center-spot.searching .spot-state {
+      color: var(--cyan);
+      font-size: clamp(.79rem, 3.35vw, .96rem);
+      margin-bottom: 3px;
+    }
+
     .spot-time {
       font-size: clamp(.72rem, 2.9vw, .86rem);
       color: #eef0f4;
@@ -314,18 +400,29 @@
       color: var(--muted);
     }
 
+    .center-spot.searching .spot-accuracy {
+      font-size: clamp(.62rem, 2.45vw, .74rem);
+    }
+
     .delete-btn {
       position: absolute;
       z-index: 6;
-      width: 17.5%;
-      min-width: 68px;
-      max-width: 80px;
+      width: 18%;
+      min-width: 70px;
+      max-width: 82px;
       aspect-ratio: 1;
       left: 50%;
-      bottom: 2%;
+      bottom: 0.5%;
       transform: translateX(-50%);
       border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.14);
       color: var(--red);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,.04), transparent 45%),
+        linear-gradient(180deg, #22252b, #191c21);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.05),
+        0 10px 22px rgba(0,0,0,.34);
       appearance: none;
       cursor: pointer;
       padding: 8px;
@@ -334,6 +431,7 @@
     }
 
     .delete-btn:active { transform: translateX(-50%) scale(.98); }
+    .delete-btn:disabled { opacity: .42; cursor: default; }
 
     .delete-inner {
       position: relative;
@@ -343,7 +441,15 @@
       gap: 1px;
     }
 
-    .delete-btn svg { width: 27px; height: 27px; }
+    .delete-btn svg {
+      width: 28px;
+      height: 28px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.15;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
 
     .delete-label {
       font-size: .66rem;
@@ -515,8 +621,8 @@
       }
       .brand { font-size: 1.35rem; height: 28px; }
       .control-stage { min-height: 325px; }
-      .petal { height: 30%; }
-      .center-spot { width: 44%; }
+      .petal { height: 29%; }
+      .center-spot { width: 45%; }
       .spots-panel { border-radius: 18px; }
       .list-head { padding-top: 10px; }
     }
@@ -525,7 +631,7 @@
       body { padding-left: 5px; padding-right: 5px; }
       .app { gap: 4px; }
       .control-stage { min-height: 335px; }
-      .petal { width: 44%; }
+      .petal { width: 43.5%; }
       .petal-label { font-size: .75rem; }
       .center-spot { width: 45%; }
       .list-head { padding-left: 8px; padding-right: 8px; gap: 6px; }
@@ -539,7 +645,22 @@
     <div class="brand">Park<span>Nous</span></div>
 
     <section class="control-stage" aria-label="Parking controls">
+      <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <defs>
+          <linearGradient id="petalFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#25282f" />
+            <stop offset="42%" stop-color="#202329" />
+            <stop offset="100%" stop-color="#191c21" />
+          </linearGradient>
+        </defs>
+      </svg>
+
       <button id="showBtn" class="petal show" aria-label="Show spot on map">
+        <svg class="petal-bg" viewBox="0 0 200 170" preserveAspectRatio="none" aria-hidden="true">
+          <path class="petal-shape" d="M16 148 C-2 126 2 83 21 48 C40 14 82 -4 136 3 C157 6 171 17 177 36 L198 95 C203 111 196 121 182 128 C164 137 151 143 140 153 C129 163 124 169 111 168 C84 165 51 160 29 153 C23 151 19 150 16 148 Z"/>
+          <path class="petal-highlight" d="M19 143 C3 121 7 84 25 52 C44 20 83 3 134 9 C153 11 165 21 171 39"/>
+          <path class="petal-inner-line" d="M194 97 C198 109 191 117 179 123 C161 132 147 139 136 149 C126 158 121 164 109 163"/>
+        </svg>
         <span class="petal-content">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
@@ -550,6 +671,13 @@
       </button>
 
       <button id="navigateBtn" class="petal navigate" aria-label="Navigate to spot">
+        <svg class="petal-bg" viewBox="0 0 200 170" preserveAspectRatio="none" aria-hidden="true">
+          <g transform="translate(200 0) scale(-1 1)">
+            <path class="petal-shape" d="M16 148 C-2 126 2 83 21 48 C40 14 82 -4 136 3 C157 6 171 17 177 36 L198 95 C203 111 196 121 182 128 C164 137 151 143 140 153 C129 163 124 169 111 168 C84 165 51 160 29 153 C23 151 19 150 16 148 Z"/>
+            <path class="petal-highlight" d="M19 143 C3 121 7 84 25 52 C44 20 83 3 134 9 C153 11 165 21 171 39"/>
+            <path class="petal-inner-line" d="M194 97 C198 109 191 117 179 123 C161 132 147 139 136 149 C126 158 121 164 109 163"/>
+          </g>
+        </svg>
         <span class="petal-content">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="m21 3-8.2 18-2.2-7.6L3 11.2 21 3Z"></path>
@@ -558,7 +686,12 @@
         </span>
       </button>
 
-      <button id="saveBtn" class="petal save" aria-label="Save current parking spot">
+      <button id="saveBtn" class="petal save" aria-label="Save selected spot with a name">
+        <svg class="petal-bg" viewBox="0 0 200 170" preserveAspectRatio="none" aria-hidden="true">
+          <path class="petal-shape" d="M13 44 C17 28 29 19 45 14 C75 4 108 14 132 31 C147 41 155 56 166 70 C176 82 190 90 197 103 C204 117 201 132 191 144 C171 168 139 176 107 168 C70 159 38 141 20 115 C8 97 6 68 13 44 Z"/>
+          <path class="petal-highlight" d="M18 45 C22 32 32 25 47 20 C75 11 105 20 128 36"/>
+          <path class="petal-inner-line" d="M135 34 C150 45 158 59 169 73 C180 86 191 92 195 104"/>
+        </svg>
         <span class="petal-content">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M5 3h12l2 2v16H5V3Z"></path>
@@ -569,6 +702,13 @@
       </button>
 
       <button id="shareBtn" class="petal share" aria-label="Share selected spot">
+        <svg class="petal-bg" viewBox="0 0 200 170" preserveAspectRatio="none" aria-hidden="true">
+          <g transform="translate(200 0) scale(-1 1)">
+            <path class="petal-shape" d="M13 44 C17 28 29 19 45 14 C75 4 108 14 132 31 C147 41 155 56 166 70 C176 82 190 90 197 103 C204 117 201 132 191 144 C171 168 139 176 107 168 C70 159 38 141 20 115 C8 97 6 68 13 44 Z"/>
+            <path class="petal-highlight" d="M18 45 C22 32 32 25 47 20 C75 11 105 20 128 36"/>
+            <path class="petal-inner-line" d="M135 34 C150 45 158 59 169 73 C180 86 191 92 195 104"/>
+          </g>
+        </svg>
         <span class="petal-content">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="18" cy="5" r="2.5"></circle>
@@ -581,6 +721,9 @@
       </button>
 
       <div id="centerSpot" class="center-spot waiting" role="status" aria-live="polite">
+        <div class="search-logo-wrap" aria-hidden="true">
+          <img class="search-logo" src="favicon.png" alt="" />
+        </div>
         <div class="spot-copy">
           <div id="spotKicker" class="spot-kicker">CURRENT SPOT</div>
           <div id="spotState" class="spot-state">STARTING</div>
@@ -731,12 +874,12 @@
             }
           }, LIVE_SEARCH_TIMEOUT_MS);
 
-          update("SEARCHING");
+          update("SEARCHING...");
 
           watchId = navigator.geolocation.watchPosition(
             (position) => {
               consider(position);
-              update("SEARCHING");
+              update("SEARCHING...");
 
               const accuracy = position.coords.accuracy;
               if (typeof accuracy === "number" && accuracy <= MAX_ACCEPTABLE_ACCURACY_METERS) {
@@ -784,9 +927,9 @@
       const alreadySavedThisSession = sessionStorage.getItem(SESSION_SAVE_KEY);
 
       if (nfcSaveMode && !alreadySavedThisSession) {
-        setEarlySearching("SEARCHING");
+        setEarlySearching("SEARCHING...");
         window.__parkNousEarlyLocationPromise = window.ParkNousLocate((label, best) => {
-          setEarlySearching(label, best && best.coords ? best.coords.accuracy : null);
+          setEarlySearching("SEARCHING...", best && best.coords ? best.coords.accuracy : null);
         });
       } else {
         window.__parkNousEarlyLocationPromise = null;
@@ -1219,7 +1362,7 @@
           ? `Best accuracy ±${Math.round(bestPosition.coords.accuracy)} m`
           : "Waiting for GPS...";
 
-      setCenterState("searching", "CURRENT SPOT", label || "SEARCHING", null, bestAccuracy);
+      setCenterState("searching", "CURRENT SPOT", label || "SEARCHING...", null, bestAccuracy);
     }
 
     function makeSpotFromResult(result) {
@@ -1269,7 +1412,7 @@
       hideAccuracyActions();
       deleteConfirm.classList.remove("show");
       setBusy(true);
-      updateSearchingUi("SEARCHING", null);
+      updateSearchingUi("SEARCHING...", null);
 
       try {
         const result = await (locationPromise || window.ParkNousLocate(updateSearchingUi));
