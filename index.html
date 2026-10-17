@@ -7,7 +7,7 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
   />
   <title>ParkNous</title>
-  <!-- UI v4: true annular radial sectors + searching logo animation -->
+  <!-- UI v5: softened annular sectors + refined icon alignment + improved save/delete icons -->
 
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -133,6 +133,7 @@
       stroke: rgba(255,255,255,.16);
       stroke-width: 1.5;
       stroke-linejoin: round;
+      stroke-linecap: round;
       vector-effect: non-scaling-stroke;
       transition: fill .12s ease, stroke .12s ease, filter .12s ease;
     }
@@ -417,15 +418,15 @@
       z-index: 2;
       display: grid;
       justify-items: center;
-      gap: 1px;
+      gap: 3px;
     }
 
     .delete-btn svg {
-      width: 28px;
-      height: 28px;
+      width: 30px;
+      height: 30px;
       fill: none;
       stroke: currentColor;
-      stroke-width: 2.15;
+      stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
@@ -634,48 +635,50 @@
         </defs>
 
         <g id="showBtn" class="radial-action show" role="button" tabindex="0" aria-label="Show selected spot on map">
-          <path class="radial-segment" d="M 31.82 162.71 A 188 188 0 0 1 172.71 21.82 Q 182.35 19.86 195.55 94.70 Q 189.81 95.87 105.87 179.81 Q 104.70 185.55 29.86 172.35 Q 31.82 162.71 31.82 162.71 Z"/>
+          <path class="radial-segment" d="M 34.74 151.61 A 188 188 0 0 1 161.61 24.74 Q 182.35 19.86 183.57 26.75 L 194.34 87.81 Q 195.55 94.70 183.19 97.61 A 112 112 0 0 0 107.61 173.19 Q 104.70 185.55 97.81 184.34 L 36.75 173.57 Q 29.86 172.35 34.74 151.61 Z"/>
           <path class="radial-highlight" d="M79 179 A174 174 0 0 1 116 85"/>
           <path class="radial-inner-line" d="M118 206 A103 103 0 0 1 148 127"/>
-          <g class="radial-icon" transform="translate(105 116) scale(1.22)">
+          <g class="radial-icon" transform="translate(111 121) scale(1.18)">
             <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"></path>
             <circle cx="12" cy="12" r="3"></circle>
           </g>
-          <text class="radial-label" x="119" y="160">SHOW</text>
+          <text class="radial-label" x="123" y="163">SHOW</text>
         </g>
 
         <g id="navigateBtn" class="radial-action navigate" role="button" tabindex="0" aria-label="Navigate to selected spot">
-          <path class="radial-segment" d="M 257.29 21.82 A 188 188 0 0 1 398.18 162.71 Q 400.14 172.35 325.30 185.55 Q 324.13 179.81 240.19 95.87 Q 234.45 94.70 247.65 19.86 Q 257.29 21.82 257.29 21.82 Z"/>
+          <path class="radial-segment" d="M 268.39 24.74 A 188 188 0 0 1 395.26 151.61 Q 400.14 172.35 393.25 173.57 L 332.19 184.34 Q 325.30 185.55 322.39 173.19 A 112 112 0 0 0 246.81 97.61 Q 234.45 94.70 235.66 87.81 L 246.43 26.75 Q 247.65 19.86 268.39 24.74 Z"/>
           <path class="radial-highlight" d="M314 85 A174 174 0 0 1 351 179"/>
           <path class="radial-inner-line" d="M282 127 A103 103 0 0 1 312 206"/>
-          <g class="radial-icon" transform="translate(302 114) scale(1.28)">
+          <g class="radial-icon" transform="translate(296 119) scale(1.22)">
             <path d="m21 3-8.2 18-2.2-7.6L3 11.2 21 3Z"></path>
           </g>
-          <text class="radial-label" x="310" y="160">NAVIGATE</text>
+          <text class="radial-label" x="306" y="163">NAVIGATE</text>
         </g>
 
         <g id="saveBtn" class="radial-action save" role="button" tabindex="0" aria-label="Save selected spot with a name">
-          <path class="radial-segment" d="M 172.71 388.18 A 188 188 0 0 1 31.82 247.29 Q 29.86 237.65 104.70 224.45 Q 105.87 230.19 189.81 314.13 Q 195.55 315.30 182.35 390.14 Q 172.71 388.18 172.71 388.18 Z"/>
+          <path class="radial-segment" d="M 161.61 385.26 A 188 188 0 0 1 34.74 258.39 Q 29.86 237.65 36.75 236.43 L 97.81 225.66 Q 104.70 224.45 107.61 236.81 A 112 112 0 0 0 183.19 312.39 Q 195.55 315.30 194.34 322.19 L 183.57 383.25 Q 182.35 390.14 161.61 385.26 Z"/>
           <path class="radial-highlight" d="M83 266 A174 174 0 0 0 119 354"/>
           <path class="radial-inner-line" d="M121 244 A103 103 0 0 0 151 322"/>
-          <g class="radial-icon" transform="translate(106 288) scale(1.18)">
-            <path d="M5 3h12l2 2v16H5V3Z"></path>
-            <path d="M8 3v6h8V3M8 21v-7h8v7"></path>
+          <g class="radial-icon" transform="translate(111 280) scale(1.20)">
+            <path d="M5 3h11.5L19 5.5V21H5V3Z"></path>
+            <path d="M8 3v6h7V3.5"></path>
+            <rect x="8" y="13" width="8" height="6" rx="1"></rect>
+            <path d="M15.5 5.2h.01"></path>
           </g>
-          <text class="radial-label" x="119" y="333">SAVE</text>
+          <text class="radial-label" x="123" y="326">SAVE</text>
         </g>
 
         <g id="shareBtn" class="radial-action share" role="button" tabindex="0" aria-label="Share selected spot">
-          <path class="radial-segment" d="M 398.18 247.29 A 188 188 0 0 1 257.29 388.18 Q 247.65 390.14 234.45 315.30 Q 240.19 314.13 324.13 230.19 Q 325.30 224.45 400.14 237.65 Q 398.18 247.29 398.18 247.29 Z"/>
+          <path class="radial-segment" d="M 395.26 258.39 A 188 188 0 0 1 268.39 385.26 Q 247.65 390.14 246.43 383.25 L 235.66 322.19 Q 234.45 315.30 246.81 312.39 A 112 112 0 0 0 322.39 236.81 Q 325.30 224.45 332.19 225.66 L 393.25 236.43 Q 400.14 237.65 395.26 258.39 Z"/>
           <path class="radial-highlight" d="M311 354 A174 174 0 0 0 347 266"/>
           <path class="radial-inner-line" d="M279 322 A103 103 0 0 0 309 244"/>
-          <g class="radial-icon" transform="translate(299 288) scale(1.18)">
+          <g class="radial-icon" transform="translate(294 280) scale(1.18)">
             <circle cx="18" cy="5" r="2.5"></circle>
             <circle cx="6" cy="12" r="2.5"></circle>
             <circle cx="18" cy="19" r="2.5"></circle>
             <path d="m8.2 10.8 7.6-4.5M8.2 13.2l7.6 4.5"></path>
           </g>
-          <text class="radial-label" x="310" y="333">SHARE</text>
+          <text class="radial-label" x="306" y="326">SHARE</text>
         </g>
       </svg>
 
@@ -694,7 +697,10 @@
       <button id="deleteBtn" class="delete-btn" aria-label="Delete selected spot">
         <span class="delete-inner">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M4 7h16M9 7V4h6v3M7 7l1 14h8l1-14M10 11v6M14 11v6"></path>
+            <path d="M4.5 7.2h15"></path>
+            <path d="M9 7.2V5.1c0-.6.5-1.1 1.1-1.1h3.8c.6 0 1.1.5 1.1 1.1v2.1"></path>
+            <path d="M7.1 7.2 8.2 19c.1.9.8 1.6 1.7 1.6h4.2c.9 0 1.6-.7 1.7-1.6l1.1-11.8"></path>
+            <path d="M10.2 10.5v6.7M13.8 10.5v6.7"></path>
           </svg>
           <span class="delete-label">DELETE</span>
         </span>
